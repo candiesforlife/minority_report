@@ -1,14 +1,15 @@
 # Data analysis
 - Document here the project: minority_report
-- Description: Project Description
+- Description: The minority report aims to predict the hourly intensity of crimes in a defined region in the next 48hours. (our y)
 - Data Source:
 - Type of analysis:
-
+-hello world
 Please document the project the better you can.
 
 # Startup the project
 
 The initial setup.
+
 
 Create virtualenv and install the project:
 ```bash
@@ -62,3 +63,5 @@ Functionnal test with a script:
   $ cd /tmp
   $ minority_report-run
 ```
+
+
