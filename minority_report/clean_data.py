@@ -19,7 +19,7 @@ class Clean_Data:
         df = self.data.copy()
         pass
 
-    def drop_miss (df):
+    def drop_miss(df):
         '''
         Drop precinct and time missing values
         '''
@@ -32,6 +32,7 @@ class Clean_Data:
         df = df[df['date'] == df['date']]
         return df
 
+    #might have to be removed tomorrow
     def removing_date_before_2007(df):
         '''
         Remove any dates before 2007 & values not corresponding to our US date format month/day/year, returns pd.series
@@ -39,8 +40,10 @@ class Clean_Data:
         rg_expression = r'(1[0-2]|0?[1-9])\/(3[01]|[12][0-9]|0?[1-9])\/20([1-2][0-9]|[0-2][7-9])'
         boolean_values = df['date'].str.match(rg_expression)
         return df[boolean_values]
+    ################################################################
 
-    def miss_lon_lat (df):
+
+    def miss_lon_lat(df):
         '''
         replace latitude and longitude missing values with median values by precinct
         '''
@@ -52,8 +55,19 @@ class Clean_Data:
             data[data['precinct_number']==precinct] = data[data['precinct_number']==precinct].fillna(value=values)
         return data
 
-
-
+    def miss_victim(df):
+        '''
+        replace missing values by unknown value
+        '''
+        data = df.copy()
+        age_liste = ['<18', '45-64', '18-24', '25-44']
+        race_liste = ['BLACK', 'WHITE', 'UNKNOWN', 'WHITE HISPANIC', 'BLACK HISPANIC',
+           'ASIAN / PACIFIC ISLANDER', 'AMERICAN INDIAN/ALASKAN NATIVE']
+        sex_liste = ['M', 'F', 'D', 'E']
+        data['victim_age'] = [element if element in age_liste else 'UNKNOWN' for element in data['victim_age']]
+        data['victim_race'] = [element if element in race_liste else 'UNKNOWN' for element in data['victim_race']]
+        data['victim_sex'] = [element if element in sex_liste else 'UNKNOWN' for element in data['victim_sex']]
+        return data
 
     #  Converting to correct datatypes
     def to_timestamp(self, column_name):
@@ -65,6 +79,7 @@ class Clean_Data:
         return df[column_name]
 
 
+    # might have to be modified tomorrow with some apply function recommended by Keurcien
     def to_date(self, column_name):
         '''
         Converts given column to datetime dtype, returns pd.series
@@ -72,12 +87,8 @@ class Clean_Data:
         df = self.data.copy()
         df[column_name] = pd.to_datetime(df[column_name], format = '%m/%d/%Y')
         return df[column_name]
+    ################################################################
 
-
-    def str_to_tuple(series):
-        """this function enables to turn a pd.series of strings into a pd.series of tuples"""
-        result = [literal_eval(x) for x in series]
-        return result
 
     def round_int(series):
         """this functions rounds pd.series of int, up"""
