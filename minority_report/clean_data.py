@@ -412,7 +412,7 @@ class CleanData:
 
     def save_data(self):
       '''
-      Saves clean dataframe to core data csv
+      Saves clean dataframe to clean data pickle
       '''
       root_dir = os.path.dirname(os.path.dirname(__file__))
       pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
