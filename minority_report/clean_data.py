@@ -64,12 +64,45 @@ class CleanData:
         return df
 
     # parkingettc
+    def miss_premise (df):
+        '''
+        replace nan values by 'unknown'
+        '''
+        df = self.data.copy()
+        #values to keep
+        premise = ['RESIDENCE - PUBLIC HOUSING', 'RESIDENCE-HOUSE', 'PUBLIC SCHOOL',
+           'RESIDENCE - APT. HOUSE', 'DOCTOR/DENTIST OFFICE',
+           'DEPARTMENT STORE', 'STREET', 'DRUG STORE', 'CHAIN STORE',
+           'RESTAURANT/DINER', 'HOSPITAL', 'TRANSIT - NYC SUBWAY',
+           'FOOD SUPERMARKET', 'BUS (NYC TRANSIT)', 'COMMERCIAL BUILDING',
+           'GAS STATION', 'FACTORY/WAREHOUSE', 'CLOTHING/BOUTIQUE',
+           'PRIVATE/PAROCHIAL SCHOOL', 'TELECOMM. STORE', 'GROCERY/BODEGA',
+           'BEAUTY & NAIL SALON', 'OTHER', 'PUBLIC BUILDING',
+           'SOCIAL CLUB/POLICY', 'TAXI (LIVERY LICENSED)',
+           'PARKING LOT/GARAGE (PUBLIC)', 'FAST FOOD', 'BAR/NIGHT CLUB',
+           'PARKING LOT/GARAGE (PRIVATE)','PARK/PLAYGROUND', 'BANK',
+           'HOTEL/MOTEL', 'BUS TERMINAL', 'VARIETY STORE', 'SMALL MERCHANT',
+           'HIGHWAY/PARKWAY', 'CHURCH', 'STORE UNCLASSIFIED',
+           'DRY CLEANER/LAUNDRY', 'TUNNEL', 'MARINA/PIER', 'AIRPORT TERMINAL',
+           'CANDY STORE', 'ATM', 'GYM/FITNESS FACILITY',
+           'TAXI (YELLOW LICENSED)', 'JEWELRY', 'SYNAGOGUE',
+           'OPEN AREAS (OPEN LOTS)', 'LIQUOR STORE', 'PHOTO/COPY',
+           'BOOK/CARD', 'STORAGE FACILITY', 'VIDEO STORE',
+           'FERRY/FERRY TERMINAL', 'SHOE', 'LOAN COMPANY', 'BUS (OTHER)',
+           'CHECK CASHING BUSINESS', 'TRANSIT FACILITY (OTHER)',
+           'MAILBOX OUTSIDE', 'MOSQUE', 'BUS STOP', 'CONSTRUCTION SITE',
+           'BRIDGE', 'ABANDONED BUILDING', 'TAXI/LIVERY (UNLICENSED)',
+           'OTHER HOUSE OF WORSHIP', 'CEMETERY', 'TRAMWAY']
+        premise_desc = ['INSIDE', 'FRONT OF', 'REAR OF', 'OPPOSITE OF', 'OUTSIDE']
+        #replace values
+        df['premise'] = [element if element in premise else 'UNKNOWN' for element in df['premise']]
+        df['premise_desc'] = [element if element in premise_desc else 'UNKNOWN' for element in df['premise_desc']]
+        return df
 
 
 
 
-
-
+    #5.
     def miss_lon_lat(self):
         '''
         replace latitude and longitude missing values with median values by precinct
@@ -85,13 +118,11 @@ class CleanData:
 
 
     #  Converting to correct datatypes
-    def to_timestamp(self, column_name):
-        '''
-        Converts given column to datetime.time dtype, returns pd.series
-        '''
+    def to_timestamp(self):
+        '''converts given column to datetime.time dtype'''
         df = self.data.copy()
-        df[column_name] = pd.to_datetime(df[column_name], format = '%H:%M:%S').dt.time
-        return df[column_name]
+        df['time'] = pd.to_datetime(df['time'], format = '%H:%M:%S').dt.time
+        return df
 
 
     # might have to be modified tomorrow with some apply function recommended by Keurcien
