@@ -9,7 +9,7 @@ class CleanData:
 
     def __init__(self):
         # loads core dataframe
-        self.data = NYPD().get_data()
+        self.data = NYPD().get_data()[:100_000]
 
     #  1.
     def drop_nan(self):
@@ -28,14 +28,16 @@ class CleanData:
         #drop offense_type and crime_completed
         df = df[df['offense_type'] == df['offense_type']]
         df = df[df['crime_completed'] == df['crime_completed']]
-        return df
+        self.data = df
+        return self.data
 
     #2. to timetamps
     def to_timestamp(self):
         '''converts given column to datetime.time dtype'''
         df = self.data.copy()
         df['time'] = pd.to_datetime(df['time'], format = '%H:%M:%S').dt.time
-        return df
+        self.data = df
+        return self.data
 
 
     #3. date format
@@ -46,7 +48,9 @@ class CleanData:
         df['date'] = df['date'].apply(lambda x: \
                                       datetime.strptime(x, '%m/%d/%Y')) # converts to datetime, then ISO format
         df = df[df['date'] > datetime(2006, 12, 31, 0, 0)]
-        return df
+        df['date'] = df['date'].dt.date
+        self.data = df
+        return self.data
 
 
     #4.
@@ -63,7 +67,8 @@ class CleanData:
         df['suspect_age'] = [element if element in age_liste else 'UNKNOWN' for element in df['suspect_age']]
         df['suspect_race'] = [element if element in race_liste else 'UNKNOWN' for element in df['suspect_race']]
         df['suspect_sex'] = [element if element in sex_liste else 'UNKNOWN' for element in df['suspect_sex']]
-        return df
+        self.data = df
+        return self.data
 
     #5.
     def miss_victim(self):
@@ -80,7 +85,8 @@ class CleanData:
         df['victim_age'] = [element if element in age_liste else 'UNKNOWN' for element in df['victim_age']]
         df['victim_race'] = [element if element in race_liste else 'UNKNOWN' for element in df['victim_race']]
         df['victim_sex'] = [element if element in sex_liste else 'UNKNOWN' for element in df['victim_sex']]
-        return df
+        self.data = df
+        return self.data
 
     # 6.
     def miss_premise(self):
@@ -116,7 +122,8 @@ class CleanData:
         #replace values
         df['premise'] = [element if element in premise else 'UNKNOWN' for element in df['premise']]
         df['premise_desc'] = [element if element in premise_desc else 'UNKNOWN' for element in df['premise_desc']]
-        return df
+        self.data = df
+        return self.data
 
     #7.
     def miss_park_metro(self):
@@ -283,7 +290,8 @@ class CleanData:
            'FRANKLIN STREET', 'AQUEDUCT-RACETRACK', 'OFF-SYSTEM']
         df['park_name'] = [element if element in park_list else 'NOT PARK' for element in df['park_name']]
         df['metro'] = [element if element in metro_list else 'NOT SUBWAY ' for element in df['metro']]
-        return df
+        self.data = df
+        return self.data
 
 
     #8.
@@ -297,7 +305,8 @@ class CleanData:
             geo = df[df['precinct_number'] == precinct][['latitude', 'longitude']]
             values = {'latitude': geo['latitude'].median(), 'longitude':geo['longitude'].median()} # get median lon and lat values as default for the precinct
             df[df['precinct_number']==precinct] = df[df['precinct_number']==precinct].fillna(value=values) # fill na with default values depending on precinct
-        return df
+        self.data = df
+        return self.data
 
     def miss_borough(self):
         '''replace borough correct values depending on the precinct'''
@@ -316,7 +325,8 @@ class CleanData:
         #rename column
         df.drop(columns='borough', inplace=True)
         df.rename(columns={'new_borough':'borough'},inplace=True)
-        return df
+        self.data = df
+        return self.data
 
 
     def miss_patrol_borough(self):
@@ -348,14 +358,16 @@ class CleanData:
 
         df.drop(columns='patrol_borough', inplace=True)
         df.rename(columns={'new_patrol':'patrol_borough'},inplace=True)
-        return df
+        self.data = df
+        return self.data
 
     #9. Run round_int sur df['precinct_number']
     def round_int_precinct(self):
         """this functions rounds pd.series of int, up"""
         df = self.data.copy()
         df['precinct_number'] = [round(x) for x in df['precinct_number']]
-        return df
+        self.data = df
+        return self.data
 
     # 10. Run complete_to_boolean sur df['crime_completed']
     def crime_completed_to_boolean(self):
@@ -365,7 +377,8 @@ class CleanData:
         """
         df = self.data.copy()
         df['crime_completed'] = df['crime_completed'].replace({'COMPLETED': True, 'INCOMPLETE': False})
-        return df
+        self.data = df
+        return self.data
 
 
 
