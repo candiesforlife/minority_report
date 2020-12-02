@@ -13,13 +13,6 @@ class CleanData:
 
     # removing Nans & weird values
     def drop_nan(self):
-        """
-        Returns a DataFrame w/o NaN
-        """
-        df = self.data.copy()
-        pass
-
-    def drop_miss(self):
         '''
         Drop precinct and time missing values
         '''
