@@ -3,6 +3,8 @@
 import os
 import pandas as pd
 from datetime import datetime
+import pickle
+
 from minority_report.data import NYPD
 from ast import literal_eval
 
@@ -10,7 +12,7 @@ class CleanData:
 
     def __init__(self):
       # loads core dataframe
-      self.data = NYPD().get_data()[:100_000]
+      self.data = NYPD().get_data()
 
     #  1.
     def drop_nan(self):
@@ -32,28 +34,18 @@ class CleanData:
       self.data = df
       return self.data
 
-    #2. to timetamps
-    def to_timestamp(self):
-      '''
-      Returns dataframe with 'time' as datetime.time dtype
-      '''
-      df = self.data.copy()
-      df['time'] = pd.to_datetime(df['time'], format = '%H:%M:%S').dt.time
-      self.data = df
-      return self.data
 
-
-    #3. date format
     def to_date_format(self):
-      """
-      Returns dataframe with 'date' as datetime dtype
+      '''
+      Merges date and time into new column, drops old
       Filters dataframe to show only complaints dated 2007 onwards
-      """
+      '''
       df = self.data.copy()
-      df['date'] = df['date'].apply(lambda x: \
-                                    datetime.strptime(x, '%m/%d/%Y')) # converts to datetime, then ISO format
-      df = df[df['date'] > datetime(2006, 12, 31, 0, 0)]
-      df['date'] = df['date'].dt.date
+      df['period'] = df['date'] + ' ' + df['time']
+      df['period'] = df['period'].apply(lambda x: \
+                             datetime.strptime(x, '%m/%d/%Y %H:%M:%S'))
+      df = df[df['period'] > datetime(2006, 12, 31, 23, 59, 0)]
+      df.drop(columns = ['date', 'time'], inplace = True)
       self.data = df
       return self.data
 
@@ -379,14 +371,14 @@ class CleanData:
       return self.data
 
     # 10. Run complete_to_boolean sur df['crime_completed']
-    def crime_completed_to_boolean(self):
-      """
-          turns complete/incomplete into boolean value
-      """
-      df = self.data.copy()
-      df['crime_completed'] = df['crime_completed'].replace({'COMPLETED': True, 'INCOMPLETE': False})
-      self.data = df
-      return self.data
+    # def crime_completed_to_boolean(self):
+    #   """
+    #       turns complete/incomplete into boolean value
+    #   """
+    #   df = self.data.copy()
+    #   df['crime_completed'] = df['crime_completed'].replace({'COMPLETED': True, 'INCOMPLETE': False})
+    #   self.data = df
+    #   return self.data
 
 
     def total_clean(self):
@@ -395,8 +387,6 @@ class CleanData:
       '''
       print('dropping NaNs')
       self.drop_nan()
-      print('Changing time column')
-      self.to_timestamp()
       print('Changing date column')
       self.to_date_format()
       print('Changing suspect column')
@@ -415,18 +405,21 @@ class CleanData:
       self.miss_patrol_borough()
       print('Changing precinct column')
       self.round_int_precinct()
-      print('Changing completion column')
-      self.crime_completed_to_boolean()
+      # print('Changing completion column')
+      # self.crime_completed_to_boolean()
       return self.data
 
 
     def save_data(self):
       '''
-      Saves clean dataframe to core data csv
+      Saves clean dataframe to clean data pickle
       '''
       root_dir = os.path.dirname(os.path.dirname(__file__))
-      csv_path = os.path.join(root_dir, 'raw_data', 'clean.csv')
-      return self.data.to_csv(csv_path, index = False)
+      pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
+
+      with open(pickle_path, 'wb') as f:
+         pickle.dump(self.data, f)
+
 
 if __name__ == '__main__':
   print('Initializing CleanData')
