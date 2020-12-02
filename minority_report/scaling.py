@@ -13,12 +13,10 @@ class Scaling:
     def __init__(self):
         self.data = CleanData().total_clean()
 
-    # def label_encoding(self):
-    #     le = LabelEncoder()
-    #     # df['crime_completed'] = df['crime_completed'].replace({True: 1, False: 0})
-    #     # self.data = df
-    #     self.data['crime_completed'] = le.fit_transform(self.data['crime_completed'])
-    #     return self.data
+    def label_encoding(self):
+        le = LabelEncoder()
+        self.data['crime_completed'] = le.fit_transform(self.data['crime_completed'])
+        return self.data
 
     def one_hot_encoding(self,features_list):
         ohe = OneHotEncoder(sparse = False)
@@ -33,8 +31,9 @@ class Scaling:
 if __name__ == '__main__':
   print('initializing sclaing object with clean data')
   df = Scaling()
-  # print('Label encoding')
-  # df.label_encoding()
+  print('Label encoding')
+  df.label_encoding()
   print('One hot encoding')
   features_list = ['offense_type','offense_level','borough','premise_desc','premise','suspect_age','suspect_race','suspect_sex','patrol_borough', 'metro','victim_age','victim_race','victim_sex','precinct_number']
   df.one_hot_encoding(features_list)
+  print('finished with scaling buddies')
