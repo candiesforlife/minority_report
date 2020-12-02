@@ -41,10 +41,16 @@ class CleanData:
       Filters dataframe to show only complaints dated 2007 onwards
       '''
       df = self.data.copy()
+      # concat to new period column
       df['period'] = df['date'] + ' ' + df['time']
+      # change to datetime
       df['period'] = df['period'].apply(lambda x: \
                              datetime.strptime(x, '%m/%d/%Y %H:%M:%S'))
+      # round to hour bucket
+      df['period'] = df['period'].apply(lambda x: x.replace(minute = 0, second = 0))
+      # filter to post 2007
       df = df[df['period'] > datetime(2006, 12, 31, 23, 59, 0)]
+      # drop date and time
       df.drop(columns = ['date', 'time'], inplace = True)
       self.data = df
       return self.data
@@ -331,7 +337,9 @@ class CleanData:
 
 
     def miss_patrol_borough(self):
-      '''replace patrol_borough correct values depending on the precinct'''
+      '''
+      Returns dataframe with corrected patrol boroughs per precinct
+      '''
 
       df = self.data.copy()
       # correct patrol borough
@@ -364,7 +372,9 @@ class CleanData:
 
     #9. Run round_int sur df['precinct_number']
     def round_int_precinct(self):
-      """this functions rounds pd.series of int, up"""
+      """
+      Returns df with correct precinct numbers (floats rounded up)
+      """
       df = self.data.copy()
       df['precinct_number'] = [round(x) for x in df['precinct_number']]
       self.data = df
@@ -379,6 +389,40 @@ class CleanData:
     #   df['crime_completed'] = df['crime_completed'].replace({'COMPLETED': True, 'INCOMPLETE': False})
     #   self.data = df
     #   return self.data
+
+    def clean_up_df(self):
+      '''
+      Returns clean df with reordered cols and droped complaint ID
+      '''
+      df = self.data.copy()
+
+      df.drop(columns = 'complaint_id', inplace = True)
+
+      list_column = ['period',
+                     'latitude',
+                     'longitude',
+                     'offense_level',
+                     'offense_type',
+                     'crime_completed',
+                     'premise_desc',
+                     'premise',
+                     'borough',
+                     'patrol_borough',
+                     'precinct_number',
+                     'jurisdiction',
+                     'suspect_age',
+                     'suspect_race',
+                     'suspect_sex',
+                     'victim_age',
+                     'victim_race',
+                     'victim_sex',
+                     'park_name',
+                     'metro']
+      # column reindex to be reviewed: doesn't work - not vital!
+      df.reindex(columns = list_column, copy=False)
+
+      self.data = df
+      return self.data
 
 
     def total_clean(self):
@@ -407,6 +451,8 @@ class CleanData:
       self.round_int_precinct()
       # print('Changing completion column')
       # self.crime_completed_to_boolean()
+      print('Reording dataframe and final clean')
+      self.clean_up_df()
       return self.data
 
 
