@@ -41,13 +41,14 @@ class CleanData:
 
     #3. date function number 2
     # might have to be modified tomorrow with some apply function recommended by Keurcien
-    def to_date(self, column_name):
-        '''
-        Converts given column to datetime dtype, returns pd.series
-        '''
+    def to_date_format(self):
+        """
+        Converts column 'date' from string to datetime and returns filtered df (complaints from 2007 onwards)"""
         df = self.data.copy()
-        df[column_name] = pd.to_datetime(df[column_name], format = '%m/%d/%Y')
-        return df[column_name]
+        df['date'] = df['date'].apply(lambda x: \
+                                      datetime.strptime(x, '%m/%d/%Y')) # converts to datetime, then ISO format
+        df = df[df['date'] > datetime(2006, 12, 31, 0, 0)]
+        return df
 
 
     #4.
