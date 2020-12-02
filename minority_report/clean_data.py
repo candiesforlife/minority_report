@@ -11,10 +11,10 @@ class CleanData:
         # loads core dataframe
         self.data = NYPD().get_data()
 
-    # removing Nans & weird values
+    #  1.removing Nans & weird values
     def drop_nan(self):
         '''
-        Drop precinct and time missing values
+        Drop precinct and time missing values, return a df without nan.
         '''
 
         df = self.data.copy()
@@ -30,17 +30,12 @@ class CleanData:
         df = df[df['crime_completed'] == df['crime_completed']]
         return df
 
-    #might have to be removed tomorrow
-    def removing_date_before_2007(df):
-        '''
-        Remove any dates before 2007 & values not corresponding to our US date format month/day/year, returns pd.series
-        '''
-        rg_expression = r'(1[0-2]|0?[1-9])\/(3[01]|[12][0-9]|0?[1-9])\/20([1-2][0-9]|[0-2][7-9])'
-        boolean_values = df['date'].str.match(rg_expression)
-        return df[boolean_values]
-    ################################################################
-
+    #2.
     def miss_suspect (df):
+        '''
+            replace missing values by 'UNKNOWN' and returns a df.
+        '''
+
         data = df.copy()
         age_liste = ['<18', '45-64', '18-24', '25-44', '65+']
         race_liste = ['BLACK', 'WHITE', 'WHITE HISPANIC', 'BLACK HISPANIC',
