@@ -1,5 +1,6 @@
 '''Returns clean dataframe w/o NaN and with correct dtypes'''
 
+import os
 import pandas as pd
 from datetime import datetime
 from minority_report.data import NYPD
@@ -9,12 +10,12 @@ class CleanData:
 
     def __init__(self):
       # loads core dataframe
-      self.data = NYPD().get_data()
+      self.data = NYPD().get_data()[:100_000]
 
     #  1.
     def drop_nan(self):
       '''
-      Returns a df without nan.
+      Returns a dataframe without NaN
       '''
 
       df = self.data.copy()
@@ -33,7 +34,9 @@ class CleanData:
 
     #2. to timetamps
     def to_timestamp(self):
-      '''converts given column to datetime.time dtype'''
+      '''
+      Returns dataframe with 'time' as datetime.time dtype
+      '''
       df = self.data.copy()
       df['time'] = pd.to_datetime(df['time'], format = '%H:%M:%S').dt.time
       self.data = df
@@ -43,7 +46,9 @@ class CleanData:
     #3. date format
     def to_date_format(self):
       """
-      Converts column 'date' from string to datetime and returns filtered df (complaints from 2007 onwards)"""
+      Returns dataframe with 'date' as datetime dtype
+      Filters dataframe to show only complaints dated 2007 onwards
+      """
       df = self.data.copy()
       df['date'] = df['date'].apply(lambda x: \
                                     datetime.strptime(x, '%m/%d/%Y')) # converts to datetime, then ISO format
@@ -56,7 +61,7 @@ class CleanData:
     #4.
     def miss_suspect(self):
       '''
-      Replace missing values by 'UNKNOWN' and returns a df.
+      Returns dataframe where missing values are replaced by 'UNKNOWN'
       '''
 
       df = self.data.copy()
@@ -73,7 +78,7 @@ class CleanData:
     #5.
     def miss_victim(self):
       '''
-      Replace missing values by unknown value
+      Returns dataframe where missing values are replaced by 'UNKNOWN'
       '''
       df = self.data.copy()
       #values to keep
@@ -91,7 +96,7 @@ class CleanData:
     # 6.
     def miss_premise(self):
       '''
-      replace nan values by 'unknown'
+      Returns dataframe where missing values are replaced by 'UNKNOWN'
       '''
       df = self.data.copy()
       #values to keep
@@ -128,7 +133,8 @@ class CleanData:
     #7.
     def miss_park_metro(self):
       '''
-      replace nan values by 'not subway' or 'not park'
+      Returns dataframe where missing values are replaced by:
+      'NOT PARK' or 'NOT SUBWAY'
       '''
       df = self.data.copy()
       park_list = ['JACKIE ROBINSON PARK MANHATTAN', 'TOMPKINS SQUARE PARK',
@@ -297,7 +303,8 @@ class CleanData:
     #8.
     def miss_lon_lat(self):
       '''
-      replace latitude and longitude missing values with median values by precinct
+      Returns dataframe with missing coordinates replaced by
+      median precinct coordinates (coordinates with most crime)
       '''
       df = self.data.copy()
       for precinct in df['precinct_number'].unique():
@@ -309,7 +316,9 @@ class CleanData:
       return self.data
 
     def miss_borough(self):
-      '''replace borough correct values depending on the precinct'''
+      '''
+      Returns dataframe with corrected boroughs for precinct wrong values
+      '''
 
       #replace borough depending on precinct_number
       df = self.data.copy()
@@ -384,17 +393,29 @@ class CleanData:
       '''
       Combines all cleaning functions and returns clean dataframe
       '''
+      print('dropping NaNs')
       self.drop_nan()
+      print('Changing time column')
       self.to_timestamp()
+      print('Changing date column')
       self.to_date_format()
+      print('Changing suspect column')
       self.miss_suspect()
+      print('Changing victim column')
       self.miss_victim()
+      print('Changing premise column')
       self.miss_premise()
+      print('Changing park & metro column')
       self.miss_park_metro()
+      print('Changing coordinates columns')
       self.miss_lon_lat()
+      print('Changing borough column')
       self.miss_borough()
+      print('Changing patrol column')
       self.miss_patrol_borough()
+      print('Changing precinct column')
       self.round_int_precinct()
+      print('Changing completion column')
       self.crime_completed_to_boolean()
       return self.data
 
@@ -403,9 +424,14 @@ class CleanData:
       '''
       Saves clean dataframe to core data csv
       '''
-      return self.data.to_csv('../raw_data/clean.csv', index = False)
+      root_dir = os.path.dirname(os.path.dirname(__file__))
+      csv_path = os.path.join(root_dir, 'raw_data', 'clean.csv')
+      return self.data.to_csv(csv_path, index = False)
 
 if __name__ == '__main__':
+  print('Initializing CleanData')
   clean_data = CleanData()
+  print('Creating clean dataframe')
   clean_data.total_clean()
+  print('Saving clean dataframe')
   clean_data.save_data()
