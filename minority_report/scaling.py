@@ -2,24 +2,32 @@
 
 import os
 import itertools
+import pickle
 import pandas as pd
 
-from minority_report.clean_data import CleanData
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
 
 class Scaling:
 
     def __init__(self):
-        self.data = CleanData().total_clean()
+        self.data = None
 
-    def label_encoding(self):
-        '''
-        Scaling column crime_completed with label_encoder technique. Returns the df updated.
-        '''
-        le = LabelEncoder()
-        self.data['crime_completed'] = le.fit_transform(self.data['crime_completed'])
+    def load_data(self):
+        root_dir = os.path.dirname(os.path.dirname(__file__))
+        pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
+        with open(pickle_path, 'rb') as f:
+            df = pickle.load(f)
+        self.data = df
         return self.data
+
+    #def label_encoding(self):
+    #    '''
+    #    Scaling column crime_completed with label_encoder technique. Returns the df updated.
+    #    '''
+    #    le = LabelEncoder()
+    #    self.data['crime_completed'] = le.fit_transform(self.data['crime_completed'])
+    #    return self.data
 
     def one_hot_encoding(self,features_list):
         '''
@@ -41,16 +49,22 @@ class Scaling:
       csv_path = os.path.join(root_dir, 'raw_data', f'{file_name}.csv')
       return self.data.to_csv(csv_path, index = False)
 
+    def to_pickle(self):
+
+      root_dir = os.path.dirname(os.path.dirname(__file__))
+      pickle_path = os.path.join(root_dir, 'raw_data', 'encoded.pickle')
+
+      with open(pickle_path, 'wb') as f:
+         pickle.dump(self.data, f)
+
+
 if __name__ == '__main__':
-  print('initializing sclaing object with clean data')
+  print('Initializing sclaing object with clean data')
   df = Scaling()
-  print('Label encoding')
-  df.label_encoding()
+  df.load_data()
   print('One hot encoding')
-  features_list = ['offense_type','offense_level','borough','premise_desc','premise','suspect_age','suspect_race','suspect_sex','patrol_borough', 'metro','victim_age','victim_race','victim_sex','precinct_number']
+  features_list = ['crime_completed', 'offense_type','offense_level','borough','premise_desc','premise','suspect_age','suspect_race','suspect_sex','patrol_borough', 'metro','victim_age','victim_race','victim_sex','precinct_number']
   df.one_hot_encoding(features_list)
-  print('Saving the encoding data as a csv file')
-  df.save_data('data_encoded')
-  print('finished!')
-
-
+  print('Saving the encoding data as pickle')
+  df.to_pickle()
+  print('Finished!')
