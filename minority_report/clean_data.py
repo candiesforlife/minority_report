@@ -66,7 +66,7 @@ class Clean_Data:
         '''
         df = self.data.copy()
         #values to keep
-        age_liste = ['<18', '45-64', '18-24', '25-44']
+        age_liste = ['<18', '45-64', '18-24', '25-44', '65+']
         race_liste = ['BLACK', 'WHITE', 'UNKNOWN', 'WHITE HISPANIC', 'BLACK HISPANIC',
            'ASIAN / PACIFIC ISLANDER', 'AMERICAN INDIAN/ALASKAN NATIVE']
         sex_liste = ['M', 'F', 'D', 'E']
