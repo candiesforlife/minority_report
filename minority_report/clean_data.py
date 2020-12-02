@@ -30,7 +30,27 @@ class CleanData:
         df = df[df['crime_completed'] == df['crime_completed']]
         return df
 
-    #2.
+    #2. DATE FUNCTIONSSSS
+
+    def to_timestamp(self):
+        '''converts given column to datetime.time dtype'''
+        df = self.data.copy()
+        df['time'] = pd.to_datetime(df['time'], format = '%H:%M:%S').dt.time
+        return df
+
+
+    #3. date function number 2
+    # might have to be modified tomorrow with some apply function recommended by Keurcien
+    def to_date(self, column_name):
+        '''
+        Converts given column to datetime dtype, returns pd.series
+        '''
+        df = self.data.copy()
+        df[column_name] = pd.to_datetime(df[column_name], format = '%m/%d/%Y')
+        return df[column_name]
+
+
+    #4.
     def miss_suspect(self):
         '''
         Replace missing values by 'UNKNOWN' and returns a df.
@@ -46,7 +66,7 @@ class CleanData:
         df['suspect_sex'] = [element if element in sex_liste else 'UNKNOWN' for element in df['suspect_sex']]
         return df
 
-    #3.
+    #5.
     def miss_victim(self):
         '''
         Replace missing values by unknown value
@@ -63,7 +83,7 @@ class CleanData:
         df['victim_sex'] = [element if element in sex_liste else 'UNKNOWN' for element in df['victim_sex']]
         return df
 
-    # 4.
+    # 6.
     def miss_premise(self):
         '''
         replace nan values by 'unknown'
@@ -99,7 +119,7 @@ class CleanData:
         df['premise_desc'] = [element if element in premise_desc else 'UNKNOWN' for element in df['premise_desc']]
         return df
 
-    #5.
+    #7.
     def miss_park_metro(self):
         '''
         replace nan values by 'not subway' or 'not park'
@@ -267,7 +287,7 @@ class CleanData:
         return df
 
 
-    #5.
+    #8.
     def miss_lon_lat(self):
         '''
         replace latitude and longitude missing values with median values by precinct
@@ -281,35 +301,18 @@ class CleanData:
         return df
 
 
-
-    #  Converting to correct datatypes
-    def to_timestamp(self):
-        '''converts given column to datetime.time dtype'''
-        df = self.data.copy()
-        df['time'] = pd.to_datetime(df['time'], format = '%H:%M:%S').dt.time
-        return df
-
-
-    # might have to be modified tomorrow with some apply function recommended by Keurcien
-    def to_date(self, column_name):
-        '''
-        Converts given column to datetime dtype, returns pd.series
-        '''
-        df = self.data.copy()
-        df[column_name] = pd.to_datetime(df[column_name], format = '%m/%d/%Y')
-        return df[column_name]
-    ################################################################
-
-
+    #9. Run round_int sur df['precinct_number']
     def round_int(series):
         """this functions rounds pd.series of int, up"""
         result = [round(x) for x in series]
         return result
 
+    # 10. Run complete_to_boolean sur df['crime_completed']
     def complete_to_boolean(series):
         """turns complete/incomplete into boolean value"""
         result = series.replace({'COMPLETED': True, 'INCOMPLETE': False})
         return result
+
 
     def miss_borough (self):
         '''replace borough correct values depending on the precinct'''
