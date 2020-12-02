@@ -3,4 +3,4 @@
 .ipynb_checkpoints
 .DS_Store
 raw_data/
-*.pyc
+__pycache__
