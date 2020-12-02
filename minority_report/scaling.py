@@ -1,0 +1,40 @@
+'''Returns scaled dataframe for numerical and categorical values'''
+
+import os
+import itertools
+import pandas as pd
+
+from minority_report.clean_data import CleanData
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import LabelEncoder
+
+class Scaling:
+
+    def __init__(self):
+        self.data = CleanData().total_clean()
+
+    # def label_encoding(self):
+    #     le = LabelEncoder()
+    #     # df['crime_completed'] = df['crime_completed'].replace({True: 1, False: 0})
+    #     # self.data = df
+    #     self.data['crime_completed'] = le.fit_transform(self.data['crime_completed'])
+    #     return self.data
+
+    def one_hot_encoding(self,features_list):
+        ohe = OneHotEncoder(sparse = False)
+        ohe.fit(self.data[features_list])
+        list_of_list_of_columns = [list(element) for element in ohe.categories_]
+        columns = list(itertools.chain(*list_of_list_of_columns))
+        et_oh = ohe.transform(self.data[features_list])
+        self.data[columns] = et_oh
+        # self.data = clean_data.data
+        return self.data
+
+if __name__ == '__main__':
+  print('initializing sclaing object with clean data')
+  df = Scaling()
+  # print('Label encoding')
+  # df.label_encoding()
+  print('One hot encoding')
+  features_list = ['offense_type','offense_level','borough','premise_desc','premise','suspect_age','suspect_race','suspect_sex','patrol_borough', 'metro','victim_age','victim_race','victim_sex','precinct_number']
+  df.one_hot_encoding(features_list)
