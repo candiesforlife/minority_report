@@ -5,7 +5,7 @@ import pandas as pd
 from minority_report.data import NYPD
 from ast import literal_eval
 
-class Clean_Data:
+class CleanData:
 
     def __init__(self):
         # loads core dataframe
@@ -47,6 +47,16 @@ class Clean_Data:
         return df[boolean_values]
     ################################################################
 
+    def miss_suspect (df):
+        data = df.copy()
+        age_liste = ['<18', '45-64', '18-24', '25-44', '65+']
+        race_liste = ['BLACK', 'WHITE', 'WHITE HISPANIC', 'BLACK HISPANIC',
+           'ASIAN / PACIFIC ISLANDER', 'AMERICAN INDIAN/ALASKAN NATIVE']
+        sex_liste = ['M', 'F', 'U']
+        data['suspect_age'] = [element if element in age_liste else 'UNKNOWN' for element in data['suspect_age']]
+        data['suspect_race'] = [element if element in race_liste else 'UNKNOWN' for element in data['suspect_race']]
+        data['suspect_sex'] = [element if element in sex_liste else 'UNKNOWN' for element in data['suspect_sex']]
+        return data
 
     def miss_lon_lat(self):
         '''
