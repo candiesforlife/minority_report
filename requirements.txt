@@ -27,3 +27,6 @@ six
 joblib
 memoized-property
 termcolor
+
+# encoding packages
+compiler
