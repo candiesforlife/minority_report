@@ -1,7 +1,7 @@
 '''Returns clean dataframe w/o NaN and with correct dtypes'''
 
 import pandas as pd
-
+from datetime import datetime
 from minority_report.data import NYPD
 from ast import literal_eval
 
@@ -30,8 +30,7 @@ class CleanData:
         df = df[df['crime_completed'] == df['crime_completed']]
         return df
 
-    #2. DATE FUNCTIONSSSS
-
+    #2. to timetamps
     def to_timestamp(self):
         '''converts given column to datetime.time dtype'''
         df = self.data.copy()
@@ -39,8 +38,7 @@ class CleanData:
         return df
 
 
-    #3. date function number 2
-    # might have to be modified tomorrow with some apply function recommended by Keurcien
+    #3. date format
     def to_date_format(self):
         """
         Converts column 'date' from string to datetime and returns filtered df (complaints from 2007 onwards)"""
@@ -353,16 +351,21 @@ class CleanData:
         return df
 
     #9. Run round_int sur df['precinct_number']
-    def round_int(series):
+    def round_int_precinct(self):
         """this functions rounds pd.series of int, up"""
-        result = [round(x) for x in series]
-        return result
+        df = self.data.copy()
+        df['precinct_number'] = [round(x) for x in df['precinct_number']]
+        return df
 
     # 10. Run complete_to_boolean sur df['crime_completed']
-    def complete_to_boolean(series):
-        """turns complete/incomplete into boolean value"""
-        result = series.replace({'COMPLETED': True, 'INCOMPLETE': False})
-        return result
+    def crime_completed_to_boolean(self):
+
+        """
+            turns complete/incomplete into boolean value
+        """
+        df = self.data.copy()
+        df['crime_completed'] = df['crime_completed'].replace({'COMPLETED': True, 'INCOMPLETE': False})
+        return df
 
 
 
