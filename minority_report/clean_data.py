@@ -10,7 +10,7 @@ class CleanData:
 
     def __init__(self):
       # loads core dataframe
-      self.data = NYPD().get_data()[:100_000]
+      self.data = NYPD().get_data()
 
     #  1.
     def drop_nan(self):
