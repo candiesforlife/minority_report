@@ -379,10 +379,3 @@ class CleanData:
         df['crime_completed'] = df['crime_completed'].replace({'COMPLETED': True, 'INCOMPLETE': False})
         self.data = df
         return self.data
-
-
-
-
-
-
-
