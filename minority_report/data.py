@@ -13,6 +13,6 @@ class NYPD:
 
         root_dir = os.path.dirname(os.path.dirname(__file__))
         csv_path = os.path.join(root_dir, 'raw_data', 'data.csv')
-        df = pd.read_csv(csv_path, low_memory = False)
+        df = pd.read_csv(csv_path, low_memory = False)[:500]
 
         return df
