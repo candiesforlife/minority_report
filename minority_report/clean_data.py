@@ -11,10 +11,10 @@ class CleanData:
         # loads core dataframe
         self.data = NYPD().get_data()
 
-    #  1.removing Nans & weird values
+    #  1.
     def drop_nan(self):
         '''
-        Drop precinct and time missing values, return a df without nan.
+        Returns a df without nan.
         '''
 
         df = self.data.copy()
@@ -46,6 +46,24 @@ class CleanData:
         df['suspect_sex'] = [element if element in sex_liste else 'UNKNOWN' for element in df['suspect_sex']]
         return df
 
+    #3.
+    def miss_victim(self):
+        '''
+        Replace missing values by unknown value
+        '''
+        df = self.data.copy()
+        #values to keep
+        age_liste = ['<18', '45-64', '18-24', '25-44', '65+']
+        race_liste = ['BLACK', 'WHITE', 'UNKNOWN', 'WHITE HISPANIC', 'BLACK HISPANIC',
+           'ASIAN / PACIFIC ISLANDER', 'AMERICAN INDIAN/ALASKAN NATIVE']
+        sex_liste = ['M', 'F', 'D', 'E']
+        #replace all others by unknown
+        df['victim_age'] = [element if element in age_liste else 'UNKNOWN' for element in df['victim_age']]
+        df['victim_race'] = [element if element in race_liste else 'UNKNOWN' for element in df['victim_race']]
+        df['victim_sex'] = [element if element in sex_liste else 'UNKNOWN' for element in df['victim_sex']]
+        return df
+
+
     def miss_lon_lat(self):
         '''
         replace latitude and longitude missing values with median values by precinct
@@ -58,21 +76,6 @@ class CleanData:
             data[data['precinct_number']==precinct] = data[data['precinct_number']==precinct].fillna(value=values) # fill na with default values depending on precinct
         return data
 
-    def miss_victim(self):
-        '''
-        replace missing values by unknown value
-        '''
-        df = self.data.copy()
-        #values to keep
-        age_liste = ['<18', '45-64', '18-24', '25-44', '65+']
-        race_liste = ['BLACK', 'WHITE', 'UNKNOWN', 'WHITE HISPANIC', 'BLACK HISPANIC',
-           'ASIAN / PACIFIC ISLANDER', 'AMERICAN INDIAN/ALASKAN NATIVE']
-        sex_liste = ['M', 'F', 'D', 'E']
-        #replace all others by unknown
-        data['victim_age'] = [element if element in age_liste else 'UNKNOWN' for element in data['victim_age']]
-        data['victim_race'] = [element if element in race_liste else 'UNKNOWN' for element in data['victim_race']]
-        data['victim_sex'] = [element if element in sex_liste else 'UNKNOWN' for element in data['victim_sex']]
-        return data
 
     #  Converting to correct datatypes
     def to_timestamp(self, column_name):
