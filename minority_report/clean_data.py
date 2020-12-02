@@ -300,21 +300,7 @@ class CleanData:
             df[df['precinct_number']==precinct] = df[df['precinct_number']==precinct].fillna(value=values) # fill na with default values depending on precinct
         return df
 
-
-    #9. Run round_int sur df['precinct_number']
-    def round_int(series):
-        """this functions rounds pd.series of int, up"""
-        result = [round(x) for x in series]
-        return result
-
-    # 10. Run complete_to_boolean sur df['crime_completed']
-    def complete_to_boolean(series):
-        """turns complete/incomplete into boolean value"""
-        result = series.replace({'COMPLETED': True, 'INCOMPLETE': False})
-        return result
-
-
-    def miss_borough (self):
+    def miss_borough(self):
         '''replace borough correct values depending on the precinct'''
 
         #replace borough depending on precinct_number
@@ -334,10 +320,10 @@ class CleanData:
         return df
 
 
-    def miss_patrol_borough (df):
+    def miss_patrol_borough(self):
         '''replace patrol_borough correct values depending on the precinct'''
 
-        data = df.copy()
+        df = self.data.copy()
         # correct patrol borough
         bronx = [40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 52]
         bklyn_south = [60, 61, 62, 63, 66, 67, 68, 69, 70, 71, 72, 76, 78]
@@ -349,7 +335,7 @@ class CleanData:
         staten = [120, 121, 122, 123]
 
         #replace with correct value
-        data['new_patrol'] = [
+        df['new_patrol'] = [
             'PATROL BORO BRONX' if precinct in bronx
             else 'PATROL BORO BKLYN SOUTH' if precinct in bklyn_south
             else 'PATROL BORO BKLYN NORTH' if precinct in bklyn_north
@@ -358,12 +344,26 @@ class CleanData:
             else 'PATROL BORO QUEENS SOUTH' if precinct in queens_south
             else 'PATROL BORO QUEENS NORTH' if precinct in queens_north
             else 'PATROL BORO STATEN ISLAND'
-            for precinct in data['precinct_number']
+            for precinct in df['precinct_number']
         ]
 
-        data.drop(columns='patrol_borough', inplace=True)
-        data.rename(columns={'new_patrol':'patrol_borough'},inplace=True)
-        return data
+        df.drop(columns='patrol_borough', inplace=True)
+        df.rename(columns={'new_patrol':'patrol_borough'},inplace=True)
+        return df
+
+    #9. Run round_int sur df['precinct_number']
+    def round_int(series):
+        """this functions rounds pd.series of int, up"""
+        result = [round(x) for x in series]
+        return result
+
+    # 10. Run complete_to_boolean sur df['crime_completed']
+    def complete_to_boolean(series):
+        """turns complete/incomplete into boolean value"""
+        result = series.replace({'COMPLETED': True, 'INCOMPLETE': False})
+        return result
+
+
 
 
 
