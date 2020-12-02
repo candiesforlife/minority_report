@@ -32,7 +32,9 @@ class Clean_Data:
         #drop time and date missing values
         df = df[df['time'] == df['time']]
         df = df[df['date'] == df['date']]
+        #drop offense_type and crime_completed
         df = df[df['offense_type'] == df['offense_type']]
+        df = df[df['crime_completed'] == df['crime_completed']]
         return df
 
     #might have to be removed tomorrow
@@ -52,10 +54,10 @@ class Clean_Data:
         '''
         df = self.data.copy()
         for precinct in data['precinct_number'].unique():
-            print(f'Modifying precinct{precinct}')
+            #print(f'Modifying precinct{precinct}')
             geo = data[data['precinct_number'] == precinct][['latitude', 'longitude']]
-            values = {'latitude': geo['latitude'].median(), 'longitude':geo['longitude'].median()}
-            data[data['precinct_number']==precinct] = data[data['precinct_number']==precinct].fillna(value=values)
+            values = {'latitude': geo['latitude'].median(), 'longitude':geo['longitude'].median()} # get median lon and lat values as default for the precinct
+            data[data['precinct_number']==precinct] = data[data['precinct_number']==precinct].fillna(value=values) # fill na with default values depending on precinct
         return data
 
     def miss_victim(self):
@@ -63,10 +65,12 @@ class Clean_Data:
         replace missing values by unknown value
         '''
         df = self.data.copy()
+        #values to keep
         age_liste = ['<18', '45-64', '18-24', '25-44']
         race_liste = ['BLACK', 'WHITE', 'UNKNOWN', 'WHITE HISPANIC', 'BLACK HISPANIC',
            'ASIAN / PACIFIC ISLANDER', 'AMERICAN INDIAN/ALASKAN NATIVE']
         sex_liste = ['M', 'F', 'D', 'E']
+        #replace all others by unknown
         data['victim_age'] = [element if element in age_liste else 'UNKNOWN' for element in data['victim_age']]
         data['victim_race'] = [element if element in race_liste else 'UNKNOWN' for element in data['victim_race']]
         data['victim_sex'] = [element if element in sex_liste else 'UNKNOWN' for element in data['victim_sex']]
@@ -106,6 +110,7 @@ class Clean_Data:
     def miss_borough (self):
         '''replace borough correct values depending on the precinct'''
 
+        #replace borough depending on precinct_number
         df = self.data.copy()
         df['new_borough'] = [
             'MANHATTAN' if precinct <=34
@@ -126,6 +131,7 @@ class Clean_Data:
         '''replace patrol_borough correct values depending on the precinct'''
 
         data = df.copy()
+        # correct patrol borough
         bronx = [40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 52]
         bklyn_south = [60, 61, 62, 63, 66, 67, 68, 69, 70, 71, 72, 76, 78]
         bklyn_north = [73, 75, 77, 79, 81, 83, 84, 88, 90, 94]
@@ -134,6 +140,8 @@ class Clean_Data:
         queens_south = [100, 101, 102, 103, 105, 106, 107, 113]
         queens_north = [104, 108, 109, 110, 111, 112, 114, 115]
         staten = [120, 121, 122, 123]
+
+        #replace with correct value
         data['new_patrol'] = [
             'PATROL BORO BRONX' if precinct in bronx
             else 'PATROL BORO BKLYN SOUTH' if precinct in bklyn_south
