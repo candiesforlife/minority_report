@@ -63,18 +63,25 @@ class CleanData:
         df['victim_sex'] = [element if element in sex_liste else 'UNKNOWN' for element in df['victim_sex']]
         return df
 
+    # parkingettc
+
+
+
+
+
 
     def miss_lon_lat(self):
         '''
         replace latitude and longitude missing values with median values by precinct
         '''
         df = self.data.copy()
-        for precinct in data['precinct_number'].unique():
+        for precinct in df['precinct_number'].unique():
             #print(f'Modifying precinct{precinct}')
-            geo = data[data['precinct_number'] == precinct][['latitude', 'longitude']]
+            geo = df[df['precinct_number'] == precinct][['latitude', 'longitude']]
             values = {'latitude': geo['latitude'].median(), 'longitude':geo['longitude'].median()} # get median lon and lat values as default for the precinct
-            data[data['precinct_number']==precinct] = data[data['precinct_number']==precinct].fillna(value=values) # fill na with default values depending on precinct
-        return data
+            df[df['precinct_number']==precinct] = df[df['precinct_number']==precinct].fillna(value=values) # fill na with default values depending on precinct
+        return df
+
 
 
     #  Converting to correct datatypes
