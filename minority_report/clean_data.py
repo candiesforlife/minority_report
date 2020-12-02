@@ -101,6 +101,9 @@ class CleanData:
 
     #5.
     def miss_park_metro(self):
+        '''
+        replace nan values by 'not subway' or 'not park'
+        '''
         df = self.data.copy()
         park_list = ['JACKIE ROBINSON PARK MANHATTAN', 'TOMPKINS SQUARE PARK',
            'FLUSHING MEADOWS CORONA PARK', 'BIG BUSH PARK',
@@ -262,8 +265,6 @@ class CleanData:
         df['park_name'] = [element if element in park_list else 'NOT PARK' for element in df['park_name']]
         df['metro'] = [element if element in metro_list else 'NOT SUBWAY ' for element in df['metro']]
         return df
-
-
 
 
     #5.
