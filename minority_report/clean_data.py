@@ -31,20 +31,20 @@ class CleanData:
         return df
 
     #2.
-    def miss_suspect (df):
+    def miss_suspect(self):
         '''
-            replace missing values by 'UNKNOWN' and returns a df.
+        Replace missing values by 'UNKNOWN' and returns a df.
         '''
 
-        data = df.copy()
+        df = self.data.copy()
         age_liste = ['<18', '45-64', '18-24', '25-44', '65+']
         race_liste = ['BLACK', 'WHITE', 'WHITE HISPANIC', 'BLACK HISPANIC',
            'ASIAN / PACIFIC ISLANDER', 'AMERICAN INDIAN/ALASKAN NATIVE']
         sex_liste = ['M', 'F', 'U']
-        data['suspect_age'] = [element if element in age_liste else 'UNKNOWN' for element in data['suspect_age']]
-        data['suspect_race'] = [element if element in race_liste else 'UNKNOWN' for element in data['suspect_race']]
-        data['suspect_sex'] = [element if element in sex_liste else 'UNKNOWN' for element in data['suspect_sex']]
-        return data
+        df['suspect_age'] = [element if element in age_liste else 'UNKNOWN' for element in df['suspect_age']]
+        df['suspect_race'] = [element if element in race_liste else 'UNKNOWN' for element in df['suspect_race']]
+        df['suspect_sex'] = [element if element in sex_liste else 'UNKNOWN' for element in df['suspect_sex']]
+        return df
 
     def miss_lon_lat(self):
         '''
