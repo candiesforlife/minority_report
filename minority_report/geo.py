@@ -72,15 +72,11 @@ class Geo:
         # return a list of tensors useful for model class
 
 
-    def save_list_tensors_to_pickel:
+    def save_list_tensors_to_pickle:
 
 
 
 
-    #Dans la class model, on recupere list of tensors
-    # method qui definit kernel
-    # method qui fait passer le kernel dans chaque tensor
-    # method X Y
 
 
 
