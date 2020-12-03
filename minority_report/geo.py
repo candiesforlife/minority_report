@@ -25,7 +25,7 @@ class Geo:
         get a sample of a month-time crimes grouped by hour
         inputs = start_date info
         '''
-        sample = df.data[['period', 'latitude', 'longitude']]
+        sample = self.data[['period', 'latitude', 'longitude']]
         inf = sample['period'] > datetime(year, month, day, 0, 0, 0)
         next_month = month+1
         next_year = year
@@ -48,18 +48,52 @@ class Geo:
         return latitude_per_image, longitude_per_image
 
 
-    def geoseries_images(latitude_per_image, longitude_per_image):
-        final_list_images =  []
+    def geoseries(latitude_per_image, longitude_per_image):
+        final_list_geoseries =  []
         for lat, lon in zip(longitude_per_image, latitude_per_image):
             geometry = [Point(xy) for xy in zip(lon, lat)]
             df_geopandas = sample.drop(['longitude', 'latitude'], axis=1)
             geoseries_image = GeoSeries(geometry)
             final_list_images.append(geoseries_image)
-        return final_list_images
+        return final_list_geoseries
 
-    def visualization_images(final_list_images):
-        for image in final_list_images:
+    def visualization_from_geoseries_to_images(final_list_geoseries):
+        for geoserie in final_list_geoseries:
             fig,ax = plt.subplots(figsize = (10,10))
-            g = image.plot(ax = ax, markersize = 20, color = 'red',marker = '*',label = 'NYC')
+            g = geoserie.plot(ax = ax, markersize = 20, color = 'red',marker = '*',label = 'NYC')
             plt.show()
+
+    # 3 METHODEs TENSOR
+
+    def geoserie_to_tensor:
+
+
+    def list_geoseries_to_list_of_tensors:
+        # return a list of tensors useful for model class
+
+
+    def save_list_tensors_to_pickel:
+
+
+
+
+    #Dans la class model, on recupere list of tensors
+    # method qui definit kernel
+    # method qui fait passer le kernel dans chaque tensor
+    # method X Y
+
+
+
+
+
+
+if __name__ == '__main__':
+  print('get a sample of a month-time crimes grouped by hour')
+  df = Geo()
+  print("loading data")
+  lat, lon = df.load_data()
+  print('Transforming into geoseries thanks to geopandas')
+  geoseries(lat, lon)
+
+  print('Finished!')
 
