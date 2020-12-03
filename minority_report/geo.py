@@ -2,6 +2,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from geopandas import GeoSeries
 from datetime import datetime
 from shapely.geometry import Point
 
@@ -32,6 +33,16 @@ class Geo:
                 print(f'Grouping timestamp {index+1}/{length}')
             by_hour = np.array(sample[sample['period']== timestamp][['latitude', 'longitude']])
             grouped.append(by_hour)
-        lat_per_image = [[element[0] for element in crime] for crime in grouped]
-        lon_per_image = [[element[1] for element in crime] for crime in grouped]
-        return lat_per_image, lon_per_image
+        latitude_per_image = [[element[0] for element in crime] for crime in grouped]
+        longitude_per_image = [[element[1] for element in crime] for crime in grouped]
+        return latitude_per_image, longitude_per_image
+
+
+    def geoseries_images(latitude_per_image, longitude_per_image):
+        final_list_images =  []
+        for lat, lon in zip(longitude_per_image, latitude_per_image):
+            geometry = [Point(xy) for xy in zip(lon, lat)]
+            df_geopandas = sample.drop(['longitude', 'latitude'], axis=1)
+            geoseries_image = GeoSeries(geometry)
+            final_list_images.append(geoseries_image)
+        return final_list_images
