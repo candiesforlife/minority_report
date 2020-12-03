@@ -46,3 +46,10 @@ class Geo:
             geoseries_image = GeoSeries(geometry)
             final_list_images.append(geoseries_image)
         return final_list_images
+
+    def visualization_images(final_list_images):
+        for image in final_list_images:
+            fig,ax = plt.subplots(figsize = (10,10))
+            g = image.plot(ax = ax, markersize = 20, color = 'red',marker = '*',label = 'NYC')
+            plt.show()
+
