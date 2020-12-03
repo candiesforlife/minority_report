@@ -9,6 +9,16 @@ from shapely.geometry import Point
 
 class Geo:
 
+    def __init__(self):
+        self.data = None
+
+    def load_data(self):
+        root_dir = os.path.dirname(os.path.dirname(__file__))
+        pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
+        with open(pickle_path, 'rb') as f:
+            df = pickle.load(f)
+        self.data = df
+        return self.data
 
     def group_by_hour(df, year, month, day):
         '''
