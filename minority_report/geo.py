@@ -1,7 +1,8 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
-
+import os
+import pickle
 from geopandas import GeoSeries
 from datetime import datetime
 from shapely.geometry import Point
@@ -20,7 +21,7 @@ class Geo:
         self.data = df
         return self.data
 
-    def group_by_hour(df, year, month, day):
+    def group_by_hour(self,year, month, day):
         '''
         get a sample of a month-time crimes grouped by hour
         inputs = start_date info
@@ -48,7 +49,7 @@ class Geo:
         return latitude_per_image, longitude_per_image
 
 
-    def geoseries(latitude_per_image, longitude_per_image):
+    def geoseries(self, latitude_per_image, longitude_per_image):
         final_list_geoseries =  []
         for lat, lon in zip(longitude_per_image, latitude_per_image):
             geometry = [Point(xy) for xy in zip(lon, lat)]
@@ -65,18 +66,17 @@ class Geo:
 
     # 3 METHODEs TENSOR
 
-    def geoserie_to_tensor:
+    # def geoserie_to_tensor:
+    #     pass
 
 
-    def list_geoseries_to_list_of_tensors:
-        # return a list of tensors useful for model class
+    # def list_geoseries_to_list_of_tensors:
+    #     pass
+    #     # return a list of tensors useful for model class
 
 
-    def save_list_tensors_to_pickle:
-
-
-
-
+    # def save_list_tensors_to_pickle:
+    #     pass
 
 
 
@@ -84,12 +84,13 @@ class Geo:
 
 
 if __name__ == '__main__':
-  print('get a sample of a month-time crimes grouped by hour')
+  print('initializing geo class')
   df = Geo()
   print("loading data")
-  lat, lon = df.load_data()
+  df = df.load_data()
+  print('get a sample of a month-time crimes grouped by hour')
+  lat, lon = df.group_by_hour(2016, 12, 17)
   print('Transforming into geoseries thanks to geopandas')
   geoseries(lat, lon)
-
   print('Finished!')
 
