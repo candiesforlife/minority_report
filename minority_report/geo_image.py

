@@ -18,11 +18,6 @@ from scipy.ndimage import gaussian_filter
 from minority_report.clean_data import CleanData
 from minority_report.scaling import Scaling
 
-
-
-
-# %matplotlib inline
-
 class GeoImage:
 
     def __init__(self):
@@ -160,7 +155,6 @@ class GeoImage:
 
     # def save_list_tensors_to_pickle:
     #     pass
-
 
 
 if __name__ == '__main__':
