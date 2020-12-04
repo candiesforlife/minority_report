@@ -6,7 +6,7 @@ import pickle
 import pandas as pd
 
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.preprocessing import LabelEncoder
+# from sklearn.preprocessing import LabelEncoder
 
 class Scaling:
 
@@ -59,10 +59,10 @@ class Scaling:
 
 
 if __name__ == '__main__':
-  print('Initializing sclaing object with clean data')
+  print('Initializing scaling object with clean data')
   df = Scaling()
   df.load_data()
-  print('One hot encoding')
+  print('One hot encoding all the categories columns')
   features_list = ['crime_completed', 'offense_type','offense_level','borough','premise_desc','premise','suspect_age','suspect_race','suspect_sex','patrol_borough', 'metro','victim_age','victim_race','victim_sex','precinct_number']
   df.one_hot_encoding(features_list)
   print('Saving the encoding data as pickle')
