@@ -56,6 +56,6 @@ if __name__ == '__main__':
   df.load_data()
   print('Adding Columns')
   df.new_columns()
-  print('Saving Viz dataframe as pickle')
+  print('Saving viz dataframe as pickle')
   df.to_pickle()
-  print('Finished!')
+  print('Finished! :)')
