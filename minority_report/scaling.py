@@ -14,6 +14,9 @@ class Scaling:
         self.data = None
 
     def load_data(self):
+        '''
+        Loads clean df from pickle file
+        '''
         root_dir = os.path.dirname(os.path.dirname(__file__))
         pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
         with open(pickle_path, 'rb') as f:
