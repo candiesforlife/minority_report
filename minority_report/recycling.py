@@ -1,36 +1,4 @@
-
-import pandas as pd
-import os
-import pickle
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-
-from datetime import datetime
-from shapely.geometry import Point
-
-from skimage import io, color
-from scipy.ndimage import gaussian_filter
-# from shapely.geometry import Point
-# from geopandas import GeoSeries
-
-from minority_report.clean_data import CleanData
-from minority_report.scaling import Scaling
-
-class GeoImage:
-
-    def __init__(self):
-        self.data = None
-        self.sample = None
-
-    def load_data(self):
-        root_dir = os.path.dirname(os.path.dirname(__file__))
-        pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
-        with open(pickle_path, 'rb') as f:
-            df = pickle.load(f)
-        self.data = df
-        return self.data
+class Recycling:
 
     # def get_geoseries(self, latitude_per_image, longitude_per_image):
     #     final_list_geoseries =  []
@@ -49,7 +17,8 @@ class GeoImage:
     #         plt.show()
 
 
-    def group_by_hour_list(self, year, month, day):#, sampling=True):
+
+     def group_by_hour_list(self, year, month, day):#, sampling=True):
         '''
         get a sample of a month-time crimes grouped by hour
         inputs = start_date info
@@ -121,54 +90,17 @@ class GeoImage:
             ax.set_xlim(left=-74.25559136315213, right=-73.70000906387347)
             ax.set_ylim(bottom = 40.49611539518921, top=40.91553277600008)
 
-            ax.scatter(lons[i], lats[i] , color='black')
+            ax.scatter(lons_per_image[i], lats_per_image[i] , color='black')
 
             #save plot
             extent = ax.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-            fig.savefig('../images/image.jpeg', bbox_inches=extent)
+            fig.savefig('../../images/image.jpeg', bbox_inches=extent)
 
             #read plot as np.array
-            img = io.imread('../images/image.jpeg')
+            img = io.imread('../../images/image.jpeg')
             grayscale = color.rgb2gray(img)
 
             # add np.array to list
             img_list.append(grayscale)
             img_list = np.array(img_list)
             return img_list
-
-    def gaussian_filter(self,img_list, (x,y,z)):
-        img3D_conv = gaussian_filter(img_list, sigma=(x,y,z))
-        for i in range(19):
-            plt.imshow(img3D_conv[i+1,:,:], cmap='gray')
-            plt.show()
-
-    # 3 METHODEs TENSOR
-
-    # def geoserie_to_tensor:
-    #     pass
-
-
-    # def list_geoseries_to_list_of_tensors:
-    #     pass
-    #     # return a list of tensors useful for model class
-
-
-    # def save_list_tensors_to_pickle:
-    #     pass
-
-
-if __name__ == '__main__':
-  print('initializing geo class')
-  df = GeoImage()
-  print("loading data")
-  df.load_data()
-  print('get a sample of a month-time crimes grouped by hour')
-  lats_per_image, lons_per_image = df.group_by_hour(2016, 12, 17)
-  # print('Transforming into geoseries thanks to geopandas')
-  # df.get_geoseries(lat, lon)
-  print('saving images to numpy array's)
-  images_np_array = save_img_to_np_array(lats_per_image,lons_per_image)
-  print('applying gaussian filter to np_array')
-  df.gaussian_filter(images_np_array, (2,2,2))
-  print('Finished!')
-

@@ -426,8 +426,8 @@ class CleanData:
 
 
     def filter_with_NYC_boundaries(self):
-      lat_interval = self.data['latitude'].between(40.49611539518921, 40.91553277600008)
-      lon_interval = self.data['longitude'].between(-74.25559136315213,-73.70000906387347)
+      lat_interval = self.data[self.data['latitude'].between(40.49611539518921, 40.91553277600008)]
+      lon_interval = self.data[self.data['longitude'].between(-74.25559136315213,-73.70000906387347)]
       self.data['latitude'] = lat_interval
       self.data['longitude'] = lon_interval
       return self.data
