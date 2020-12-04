@@ -34,11 +34,17 @@ class Scaling:
         Scaling categorical columns with one_hot_encoder technique. Returns the df updated.
         '''
         ohe = OneHotEncoder(sparse = False)
+        print('first step')
         ohe.fit(self.data[features_list])
+        print('second step')
         list_of_list_of_columns = [list(element) for element in ohe.categories_]
+        print('third step')
         columns = list(itertools.chain(*list_of_list_of_columns))
+        print('fourth step')
         et_oh = ohe.transform(self.data[features_list])
+        print('fifth step')
         self.data[columns] = et_oh
+        print('sixth step')
         return self.data
 
     def save_data(self, file_name):
