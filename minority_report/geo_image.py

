@@ -23,7 +23,7 @@ from minority_report.scaling import Scaling
 
 # %matplotlib inline
 
-class Geo:
+class GeoImage:
 
     def __init__(self):
         self.data = None
@@ -54,7 +54,7 @@ class Geo:
     #         plt.show()
 
 
-    def group_by_hour_list(df, year, month, day):#, sampling=True):
+    def group_by_hour_list(self, year, month, day):#, sampling=True):
         '''
         get a sample of a month-time crimes grouped by hour
         inputs = start_date info
@@ -82,7 +82,7 @@ class Geo:
         return lat_per_image, lon_per_image
 
 
-    def group_by_hour(df, year, month, day):#, sampling=True):
+    def group_by_hour(self, year, month, day):#, sampling=True):
         '''
         get a sample of a month-time crimes grouped by hour
         inputs = start_date info
@@ -102,19 +102,19 @@ class Geo:
 
         liste = np.sort(np.array(sample['period'].unique()))
         length = len(liste)
-        lat_per_image = []
-        lon_per_image = []
+        lats_per_image = []
+        lons_per_image = []
         for index, timestamp in enumerate(liste):
             if (index+1) % 100 ==0:
                 print(f'Grouping timestamp {index+1}/{length}')
             by_hour = np.array(sample[sample['period']== timestamp][['latitude', 'longitude']])
-            lat_per_image.append([coord[0] for coord in by_hour])
-            lon_per_image.append([coord[1] for coord in by_hour])
-        return lat_per_image, lon_per_image
+            lats_per_image.append([coord[0] for coord in by_hour])
+            lons_per_image.append([coord[1] for coord in by_hour])
+        return lats_per_image, lons_per_image
 
 
 
-    def save_img_to_np_array():
+    def save_img_to_np_array(self,lats_per_image,lons_per_image):
         '''
         Save img to np_array, returns an list of np_array images.
         '''
@@ -141,7 +141,7 @@ class Geo:
             img_list = np.array(img_list)
             return img_list
 
-    def gaussian_filter(img_list):
+    def gaussian_filter(self,img_list):
         img3D_conv = gaussian_filter(img_list, sigma=(2,2,2))
         for i in range(19):
             plt.imshow(img3D_conv[i+1,:,:], cmap='gray')
@@ -165,12 +165,16 @@ class Geo:
 
 if __name__ == '__main__':
   print('initializing geo class')
-  df = Geo()
+  df = GeoImage()
   print("loading data")
   df.load_data()
   print('get a sample of a month-time crimes grouped by hour')
-  lat, lon = df.group_by_hour(2016, 12, 17)
-  print('Transforming into geoseries thanks to geopandas')
-  df.get_geoseries(lat, lon)
+  lats_per_image, lons_per_image = df.group_by_hour(2016, 12, 17)
+  # print('Transforming into geoseries thanks to geopandas')
+  # df.get_geoseries(lat, lon)
+  print('saving images to numpy array's)
+  images_np_array = save_img_to_np_array(lats_per_image,lons_per_image)
+  print('applying gaussian filter to np_array')
+  df.gaussian_filter(images_np_array)
   print('Finished!')
 
