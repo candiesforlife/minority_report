@@ -25,49 +25,66 @@ class Geo:
 
 
 
-    def group_by_hour(self,year, month, day):
+    def group_by_hour_list(df, year, month, day):#, sampling=True):
         '''
         get a sample of a month-time crimes grouped by hour
         inputs = start_date info
         '''
-        sample = self.data[['period', 'latitude', 'longitude']]
+        sample = df.data[['period', 'latitude', 'longitude']]
+
+        #if sampling:
         inf = sample['period'] > datetime(year, month, day, 0, 0, 0)
         next_month = month+1
         next_year = year
         if month == 12:
             next_month = 1
             next_year = year+1
-        # print(next_year, next_month)
+        #print(next_year, next_month)
         sup = sample['period'] < datetime(next_year, next_month, day, 0, 0, 0)
-        self.sample = sample[ inf & sup ]
-        liste = np.sort(np.array(self.sample['period'].unique()))
-        grouped = []
+        sample = sample[ inf & sup ]
+
+        liste = np.sort(np.array(sample['period'].unique()))
         length = len(liste)
+        lat_per_image = [[coord[1] for coord in np.array(sample[sample['period']== timestamp][['latitude', 'longitude']])]\
+                 for index, timestamp in enumerate(liste)]
+        lon_per_image = [[coord[0] for coord in np.array(sample[sample['period']== timestamp][['latitude', 'longitude']])]\
+                 for index, timestamp in enumerate(liste)]
+
+        return lat_per_image, lon_per_image
+
+
+    def group_by_hour(df, year, month, day):#, sampling=True):
+        '''
+        get a sample of a month-time crimes grouped by hour
+        inputs = start_date info
+        '''
+        sample = df.data[['period', 'latitude', 'longitude']]
+
+        #if sampling:
+        inf = sample['period'] > datetime(year, month, day, 0, 0, 0)
+        next_month = month+1
+        next_year = year
+        if month == 12:
+            next_month = 1
+            next_year = year+1
+        #print(next_year, next_month)
+        sup = sample['period'] < datetime(next_year, next_month, day, 0, 0, 0)
+        sample = sample[ inf & sup ]
+
+        liste = np.sort(np.array(sample['period'].unique()))
+        length = len(liste)
+        lat_per_image = []
+        lon_per_image = []
         for index, timestamp in enumerate(liste):
             if (index+1) % 100 ==0:
                 print(f'Grouping timestamp {index+1}/{length}')
-            by_hour = np.array(self.sample[self.sample['period']== timestamp][['latitude', 'longitude']])
-            grouped.append(by_hour)
-        latitude_per_image = [[element[0] for element in crime] for crime in grouped]
-        longitude_per_image = [[element[1] for element in crime] for crime in grouped]
-        return latitude_per_image, longitude_per_image
+            by_hour = np.array(sample[sample['period']== timestamp][['latitude', 'longitude']])
+            lat_per_image.append([coord[0] for coord in by_hour])
+            lon_per_image.append([coord[1] for coord in by_hour])
+        return lat_per_image, lon_per_image
 
 
-    def get_geoseries(self, latitude_per_image, longitude_per_image):
-        final_list_geoseries =  []
-        sample = self.sample
-        for lat, lon in zip(longitude_per_image, latitude_per_image):
-            geometry = [Point(xy) for xy in zip(lon, lat)]
-            df_geopandas = sample.drop(['longitude', 'latitude'], axis=1)
-            geoseries_image = GeoSeries(geometry)
-            final_list_geoseries.append(geoseries_image)
-        return final_list_geoseries
 
-    def visualization_from_geoseries_to_images(self,final_list_geoseries):
-        for geoserie in final_list_geoseries:
-            fig,ax = plt.subplots(figsize = (10,10))
-            g = geoserie.plot(ax = ax, markersize = 20, color = 'red',marker = '*',label = 'NYC')
-            plt.show()
 
     # 3 METHODEs TENSOR
 
