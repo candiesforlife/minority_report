@@ -82,7 +82,7 @@ class GeoImage:
         get a sample of a month-time crimes grouped by hour
         inputs = start_date info
         '''
-        sample = df.data[['period', 'latitude', 'longitude']]
+        sample = self.data[['period', 'latitude', 'longitude']]
 
         #if sampling:
         inf = sample['period'] > datetime(year, month, day, 0, 0, 0)
@@ -115,7 +115,7 @@ class GeoImage:
         '''
         plt.rcParams["figure.figsize"] = [15,15]
         img_list = []
-        for i in range (100):
+        for i in range(100):
 
             fig, ax = plt.subplots()
             ax.set_xlim(left=-74.25559136315213, right=-73.70000906387347)

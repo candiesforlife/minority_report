@@ -1,5 +1,4 @@
-class Model:
-
+class Input:
 
     #Dans la class model, on recupere list of tensors
     # method qui definit kernel
