@@ -1,13 +1,27 @@
 
 import pandas as pd
-import matplotlib.pyplot as plt
 import os
 import pickle
 import numpy as np
-from geopandas import GeoSeries
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
 from datetime import datetime
 from shapely.geometry import Point
 
+from skimage import io, color
+from scipy.ndimage import gaussian_filter
+# from shapely.geometry import Point
+# from geopandas import GeoSeries
+
+from minority_report.clean_data import CleanData
+from minority_report.scaling import Scaling
+
+
+
+
+# %matplotlib inline
 
 class Geo:
 
@@ -23,6 +37,21 @@ class Geo:
         self.data = df
         return self.data
 
+    # def get_geoseries(self, latitude_per_image, longitude_per_image):
+    #     final_list_geoseries =  []
+    #     sample = self.sample
+    #     for lat, lon in zip(longitude_per_image, latitude_per_image):
+    #         geometry = [Point(xy) for xy in zip(lon, lat)]
+    #         df_geopandas = sample.drop(['longitude', 'latitude'], axis=1)
+    #         geoseries_image = GeoSeries(geometry)
+    #         final_list_geoseries.append(geoseries_image)
+    #     return final_list_geoseries
+
+    # def visualization_from_geoseries_to_images(self,final_list_geoseries):
+    #     for geoserie in final_list_geoseries:
+    #         fig,ax = plt.subplots(figsize = (10,10))
+    #         g = geoserie.plot(ax = ax, markersize = 20, color = 'red',marker = '*',label = 'NYC')
+    #         plt.show()
 
 
     def group_by_hour_list(df, year, month, day):#, sampling=True):
@@ -85,6 +114,38 @@ class Geo:
 
 
 
+    def save_img_to_np_array():
+        '''
+        Save img to np_array, returns an list of np_array images.
+        '''
+        plt.rcParams["figure.figsize"] = [15,15]
+        img_list = []
+        for i in range (100):
+
+            fig, ax = plt.subplots()
+            ax.set_xlim(left=-74.25559136315213, right=-73.70000906387347)
+            ax.set_ylim(bottom = 40.49611539518921, top=40.91553277600008)
+
+            ax.scatter(lons[i], lats[i] , color='black')
+
+            #save plot
+            extent = ax.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+            fig.savefig('../images/image.jpeg', bbox_inches=extent)
+
+            #read plot as np.array
+            img = io.imread('../images/image.jpeg')
+            grayscale = color.rgb2gray(img)
+
+            # add np.array to list
+            img_list.append(grayscale)
+            img_list = np.array(img_list)
+            return img_list
+
+    def gaussian_filter(img_list):
+        img3D_conv = gaussian_filter(img_list, sigma=(2,2,2))
+        for i in range(19):
+            plt.imshow(img3D_conv[i+1,:,:], cmap='gray')
+            plt.show()
 
     # 3 METHODEs TENSOR
 
