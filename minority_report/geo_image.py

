@@ -136,8 +136,8 @@ class GeoImage:
             img_list = np.array(img_list)
             return img_list
 
-    def gaussian_filter(self,img_list):
-        img3D_conv = gaussian_filter(img_list, sigma=(2,2,2))
+    def gaussian_filter(self,img_list, (x,y,z)):
+        img3D_conv = gaussian_filter(img_list, sigma=(x,y,z))
         for i in range(19):
             plt.imshow(img3D_conv[i+1,:,:], cmap='gray')
             plt.show()
@@ -169,6 +169,6 @@ if __name__ == '__main__':
   print('saving images to numpy array's)
   images_np_array = save_img_to_np_array(lats_per_image,lons_per_image)
   print('applying gaussian filter to np_array')
-  df.gaussian_filter(images_np_array)
+  df.gaussian_filter(images_np_array, (2,2,2))
   print('Finished!')
 
