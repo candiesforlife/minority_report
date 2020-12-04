@@ -20,7 +20,7 @@ class Input:
     def get_observation_target(self,img3D_conv):
         position = np.random.randint(0,img3D_conv.shape[0]-27)
         observation = img3D_conv[position:position+24]
-        target = img3D_conv[position+24:position+27].flatten()
+        target = img3D_conv[position+24:position+27].flatten() # include as function parameter
         return observation, target
 
     def get_X_y(self,img3D_conv, number_of_observations):
