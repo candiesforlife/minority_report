@@ -17,6 +17,7 @@ from scipy.ndimage import gaussian_filter
 
 from minority_report.clean_data import CleanData
 from minority_report.scaling import Scaling
+from scipy.ndimage import gaussian_filter
 
 class GeoImg:
 
@@ -33,12 +34,25 @@ class GeoImg:
         return self.data
 
 
+    def plotting_img3D(self): #data viz check
+        img3D= np.zeros((743,50,50))
+        img3D[15,15,15] = 1
 
-    def gaussian_filtering(self,img_list,x,y,z):
-        img3D_conv = gaussian_filter(img_list, sigma=(x,y,z))
-        for i in range(19):
-            plt.imshow(img3D_conv[i+1,:,:], cmap='gray')
+        for element in img3D:
+            plt.imshow(element)
             plt.show()
+
+
+    def gaussian_filtering(self,img3D,z,x,y):
+        '''
+          Returns img3D convoluted
+        '''
+        img3D_convoluted = gaussian_filter(img3D, sigma=(z,x,y))
+        max_lum = img3D_convoluted.max()
+        for i in range(19):
+            plt.imshow(img3D_convoluted[i+1,:,:], cmap='gray', vmin=0, vmax=max_lum)
+            plt.show()
+        return img3D_convoluted
 
 
 
@@ -47,13 +61,15 @@ if __name__ == '__main__':
   df = GeoImg()
   print("loading data")
   df.load_data()
-  print('get a sample of a month-time crimes grouped by hour')
-  lats_per_image, lons_per_image = df.group_by_hour(2016, 12, 17)
+  # print('get a sample of a month-time crimes grouped by hour')
+  # lats_per_image, lons_per_image = df.group_by_hour(2016, 12, 17)
   # print('Transforming into geoseries thanks to geopandas')
   # df.get_geoseries(lat, lon)
-  print('saving images to numpy array')
-  images_np_array = df.save_img_to_np_array(lats_per_image,lons_per_image)
+  # print('saving images to numpy array')
+  # images_np_array = df.save_img_to_np_array(lats_per_image,lons_per_image)
+  img3D = np.zeros((743,50,50))
+  img3D[15,15,15] = 1
   print('applying gaussian filter to np_array')
-  df.gaussian_filter(images_np_array, 2,2,2)
+  df.gaussien_filtering(img3D, 2,2,2)
   print('Finished!')
 

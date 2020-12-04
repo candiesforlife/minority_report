@@ -1,21 +1,29 @@
+
+import os
+import pandas as pd
+import pickle
+
 class Input:
+    # passer de nos map à notre liste de tensors d'entrainement
 
-    #Dans la class model, on recupere list of tensors
-    # method qui definit kernel
-    # method qui fait passer le kernel dans chaque tensor
-    # method X Y
+    def __init__(self):
+        self.data = None
 
-    def __init__:
-        #model
-        #X_train is our list of tensors
+    def load_data(self):
+        root_dir = os.path.dirname(os.path.dirname(__file__))
+        pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
+        with open(pickle_path, 'rb') as f:
+            df = pickle.load(f)
+        self.data = df
+        return self.data
 
-    def get_observation_target(img3D_conv):
+    def get_observation_target(self,img3D_conv):
         position = np.random.randint(0,img3D_conv.shape[0]-27)
         observation = img3D_conv[position:position+24]
-        target = img3D_conv[position+24:position+27]
+        target = img3D_conv[position+24:position+27].flatten() # include as function parameter
         return observation, target
 
-    def get_X_y(img3D_conv, number_of_observations):
+    def get_X_y(self,img3D_conv, number_of_observations):
         X = []
         y = []
         for n in range(number_of_observations):
@@ -28,6 +36,8 @@ class Input:
 
 
 if __name__ == '__main__':
-    # X, y = get_X_y(img3D_conv, 50 )
-    # X.shape
-    # y.shape
+    input = Input()
+    input.load_data()
+    X, y = input.get_X_y(img3D_conv, 50)
+    X.shape
+    y.shape
