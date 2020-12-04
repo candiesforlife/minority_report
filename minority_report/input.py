@@ -15,7 +15,6 @@ class Input:
         target = img3D_conv[position+24:position+27]
         return observation, target
 
-
     def get_X_y(img3D_conv, number_of_observations):
         X = []
         y = []
