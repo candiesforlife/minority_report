@@ -9,15 +9,16 @@ class Input:
 
     def __init__(self):
         self.data = None
+        self.img = None
 
+    #IMG3D filtré
     def load_data(self):
         root_dir = os.path.dirname(os.path.dirname(__file__))
-        pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
+        pickle_path = os.path.join(root_dir, 'raw_data', 'filtered-image.pickle')
         with open(pickle_path, 'rb') as f:
             df = pickle.load(f)
         self.data = df
         return self.data
-
 
 
     def get_observation_target(self,img3D_conv,x_length, y_length):
@@ -49,15 +50,10 @@ class Input:
 if __name__ == '__main__':
     print('1. Creating an Input instance')
     input = Input()
-    print('2. Loading the data')
+    print('2. Loading the data from the filtered image pickle')
     input.load_data()
-    print('3. ')
-    print('4. ')
-    print('5. ')
-    print('6. ')
+    #get_X_y
+    #train_test_split ici or in Training class
+    #save to pickle => input.pickle
+    print('Finished!')
 
-
-
-    # X, y = input.get_X_y(img3D_conv, 50)
-    # X.shape
-    # y.shape

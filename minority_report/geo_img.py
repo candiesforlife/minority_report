@@ -43,7 +43,7 @@ class GeoImg:
         lon = -73
 
         #Earth’s radius, sphere
-        R=6378137
+        R = 6378137
 
         #offsets in meters
         dn = lat_meters
@@ -70,7 +70,6 @@ class GeoImg:
         ind = {time:index for index,time in enumerate(np.sort(df['period'].unique()))}
 
         df['time_index'] = df['period'].map(ind)
-        self.data = df
         #initiate matrix
         grid_offset = np.array([0, -40.91553277600008,  -74.25559136315213]) # Where do you start
         #from meters to lat/lon step
@@ -85,6 +84,7 @@ class GeoImg:
 
         # Convert point to index
         indexes = np.round((coords - grid_offset)/grid_spacing).astype('int')
+
         Z = indexes[:,0]
         Y = indexes[:,1]
         X = indexes[:,2]
@@ -92,13 +92,23 @@ class GeoImg:
         #virgin matrix
         a = np.zeros((Z.max()+1, Y.max()+1, X.max()+1))
 
-
-        a[Z, Y, X] = ,1
+        a[Z, Y, X] = 1
 
         del ind, grid_offset, lat_spacing, lon_spacing, grid_spacing, coords, indexes, Z, Y, X
 
         return a, a.shape[1], a.shape[2]
 
+
+    def gaussian_filtering(self,img3D,z,x,y):
+        '''
+          Returns img3D convoluted
+        '''
+        img3D_convoluted = gaussian_filter(img3D, sigma=(z,x,y))
+        # max_lum = img3D_convoluted.max()
+        # for i in range(19):
+        #     plt.imshow(img3D_convoluted[i+1,:,:], cmap='gray', vmin=0, vmax=max_lum)
+        #     plt.show()
+        return img3D_convoluted
 
     def from_matrix_to_coord(self,indexes, lat_meters, lon_meters):
         """
@@ -124,17 +134,17 @@ class GeoImg:
             plt.imshow(element)
             plt.show()
 
+    def save_data(self):
+      '''
+      Saves clean dataframe to clean data pickle
+      '''
+      root_dir = os.path.dirname(os.path.dirname(__file__))
+      pickle_path = os.path.join(root_dir, 'raw_data', 'filtered-image.pickle')
 
-    def gaussian_filtering(self,img3D,z,x,y):
-        '''
-          Returns img3D convoluted
-        '''
-        img3D_convoluted = gaussian_filter(img3D, sigma=(z,x,y))
-        max_lum = img3D_convoluted.max()
-        for i in range(19):
-            plt.imshow(img3D_convoluted[i+1,:,:], cmap='gray', vmin=0, vmax=max_lum)
-            plt.show()
-        return img3D_convoluted
+      with open(pickle_path, 'wb') as f:
+         pickle.dump(self.data, f)
+
+
 
 
 
@@ -153,10 +163,13 @@ if __name__ == '__main__':
   print('4. From coordinates to matrix')
   img3D = df.from_coord_to_matrix(lat_meters, lon_meters)
 
-  # print('5. From matrix to coordinates')
-  # df.from_matrix_to_coord(indexes, lat_meters, lon_meters)
-
   print('5. Gaussian filtering')
-  df.gaussian_filtering(img3D, 2,2,2)
-  print('Finished!')
+  img3Dfiltered = df.gaussian_filtering(img3D[0], 2,2,2) #to be defined
+
+  print('6. Saving image filtered to pickle')
+  self.save_data
+
+
+
+
 
