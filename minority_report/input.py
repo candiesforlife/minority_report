@@ -18,10 +18,14 @@ class Input:
         self.data = df
         return self.data
 
-    def get_observation_target(self,img3D_conv):
-        position = np.random.randint(0,img3D_conv.shape[0]-27)
-        observation = img3D_conv[position:position+24]
-        target = img3D_conv[position+24:position+27].flatten() # include as function parameter
+    def get_observation_target(self,img3D_conv,x_length, y_length):
+        '''
+        output an observation of x_length consecutive images and the y_length next images as the target
+        '''
+        position = np.random.randint(0,img3D_conv.shape[0]-(x_length + y_length))
+        observation = img3D_conv[position:position+ x_length]
+        target = img3D_conv[position+ x_length:position + (x_length + y_length)]
+        del position
         return observation, target
 
     def get_X_y(self,img3D_conv, number_of_observations):
