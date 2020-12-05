@@ -25,18 +25,23 @@ class Input:
         position = np.random.randint(0,img3D_conv.shape[0]-(x_length + y_length))
         observation = img3D_conv[position:position+ x_length]
         target = img3D_conv[position+ x_length:position + (x_length + y_length)]
-        del position
+        del position #pour recuperer de la memoire dans le notebook
         return observation, target
 
-    def get_X_y(self,img3D_conv, number_of_observations):
+    def get_X_y(self,img3D_conv, number_of_observations, x_length, y_length):
+        '''
+        outputs n observations and their associated targets
+        '''
         X = []
         y = []
         for n in range(number_of_observations):
-            X_subsample, y_subsample = get_observation_target(img3D_conv)
+            X_subsample, y_subsample = get_observation_target(img3D_conv, x_length, y_length)
             X.append(X_subsample)
             y.append(y_subsample)
         X = np.array(X)
         y = np.array(y)
+
+        del X_subsample, y_subsample, n #pour recuperer de la memoire dans le notebook
         return X, y
 
     def from_meters_to_coords(lat_meters, lon_meters):
