@@ -29,7 +29,7 @@ class GeoImg:
         root_dir = os.path.dirname(os.path.dirname(__file__))
         pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
         with open(pickle_path, 'rb') as f:
-            df = pickle.load(f)
+            df = pickle.load(f)[:1000]
         self.data = df
         return self.data
 
@@ -167,7 +167,7 @@ if __name__ == '__main__':
   img3Dfiltered = df.gaussian_filtering(img3D[0], 2,2,2) #to be defined
 
   print('6. Saving image filtered to pickle')
-  self.save_data
+  df.save_data()
 
 
 

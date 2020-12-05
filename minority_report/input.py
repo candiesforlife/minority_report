@@ -52,6 +52,7 @@ if __name__ == '__main__':
     input = Input()
     print('2. Loading the data from the filtered image pickle')
     input.load_data()
+    # print(input)
     #get_X_y
     #train_test_split ici or in Training class
     #save to pickle => input.pickle
