@@ -93,7 +93,7 @@ class GeoImg:
         a = np.zeros((Z.max()+1, Y.max()+1, X.max()+1))
 
 
-        a[Z, Y, X] = 1
+        a[Z, Y, X] = ,1
 
         del ind, grid_offset, lat_spacing, lon_spacing, grid_spacing, coords, indexes, Z, Y, X
 
@@ -119,10 +119,7 @@ class GeoImg:
         return result
 
 
-    def plotting_img3D(self): #data viz check
-        img3D= np.zeros((743,50,50))
-        img3D[15,15,15] = 1
-
+    def plotting_img3D(self, img3D): #data viz check
         for element in img3D:
             plt.imshow(element)
             plt.show()
