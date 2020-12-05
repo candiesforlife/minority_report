@@ -1,8 +1,15 @@
 class Output:
 
     def __init__(self):
-        # self
+        self.data = None
 
+    def load_data(self):
+        root_dir = os.path.dirname(os.path.dirname(__file__))
+        pickle_path = os.path.join(root_dir, 'raw_data', 'filtered-image.pickle')
+        with open(pickle_path, 'rb') as f:
+            df = pickle.load(f)
+        self.data = df
+        return self.data
 
 
      def from_matrix_to_coord(self,indexes, lat_meters, lon_meters):
@@ -33,7 +40,11 @@ class Output:
 
 
 if __name__=='main':
+    print('1. Creating an instance of output class')
+    output = Output()
+    print('2. Loading data')
+    output.load_data()
     print('3. From matrix to coordinates')
-    df.from_matrix_to_coord(indexes, lat_meters, lon_meters)
+    output.from_matrix_to_coord(indexes, lat_meters, lon_meters)
     print('4. From coords to map')
     # to call

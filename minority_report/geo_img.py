@@ -167,7 +167,7 @@ if __name__ == '__main__':
   img3Dfiltered = df.gaussian_filtering(img3D[0], 2,2,2) #to be defined
 
   print('6. Saving image filtered to pickle')
-  self.save_data
+  df.save_data()
 
 
 
