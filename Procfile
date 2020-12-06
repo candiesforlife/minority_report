@@ -1,1 +1,1 @@
-web: pip install . -U && minority-report-run
+web: pip install . -U && minority_report-run
