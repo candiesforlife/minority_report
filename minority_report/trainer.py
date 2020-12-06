@@ -65,7 +65,6 @@ class Trainer:
                       callbacks = es)
         return self.model
 
-
     def evaluate_model(self):
         result = self.model.evaluate(self.X_test, self.y_test)
         return result
@@ -74,28 +73,32 @@ class Trainer:
         self.y_pred = self.model.predict(self.X_test)
         return self.y_pred
 
+
+    def training_model(self, number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs):
+        print('7. Getting X, y from instanciating Trainer class ')
+        self.load_data_from_input_class(number_of_observations, x_length, y_length))
+        print('8. Train test split')
+        self.holdout()
+        print('9. Init model')
+        self.init_model(x_length, y_length, lat_size, lon_size)
+        print('10. Fit model')
+        self.fit_model(batch_size, epochs)
+        print('11. Evaluate')
+        self.evaluate_model()
+
 if __name__ == '__main__':
     print('1. Creating an instance of GeoImg class')
     df = GeoImg()
     lat_size, lon_size, indexes,img3D_conv = df.crime_to_img3D_con()
     print('6. Saving image filtered to pickle')
     df.save_data()
-
-    number_of_observations = 50 #50 observations
     x_length = 24 #24h avant
     y_length = 3 #3h apres
-    print('7. Getting X, y from instanciating Trainer class ')
-    X, y = Trainer().load_data_from_input_class(number_of_observations, x_length, y_length))
-    print('8. Train test split')
-    holdout()
-    print('9. Init model')
-    init_model(x_length, y_length, lat_size, lon_size)
-    print('10. fit model')
+    number_of_observations = 50 #50 observations
     batch_size = 32
     epochs = 100
-    fit_model(batch_size, epochs)
+    trainer = Trainer()
+    trainer.training_model(number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs
 
-    print('11. predict')
-    print('12. evaluate')
 
 
