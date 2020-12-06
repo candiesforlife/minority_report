@@ -8,8 +8,8 @@ class Input:
     # passer de nos map à notre liste de tensors d'entrainement
 
     def __init__(self):
-        self.data = None
-        self.img = None
+        self.X = None
+        self.y = None
 
     #IMG3D filtré
     def load_data(self):
@@ -17,8 +17,8 @@ class Input:
         pickle_path = os.path.join(root_dir, 'raw_data', 'filtered-image.pickle')
         with open(pickle_path, 'rb') as f:
             df = pickle.load(f)
-        self.data = df
-        return self.data
+        self.img3D_conv = df
+        return self.img3D_conv
 
 
     def get_observation_target(self,img3D_conv,x_length, y_length):
@@ -47,14 +47,24 @@ class Input:
         del X_subsample, y_subsample, n #pour recuperer de la memoire dans le notebook
         return X, y
 
+    def combining_load_data_and_X_y(self, number_of_observations, x_length, y_length):
+        print('1. Creating an Input instance')
+        df = self.load_data()
+        print('2. Loading the data from the filtered image pickle')
+        self.X, self.y = self.get_X_y(df, number_of_observations, x_length, y_length)
+        return self.X, self.y
+
 if __name__ == '__main__':
-    print('1. Creating an Input instance')
-    input = Input()
-    print('2. Loading the data from the filtered image pickle')
-    input.load_data()
-    # print(input)
-    #get_X_y
-    #train_test_split ici or in Training class
-    #save to pickle => input.pickle
-    print('Finished!')
+    # TO BE REMOVED,ALL HAPPENING IN TRAINER CLASS BABYYYY
+    # print('1. Creating an Input instance')
+    # input = Input()
+    # print('2. Loading the data from the filtered image pickle')
+    # input.load_data()
+    # print('3. Getting X & y')
+    # number_of_observations = 50 #50 observations
+    # x_length = 24 #24h avant
+    # y_length = 3 #3h apres
+    # # input.get_X_y(self.img3D_conv, number_of_observations, x_length, y_length)
+    # X, y = self.combining_load_data_and_X_y(number_of_observations, x_length, y_length)
+    # print('finished')
 
