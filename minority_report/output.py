@@ -36,6 +36,7 @@ class Output:
         # What's the space you consider (euclidian here)
         grid_spacing = np.array([1, lat_spacing, lon_spacing])
 
+        # index : coords de mes crimes dans mon np array
         result = grid_offset + indexes * grid_spacing
         return result
 
