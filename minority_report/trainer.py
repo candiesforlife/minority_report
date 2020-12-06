@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras.callbacks import EarlyStopping
 
 class Trainer:
-    def __init__(self,X, y):
+    def __init__(self):
         self.X = None
         self.y = None
         self.X_train = None

@@ -38,7 +38,7 @@ class Input:
         X = []
         y = []
         for n in range(number_of_observations):
-            X_subsample, y_subsample = get_observation_target(img3D_conv, x_length, y_length)
+            X_subsample, y_subsample = self.get_observation_target(img3D_conv, x_length, y_length)
             X.append(X_subsample)
             y.append(y_subsample)
         X = np.array(X)
