@@ -58,3 +58,15 @@ pypi_test:
 
 pypi:
 	@twine upload dist/* -u lologibus2
+
+
+
+PROJECT_ID='minority-report-297815'
+BUCKET_NAME=minority-report
+REGION=europe-west1
+
+set_project:
+  -@gcloud config set project ${PROJECT_ID}
+
+create_bucket:
+  -@gsutil mb -l ${REGION} -p ${PROJECT_ID} gs://${BUCKET_NAME}
