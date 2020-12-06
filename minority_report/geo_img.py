@@ -24,6 +24,9 @@ class GeoImg:
     def __init__(self):
         self.data = None
         self.sample = None
+        self.lat_size = None
+        self.lon_size = None
+        self.indexes = None
 
     def load_data(self):
         root_dir = os.path.dirname(os.path.dirname(__file__))
@@ -94,9 +97,12 @@ class GeoImg:
 
         a[Z, Y, X] = 1
 
-        del ind, grid_offset, lat_spacing, lon_spacing, grid_spacing, coords, indexes, Z, Y, X
+        del ind, grid_offset, lat_spacing, lon_spacing, grid_spacing, coords,Z, Y, X
 
-        return a, a.shape[1], a.shape[2]
+        self.lat_size = a.shape[1]
+        self.lon_size = a.shape[2]
+        self.indexes = indexes
+        return a, self.lat_size, self.lon_size, self.indexes
 
 
     def gaussian_filtering(self,img3D,z,x,y):
@@ -110,23 +116,23 @@ class GeoImg:
         #     plt.show()
         return img3D_convoluted
 
-    def from_matrix_to_coord(self,indexes, lat_meters, lon_meters):
-        """
-        gives back the coordinates from a 3D matrix for a given bucket height and width
-        """
-        df = self.data.copy()
+    # def from_matrix_to_coord(self,indexes, lat_meters, lon_meters):
+    #     """
+    #     gives back the coordinates from a 3D matrix for a given bucket height and width
+    #     """
+    #     df = self.data.copy()
 
-        # Where do you start
-        grid_offset = np.array([0, -40.91553277600008,  -74.25559136315213,])
+    #     # Where do you start
+    #     grid_offset = np.array([0, -40.91553277600008,  -74.25559136315213,])
 
-        #from meters to lat/lon step
-        lat_spacing, lon_spacing = self.from_meters_to_coords(df,lat_meters, lon_meters)
+    #     #from meters to lat/lon step
+    #     lat_spacing, lon_spacing = self.from_meters_to_coords(df,lat_meters, lon_meters)
 
-        # What's the space you consider (euclidian here)
-        grid_spacing = np.array([1, lat_spacing, lon_spacing])
+    #     # What's the space you consider (euclidian here)
+    #     grid_spacing = np.array([1, lat_spacing, lon_spacing])
 
-        result = grid_offset + indexes * grid_spacing
-        return result
+    #     result = grid_offset + indexes * grid_spacing
+    #     return result
 
 
     def plotting_img3D(self, img3D): #data viz check
@@ -146,8 +152,6 @@ class GeoImg:
 
 
 
-
-
 if __name__ == '__main__':
   print('1. Creating an instance of GeoImg class')
   df = GeoImg()
@@ -161,10 +165,12 @@ if __name__ == '__main__':
   df.from_meters_to_coords(lat_meters, lon_meters)
 
   print('4. From coordinates to matrix')
-  img3D = df.from_coord_to_matrix(lat_meters, lon_meters)
+
+  #verify order
+  img3D, lat_size, lon_size, indexes = df.from_coord_to_matrix(lat_meters, lon_meters)
 
   print('5. Gaussian filtering')
-  img3Dfiltered = df.gaussian_filtering(img3D[0], 2,2,2) #to be defined
+  img3Dfiltered = df.gaussian_filtering(img3D[0], 3,3,3) #to be defined
 
   print('6. Saving image filtered to pickle')
   df.save_data()
