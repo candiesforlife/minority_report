@@ -60,16 +60,11 @@ pypi:
 	@twine upload dist/* -u lologibus2
 
 
+##### Configuration between machine & GCP - - - - - - - - - - - - - - - - - - -
 
 PROJECT_ID=minority-report-297815
 BUCKET_NAME=minority-report
 REGION=europe-west1
-
-set_project:
-	@gcloud config set project ${PROJECT_ID}
-
-create_bucket:
-	@gsutil mb -l ${REGION} -p ${PROJECT_ID} gs://${BUCKET_NAME}
 
 # # path of the file to upload to gcp (the path of the file should be absolute or should match the directory where the make command is run)
 LOCAL_PATH="/Users/ellynbouscasse/code/candiesforlife/minority_report/raw_data/data.csv" # Replace with your local path to the `train_1k.csv` and make sure to put it between quotes
@@ -81,5 +76,42 @@ BUCKET_FOLDER=data
 # BUCKET_FILE_NAME=another_file_name_if_I_so_desire.csv
 BUCKET_FILE_NAME=$(shell basename ${LOCAL_PATH})
 
+PYTHON_VERSION=3.7
+FRAMEWORK=scikit-learn
+RUNTIME_VERSION=1.15
+
+PACKAGE_NAME=minority-report
+FILENAME=trainer
+
+
+set_project:
+	@gcloud config set project ${PROJECT_ID}
+
+create_bucket:
+	@gsutil mb -l ${REGION} -p ${PROJECT_ID} gs://${BUCKET_NAME}
+
 upload_data:
 	@gsutil cp ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}/${BUCKET_FILE_NAME}
+
+##### Job - - - - - - - - - - - - - - - - - - - - - - - - -
+JOB_NAME=minority_report_training_pipeline_$(shell date +'%Y%m%d_%H%M%S')
+
+run_locally:
+	@python -m ${PACKAGE_NAME}.${FILENAME}
+
+gcp_submit_training:
+	gcloud ai-platform jobs submit training ${JOB_NAME} \
+		--job-dir gs://${BUCKET_NAME}/${BUCKET_TRAINING_FOLDER} \
+		--package-path ${PACKAGE_NAME} \
+		--module-name ${PACKAGE_NAME}.${FILENAME} \
+		--python-version=${PYTHON_VERSION} \
+		--runtime-version=${RUNTIME_VERSION} \
+		--region ${REGION} \
+		--stream-logs
+
+clean:
+	@rm -f */version.txt
+	@rm -f .coverage
+	@rm -fr */__pycache__ __pycache__
+	@rm -fr build dist *.dist-info *.egg-info
+	@rm -fr */*.pyc
