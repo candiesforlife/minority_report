@@ -1,4 +1,6 @@
 from minority_report.input import Input
+from minority_report.geo_img import GeoImg
+
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.callbacks import EarlyStopping
 
@@ -76,7 +78,7 @@ class Trainer:
 
     def training_model(self, number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs):
         print('7. Getting X, y from instanciating Trainer class ')
-        self.load_data_from_input_class(number_of_observations, x_length, y_length))
+        self.load_data_from_input_class(number_of_observations, x_length, y_length)
         print('8. Train test split')
         self.holdout()
         print('9. Init model')
@@ -85,6 +87,8 @@ class Trainer:
         self.fit_model(batch_size, epochs)
         print('11. Evaluate')
         self.evaluate_model()
+        print(self.y_pred)
+        return self
 
 if __name__ == '__main__':
     print('1. Creating an instance of GeoImg class')
@@ -98,7 +102,7 @@ if __name__ == '__main__':
     batch_size = 32
     epochs = 100
     trainer = Trainer()
-    trainer.training_model(number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs
+    trainer.training_model(number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs)
 
 
 
