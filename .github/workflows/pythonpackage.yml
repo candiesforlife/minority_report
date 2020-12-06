@@ -1,4 +1,4 @@
-name: minority_report
+name: minority_reportdc
 
 on:
   push:
