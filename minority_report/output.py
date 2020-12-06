@@ -1,11 +1,27 @@
+import os
+
+import pandas as pd
+import os
+import pickle
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
 class Output:
 
     def __init__(self):
-        # self
+        self.data = None
+
+    def load_data(self):
+        root_dir = os.path.dirname(os.path.dirname(__file__))
+        pickle_path = os.path.join(root_dir, 'raw_data', 'filtered-image.pickle')
+        with open(pickle_path, 'rb') as f:
+            df = pickle.load(f)
+        self.data = df
+        return self.data
 
 
-
-     def from_matrix_to_coord(self,indexes, lat_meters, lon_meters):
+    def from_matrix_to_coord(self,indexes, lat_meters, lon_meters):
         """
         gives back the coordinates from a 3D matrix for a given bucket height and width
         """
@@ -20,20 +36,23 @@ class Output:
         # What's the space you consider (euclidian here)
         grid_spacing = np.array([1, lat_spacing, lon_spacing])
 
+        # index : coords de mes crimes dans mon np array
         result = grid_offset + indexes * grid_spacing
         return result
 
     def from_coords_to_map(self, series):
         # to be defined
+        pass
 
 
 
-
-
-
-
-if __name__=='main':
+if __name__ == '__main__':
+    print('1. Creating an instance of output class')
+    output = Output()
+    print('2. Loading data')
+    output.load_data()
     print('3. From matrix to coordinates')
-    df.from_matrix_to_coord(indexes, lat_meters, lon_meters)
+    coords = output.from_matrix_to_coord(indexes, lat_meters, lon_meters)
+    print(coords)
     print('4. From coords to map')
     # to call
