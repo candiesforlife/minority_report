@@ -28,12 +28,14 @@ class GeoImg:
         self.lon_size = None
         self.indexes = None
         self.img3D_conv = None
+        self.img3D_non_conv = None
+
 
     def load_data(self):
         root_dir = os.path.dirname(os.path.dirname(__file__))
         pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
         with open(pickle_path, 'rb') as f:
-            df = pickle.load(f)
+            df = pickle.load(f)[:100_000]
         self.data = df
         return self.data
 
@@ -77,6 +79,7 @@ class GeoImg:
         #initiate matrix
         grid_offset = np.array([0, -40.91553277600008,  -74.25559136315213]) # Where do you start
         #from meters to lat/lon step
+        print('4. From meters to coords')
         lat_spacing, lon_spacing = self.from_meters_to_coords(lat_meters, lon_meters )
         grid_spacing = np.array([1, lat_spacing , lon_spacing]) # What's the space you consider (euclidian here)
 
@@ -103,7 +106,8 @@ class GeoImg:
         self.lat_size = a.shape[1]
         self.lon_size = a.shape[2]
         self.indexes = indexes
-        return a, self.lat_size, self.lon_size, self.indexes
+        self.img3D_non_conv = a
+        return self.img3D_non_conv, self.lat_size, self.lon_size, self.indexes
 
 
     def gaussian_filtering(self,img3D,z,x,y):
@@ -111,8 +115,7 @@ class GeoImg:
           Returns img3D convoluted
         '''
         self.img3D_conv = gaussian_filter(img3D, sigma=(z,x,y))
-        return self.simg3D_conv
-
+        return self.img3D_conv
 
 
     def plotting_img3D(self, img3D): #data viz check
@@ -128,21 +131,20 @@ class GeoImg:
       pickle_path = os.path.join(root_dir, 'raw_data', 'img3D-conv.pickle')
 
       with open(pickle_path, 'wb') as f:
-         pickle.dump(self.data, f)
+         pickle.dump(self.img3D_conv, f)
 
     def crime_to_img3D_con(self):
       print("2. Loading data")
       self.load_data()
-      print('3. From meters to coordinates ')
+      print('3. From coords to matrix ')
       lat_meters = 100
       lon_meters = 100
-      self.from_meters_to_coords(lat_meters, lon_meters)
-      print('4. From coordinates to matrix')
       self.from_coord_to_matrix(lat_meters, lon_meters)
       print('5. Gaussian filtering')
-      self.gaussian_filtering(img3D[0], 2,2,2) #to be defined/research
-      return self.lat_size, self.lon_size, self.indexes , self.img3D_conv
+      self.gaussian_filtering(self.img3D_non_conv, 2,2,2) #to be defined/research
+      return self.lat_size, self.lon_size, self.indexes, self.img3D_conv
 
+# to be removed and run in trainer
 
 if __name__ == '__main__':
   print('1. Creating an instance of GeoImg class')
