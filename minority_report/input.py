@@ -14,7 +14,7 @@ class Input:
     #IMG3D filtré
     def load_data(self):
         root_dir = os.path.dirname(os.path.dirname(__file__))
-        pickle_path = os.path.join(root_dir, 'raw_data', 'filtered-image.pickle')
+        pickle_path = os.path.join(root_dir, 'raw_data', 'img3D-conv.pickle')
         with open(pickle_path, 'rb') as f:
             df = pickle.load(f)
         self.img3D_conv = df
@@ -48,9 +48,9 @@ class Input:
         return X, y
 
     def combining_load_data_and_X_y(self, number_of_observations, x_length, y_length):
-        print('1. Creating an Input instance')
+        print('8. Creating an Input instance')
         df = self.load_data()
-        print('2. Loading the data from the filtered image pickle')
+        print('9. Loading the data from the filtered image pickle')
         self.X, self.y = self.get_X_y(df, number_of_observations, x_length, y_length)
         return self.X, self.y
 

@@ -3,6 +3,8 @@ from minority_report.geo_img import GeoImg
 
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras import models
+from tensorflow.keras import layers
 
 class Trainer:
     def __init__(self):
@@ -24,7 +26,7 @@ class Trainer:
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size = 0.2)
         return self.X_train, self.X_test, self.y_train, self.y_test
 
-    def init_model(x_length, y_length, lat_size, lon_size):
+    def init_model(self,x_length, y_length, lat_size, lon_size):
         print('initializing model')
         model = models.Sequential()
         print('adding conv2D 1')
@@ -79,13 +81,13 @@ class Trainer:
     def training_model(self, number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs):
         print('7. Getting X, y from instanciating Trainer class ')
         self.load_data_from_input_class(number_of_observations, x_length, y_length)
-        print('8. Train test split')
+        print('10. Train test split')
         self.holdout()
-        print('9. Init model')
+        print('11. Init model')
         self.init_model(x_length, y_length, lat_size, lon_size)
-        print('10. Fit model')
+        print('12. Fit model')
         self.fit_model(batch_size, epochs)
-        print('11. Evaluate')
+        print('13. Evaluate')
         self.evaluate_model()
         print(self.y_pred)
         return self
