@@ -27,6 +27,7 @@ class GeoImg:
         self.lat_size = None
         self.lon_size = None
         self.indexes = None
+        self.img3D_conv = None
 
     def load_data(self):
         root_dir = os.path.dirname(os.path.dirname(__file__))
@@ -109,30 +110,9 @@ class GeoImg:
         '''
           Returns img3D convoluted
         '''
-        img3D_convoluted = gaussian_filter(img3D, sigma=(z,x,y))
-        # max_lum = img3D_convoluted.max()
-        # for i in range(19):
-        #     plt.imshow(img3D_convoluted[i+1,:,:], cmap='gray', vmin=0, vmax=max_lum)
-        #     plt.show()
-        return img3D_convoluted
+        self.img3D_conv = gaussian_filter(img3D, sigma=(z,x,y))
+        return self.simg3D_conv
 
-    # def from_matrix_to_coord(self,indexes, lat_meters, lon_meters):
-    #     """
-    #     gives back the coordinates from a 3D matrix for a given bucket height and width
-    #     """
-    #     df = self.data.copy()
-
-    #     # Where do you start
-    #     grid_offset = np.array([0, -40.91553277600008,  -74.25559136315213,])
-
-    #     #from meters to lat/lon step
-    #     lat_spacing, lon_spacing = self.from_meters_to_coords(df,lat_meters, lon_meters)
-
-    #     # What's the space you consider (euclidian here)
-    #     grid_spacing = np.array([1, lat_spacing, lon_spacing])
-
-    #     result = grid_offset + indexes * grid_spacing
-    #     return result
 
 
     def plotting_img3D(self, img3D): #data viz check
@@ -145,33 +125,29 @@ class GeoImg:
       Saves clean dataframe to clean data pickle
       '''
       root_dir = os.path.dirname(os.path.dirname(__file__))
-      pickle_path = os.path.join(root_dir, 'raw_data', 'filtered-image.pickle')
+      pickle_path = os.path.join(root_dir, 'raw_data', 'img3D-conv.pickle')
 
       with open(pickle_path, 'wb') as f:
          pickle.dump(self.data, f)
 
+    def crime_to_img3D_con(self):
+      print("2. Loading data")
+      self.load_data()
+      print('3. From meters to coordinates ')
+      lat_meters = 100
+      lon_meters = 100
+      self.from_meters_to_coords(lat_meters, lon_meters)
+      print('4. From coordinates to matrix')
+      self.from_coord_to_matrix(lat_meters, lon_meters)
+      print('5. Gaussian filtering')
+      self.gaussian_filtering(img3D[0], 2,2,2) #to be defined/research
+      return self.lat_size, self.lon_size, self.indexes , self.img3D_conv
 
 
 if __name__ == '__main__':
   print('1. Creating an instance of GeoImg class')
   df = GeoImg()
-
-  print("2. Loading data")
-  df.load_data()
-
-  print('3. From meters to coordinates ')
-  lat_meters = 100
-  lon_meters = 100
-  df.from_meters_to_coords(lat_meters, lon_meters)
-
-  print('4. From coordinates to matrix')
-
-  #verify order
-  img3D, lat_size, lon_size, indexes = df.from_coord_to_matrix(lat_meters, lon_meters)
-
-  print('5. Gaussian filtering')
-  img3Dfiltered = df.gaussian_filtering(img3D[0], 3,3,3) #to be defined
-
+  df.crime_to_img3D_con()
   print('6. Saving image filtered to pickle')
   df.save_data()
 
