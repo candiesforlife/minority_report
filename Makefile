@@ -61,17 +61,17 @@ pypi:
 
 
 
-PROJECT_ID='minority-report-297815'
+PROJECT_ID=minority-report-297815
 BUCKET_NAME=minority-report
 REGION=europe-west1
 
 set_project:
-  -@gcloud config set project ${PROJECT_ID}
+	@gcloud config set project ${PROJECT_ID}
 
 create_bucket:
-  -@gsutil mb -l ${REGION} -p ${PROJECT_ID} gs://${BUCKET_NAME}
+	@gsutil mb -l ${REGION} -p ${PROJECT_ID} gs://${BUCKET_NAME}
 
-# path of the file to upload to gcp (the path of the file should be absolute or should match the directory where the make command is run)
+# # path of the file to upload to gcp (the path of the file should be absolute or should match the directory where the make command is run)
 LOCAL_PATH="/Users/ellynbouscasse/code/candiesforlife/minority_report/raw_data/data.csv" # Replace with your local path to the `train_1k.csv` and make sure to put it between quotes
 
 # bucket directory in which to store the uploaded file (we choose to name this data as a convention)
@@ -82,5 +82,4 @@ BUCKET_FOLDER=data
 BUCKET_FILE_NAME=$(shell basename ${LOCAL_PATH})
 
 upload_data:
-  # -@gsutil cp train_1k.csv gs://wagon-ml-my-bucket-name/data/train_1k.csv
-  -@gsutil cp ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}/${BUCKET_FILE_NAME}
+	@gsutil cp ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}/${BUCKET_FILE_NAME}
