@@ -24,7 +24,6 @@ class Matrix:
         self.sample = None
         self.lat_size = None
         self.lon_size = None
-        self.indexes = None
         self.img3D_conv = None
         self.img3D_non_conv = None
 
@@ -33,7 +32,7 @@ class Matrix:
         root_dir = os.path.dirname(os.path.dirname(__file__))
         pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
         with open(pickle_path, 'rb') as f:
-            df = pickle.load(f)
+            df = pickle.load(f)[:1000]
         self.data = df
         return self.data
 
@@ -99,13 +98,12 @@ class Matrix:
 
         a[Z, Y, X] = 1
 
-        del ind, grid_offset, lat_spacing, lon_spacing, grid_spacing, coords,Z, Y, X
+        del ind, grid_offset, lat_spacing, lon_spacing, grid_spacing, coords,Z, Y, X, indexes
 
         self.lat_size = a.shape[1]
         self.lon_size = a.shape[2]
-        self.indexes = indexes
         self.img3D_non_conv = a
-        return self.img3D_non_conv, self.lat_size, self.lon_size, self.indexes
+        return self.img3D_non_conv, self.lat_size, self.lon_size
 
 
     def gaussian_filtering(self,img3D,z,x,y):
@@ -140,7 +138,7 @@ class Matrix:
       self.from_coord_to_matrix(lat_meters, lon_meters)
       print('5. Gaussian filtering')
       self.gaussian_filtering(self.img3D_non_conv, 2,2,2) #to be defined/research
-      return self.lat_size, self.lon_size, self.indexes, self.img3D_conv
+      return self.lat_size, self.lon_size, self.img3D_conv
 
 
 
