@@ -76,7 +76,7 @@ class Matrix:
         #initiate matrix
         grid_offset = np.array([0, -40.91553277600008,  -74.25559136315213]) # Where do you start
         #from meters to lat/lon step
-        print('4. But before going from coords to matrix, lets go from meters to coords')
+        print('4. But before going from coords to matrix, lets go from meters to steps')
         lat_spacing, lon_spacing = self.from_meters_to_steps(lat_meters, lon_meters )
         grid_spacing = np.array([1, lat_spacing , lon_spacing]) # What's the space you consider (euclidian here)
 
