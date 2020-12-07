@@ -75,7 +75,18 @@ class Trainer:
 
     def predict_model(self):
         self.y_pred = self.model.predict(self.X_test)
+        self.save_y_pred_to_pickle()
         return self.y_pred
+
+    def save_y_pred_to_pickle(self):
+        '''
+        Saves to  y_pred pickler
+        '''
+        root_dir = os.path.dirname(os.path.dirname(__file__))
+        pickle_path = os.path.join(root_dir, 'raw_data', 'y_pred.pickle')
+
+        with open(pickle_path, 'wb') as f:
+            pickle.dump(self.y_pred, f)
 
 
     def training_model(self, number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs, patience):
