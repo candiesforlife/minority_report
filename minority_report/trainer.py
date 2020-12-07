@@ -75,7 +75,6 @@ class Trainer:
 
     def predict_model(self):
         self.y_pred = self.model.predict(self.X_test)
-        self.save_y_pred_to_pickle()
         return self.y_pred
 
     def save_y_pred_to_pickle(self):
@@ -89,6 +88,7 @@ class Trainer:
             pickle.dump(self.y_pred, f)
 
 
+
     def training_model(self, number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs, patience):
         print('7. Getting X, y from instanciating Trainer class ')
         self.load_data_from_input_class(number_of_observations, x_length, y_length)
@@ -100,8 +100,13 @@ class Trainer:
         self.fit_model(batch_size, epochs, patience)
         print('13. Evaluate')
         self.evaluate_model()
-        print(self.y_pred)
+        # print('14. Predict')
+        # self.predict_model()
+        # print('15. Save y_pred to pickle')
+        # self.save_y_pred_to_pickle()
         return self
+
+
 
 if __name__ == '__main__':
     print('1. Creating an instance of Matrix class')

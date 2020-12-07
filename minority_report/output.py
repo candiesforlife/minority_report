@@ -42,11 +42,6 @@ class Output:
         return np.array(results)
 
 
-    def from_coords_to_map(self, series):
-        # to be defined
-        pass
-
-
 
 if __name__ == '__main__':
     print('1. Creating an instance of output class')
