@@ -14,7 +14,7 @@ class Output:
 
     def load_data(self):
         root_dir = os.path.dirname(os.path.dirname(__file__))
-        pickle_path = os.path.join(root_dir, 'raw_data', 'filtered-image.pickle')
+        pickle_path = os.path.join(root_dir, 'raw_data', 'img3D-conv.pickle')
         with open(pickle_path, 'rb') as f:
             df = pickle.load(f)
         self.data = df
@@ -52,6 +52,7 @@ if __name__ == '__main__':
     print('2. Loading data')
     output.load_data()
     print('3. From matrix to coordinates')
+    GeoImg()
     coords = output.from_matrix_to_coord(indexes, lat_meters, lon_meters)
     print(coords)
     print('4. From coords to map')
