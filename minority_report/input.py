@@ -8,17 +8,17 @@ class Input:
     # passer de nos map à notre liste de tensors d'entrainement
 
     def __init__(self):
-        self.data = None
-        self.img = None
+        self.X = None
+        self.y = None
 
     #IMG3D filtré
     def load_data(self):
         root_dir = os.path.dirname(os.path.dirname(__file__))
-        pickle_path = os.path.join(root_dir, 'raw_data', 'filtered-image.pickle')
+        pickle_path = os.path.join(root_dir, 'raw_data', 'img3D-conv.pickle')
         with open(pickle_path, 'rb') as f:
             df = pickle.load(f)
-        self.data = df
-        return self.data
+        self.img3D_conv = df
+        return self.img3D_conv
 
 
     def get_observation_target(self,img3D_conv,x_length, y_length):
@@ -38,7 +38,7 @@ class Input:
         X = []
         y = []
         for n in range(number_of_observations):
-            X_subsample, y_subsample = get_observation_target(img3D_conv, x_length, y_length)
+            X_subsample, y_subsample = self.get_observation_target(img3D_conv, x_length, y_length)
             X.append(X_subsample)
             y.append(y_subsample)
         X = np.array(X)
@@ -47,14 +47,12 @@ class Input:
         del X_subsample, y_subsample, n #pour recuperer de la memoire dans le notebook
         return X, y
 
-if __name__ == '__main__':
-    print('1. Creating an Input instance')
-    input = Input()
-    print('2. Loading the data from the filtered image pickle')
-    input.load_data()
-    # print(input)
-    #get_X_y
-    #train_test_split ici or in Training class
-    #save to pickle => input.pickle
-    print('Finished!')
+    def combining_load_data_and_X_y(self, number_of_observations, x_length, y_length):
+        print('8. Creating an Input instance')
+        df = self.load_data()
+        print('9. Loading the data from the filtered image pickle')
+        self.X, self.y = self.get_X_y(df, number_of_observations, x_length, y_length)
+        return self.X, self.y
+
+
 
