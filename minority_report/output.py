@@ -52,7 +52,7 @@ if __name__ == '__main__':
     print('2. Loading data')
     output.load_data()
     print('3. From matrix to coordinates')
-    GeoImg()
+    Matrix()
     coords = output.from_matrix_to_coord(indexes, lat_meters, lon_meters)
     print(coords)
     print('4. From coords to map')

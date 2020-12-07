@@ -17,7 +17,7 @@ from minority_report.clean_data import CleanData
 from minority_report.scaling import Scaling
 from scipy.ndimage import gaussian_filter
 
-class GeoImg:
+class Matrix:
 
     def __init__(self):
         self.data = None

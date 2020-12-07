@@ -1,5 +1,5 @@
 from minority_report.input import Input
-from minority_report.geo_img import GeoImg
+from minority_report.matrix import Matrix
 
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.callbacks import EarlyStopping
@@ -93,8 +93,8 @@ class Trainer:
         return self
 
 if __name__ == '__main__':
-    print('1. Creating an instance of GeoImg class')
-    df = GeoImg()
+    print('1. Creating an instance of Matrix class')
+    df = Matrix()
     lat_size, lon_size, indexes,img3D_conv = df.crime_to_img3D_con()
     print('6. Saving image filtered 3d convoluted to pickle')
     df.save_data()
