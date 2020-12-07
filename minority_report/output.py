@@ -31,7 +31,7 @@ class Output:
         grid_offset = np.array([0, -40.91553277600008,  -74.25559136315213,])
 
         #from meters to lat/lon step
-        lat_spacing, lon_spacing = self.from_meters_to_coords(df,lat_meters, lon_meters)
+        lat_spacing, lon_spacing = self.from_meters_to_steps(df,lat_meters, lon_meters)
 
         # What's the space you consider (euclidian here)
         grid_spacing = np.array([1, lat_spacing, lon_spacing])

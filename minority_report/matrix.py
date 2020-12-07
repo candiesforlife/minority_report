@@ -37,7 +37,7 @@ class Matrix:
         self.data = df
         return self.data
 
-    def from_meters_to_coords(self,lat_meters, lon_meters):
+    def from_meters_to_steps(self,lat_meters, lon_meters):
         """
         gives the latitude and longitude step to use for the grid buckets
         lat_meters, lon_meters = lat/lon step
@@ -78,7 +78,7 @@ class Matrix:
         grid_offset = np.array([0, -40.91553277600008,  -74.25559136315213]) # Where do you start
         #from meters to lat/lon step
         print('4. But before going from coords to matrix, lets go from meters to coords')
-        lat_spacing, lon_spacing = self.from_meters_to_coords(lat_meters, lon_meters )
+        lat_spacing, lon_spacing = self.from_meters_to_steps(lat_meters, lon_meters )
         grid_spacing = np.array([1, lat_spacing , lon_spacing]) # What's the space you consider (euclidian here)
 
 
