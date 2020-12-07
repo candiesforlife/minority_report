@@ -50,6 +50,8 @@ class CleanData:
       df['period'] = df['period'].apply(lambda x: x.replace(minute = 0, second = 0))
       # filter to post 2007
       df = df[df['period'] > datetime(2006, 12, 31, 23, 59, 0)]
+      #round to day bucker
+      # df['period_by_day'] = df['period'].apply(lambda x: x.replace())
       # drop date and time
       df.drop(columns = ['date', 'time'], inplace = True)
       self.data = df
