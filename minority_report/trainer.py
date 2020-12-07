@@ -78,7 +78,7 @@ class Trainer:
         return self.y_pred
 
 
-    def training_model(self, number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs):
+    def training_model(self, number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs, patience):
         print('7. Getting X, y from instanciating Trainer class ')
         self.load_data_from_input_class(number_of_observations, x_length, y_length)
         print('10. Train test split')
@@ -86,7 +86,7 @@ class Trainer:
         print('11. Init model')
         self.init_model(x_length, y_length, lat_size, lon_size)
         print('12. Fit model')
-        self.fit_model(batch_size, epochs)
+        self.fit_model(batch_size, epochs, patience)
         print('13. Evaluate')
         self.evaluate_model()
         print(self.y_pred)
@@ -96,15 +96,16 @@ if __name__ == '__main__':
     print('1. Creating an instance of GeoImg class')
     df = GeoImg()
     lat_size, lon_size, indexes,img3D_conv = df.crime_to_img3D_con()
-    print('6. Saving image filtered to pickle')
+    print('6. Saving image filtered 3d convoluted to pickle')
     df.save_data()
     x_length = 24 #24h avant
     y_length = 3 #3h apres
     number_of_observations = 50 #50 observations
     batch_size = 32
     epochs = 100
+    patience = 5
     trainer = Trainer()
-    trainer.training_model(number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs)
+    trainer.training_model(number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs, patience)
 
 
 
