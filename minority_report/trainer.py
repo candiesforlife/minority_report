@@ -60,8 +60,8 @@ class Trainer:
         self.model = model
         return self.model
 
-    def fit_model(self,batch_size, epochs):
-        es = EarlyStopping(patience = 5, restore_best_weights=True)
+    def fit_model(self,batch_size, epochs, patience):
+        es = EarlyStopping(patience = patience, restore_best_weights=True)
         self.model.fit(self.X_train, self.y_train,
                       batch_size = batch_size,
                       epochs = epochs,

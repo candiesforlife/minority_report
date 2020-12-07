@@ -12,8 +12,6 @@ from shapely.geometry import Point
 
 from skimage import io, color
 from scipy.ndimage import gaussian_filter
-# from shapely.geometry import Point
-# from geopandas import GeoSeries
 
 from minority_report.clean_data import CleanData
 from minority_report.scaling import Scaling
@@ -143,15 +141,6 @@ class GeoImg:
       print('5. Gaussian filtering')
       self.gaussian_filtering(self.img3D_non_conv, 2,2,2) #to be defined/research
       return self.lat_size, self.lon_size, self.indexes, self.img3D_conv
-
-# # to be removed and run in trainer
-
-# if __name__ == '__main__':
-#   print('1. Creating an instance of GeoImg class')
-#   df = GeoImg()
-#   df.crime_to_img3D_con()
-#   print('6. Saving image filtered to pickle')
-#   df.save_data()
 
 
 

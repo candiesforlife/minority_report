@@ -72,6 +72,7 @@ LOCAL_PATH="/Users/ellynbouscasse/code/candiesforlife/minority_report/raw_data/d
 # bucket directory in which to store the uploaded file (we choose to name this data as a convention)
 BUCKET_FOLDER=data
 
+BUCKET_TRAINING_FOLDER=training_folder
 # name for the uploaded file inside the bucket folder (here we choose to keep the name of the uploaded file)
 # BUCKET_FILE_NAME=another_file_name_if_I_so_desire.csv
 BUCKET_FILE_NAME=$(shell basename ${LOCAL_PATH})
