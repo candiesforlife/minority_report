@@ -95,7 +95,7 @@ class Trainer:
 if __name__ == '__main__':
     print('1. Creating an instance of Matrix class')
     df = Matrix()
-    lat_size, lon_size, indexes,img3D_conv = df.crime_to_img3D_con()
+    lat_size, lon_size,img3D_conv = df.crime_to_img3D_con()
     print('6. Saving image filtered 3d convoluted to pickle')
     df.save_data()
     x_length = 24 #24h avant

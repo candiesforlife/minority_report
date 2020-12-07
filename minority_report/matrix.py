@@ -32,7 +32,7 @@ class Matrix:
         root_dir = os.path.dirname(os.path.dirname(__file__))
         pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
         with open(pickle_path, 'rb') as f:
-            df = pickle.load(f)[:1000]
+            df = pickle.load(f)
         self.data = df
         return self.data
 
