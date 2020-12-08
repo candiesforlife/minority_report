@@ -93,5 +93,22 @@ class Input:
         return self.X, self.y
 
 
+    def save_data(self):
+      '''
+      Saves clean dataframe to clean data pickle
+      '''
+      root_dir = os.path.dirname(os.path.dirname(__file__))
+      x_train_pickle_path = os.path.join(root_dir, 'raw_data', 'x_train.pickle')
+      y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'x_train.pickle')
+
+
+      with open(x_train_pickle_path, 'wb') as f:
+         pickle.dump(self.X, f)
+
+      with open(y_train_pickle_path, 'wb') as f:
+         pickle.dump(self.y, f)
+
+
+
 
 

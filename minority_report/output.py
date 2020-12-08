@@ -43,6 +43,7 @@ class Output:
 
 
 
+
 if __name__ == '__main__':
     print('1. Creating an instance of output class')
     output = Output()
