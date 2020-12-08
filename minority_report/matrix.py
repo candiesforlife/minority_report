@@ -112,6 +112,7 @@ class Matrix:
         #sigma 2 => 4x, 4y, et 4temps
         return parameter_one_dimension / 2
 
+    #need to split x, y before passing on the gaussian filtering
     def gaussian_filtering(self,img3D,raw_z,raw_x,raw_y):
         '''
           Returns img3D convoluted
