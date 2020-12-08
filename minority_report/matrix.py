@@ -74,7 +74,7 @@ class Matrix:
 
         df['time_index'] = df['period'].map(ind)
         #initiate matrix
-        grid_offset = np.array([0, -40.91553277600008,  -74.25559136315213]) # Where do you start
+        grid_offset = np.array([ -sample['latitude'].max() , sample['longitude'].min(), 0 ]) # Where do you start
         #from meters to lat/lon step
         print('4. But before going from coords to matrix, lets go from meters to steps')
         lat_spacing, lon_spacing = self.from_meters_to_steps(lat_meters, lon_meters )
