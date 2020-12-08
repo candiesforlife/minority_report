@@ -26,11 +26,13 @@ class Matrix:
         self.lon_size = None
         self.img3D_conv = None
         self.img3D_non_conv = None
+        self.lat_meters = None
+        self.lon_meters = None
 
 
     def load_data(self):
         root_dir = os.path.dirname(os.path.dirname(__file__))
-        pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
+        pickle_path = os.path.join(root_dir, 'raw_data', 'clean-75-precinct.pickle')
         with open(pickle_path, 'rb') as f:
             df = pickle.load(f)
         self.data = df
@@ -68,6 +70,8 @@ class Matrix:
         """
         outputs the 3D matrix of all coordinates for a given bucket height and width in meters
         """
+        self.lat_meters = lat_meters
+        self.lon_meters = lon_meters
         df = self.data.copy()
         #add 'time_index' column to df
         ind = {time:index for index,time in enumerate(np.sort(df['period'].unique()))}
@@ -77,7 +81,7 @@ class Matrix:
         grid_offset = np.array([ -sample['latitude'].max() , sample['longitude'].min(), 0 ]) # Where do you start
         #from meters to lat/lon step
         print('4. But before going from coords to matrix, lets go from meters to steps')
-        lat_spacing, lon_spacing = self.from_meters_to_steps(lat_meters, lon_meters )
+        lat_spacing, lon_spacing = self.from_meters_to_steps(self.lat_meters, self.lon_meters )
         grid_spacing = np.array([1, lat_spacing , lon_spacing]) # What's the space you consider (euclidian here)
 
 
@@ -98,31 +102,28 @@ class Matrix:
 
         a[Z, Y, X] = 1
 
-        del ind, grid_offset, lat_spacing, lon_spacing, grid_spacing, coords,Z, Y, X, indexes
-
         self.lat_size = a.shape[1]
         self.lon_size = a.shape[2]
         self.img3D_non_conv = a
-        return self.img3D_non_conv, self.lat_size, self.lon_size
+        return self.img3D_non_conv
 
 
+    def getting_sigma_values(self, raw_x, raw_y, raw_z):
+         '''
+          Returns sigma values for the three dimensions, useful later for gaussian filtering.
+        '''
+        sigma_x = (raw_x / self.lat_meters) / 2
+        sigma_y = (raw_y / self.lon_meters) / 2
+        sigma_z = raw_z / 2
+        return sigma_x, sigma_y, sigma_z
 
 
-    def getting_sigma_values(self, parameter_one_dimension):
-        # time parameter will be in hour already
-        #sigma 1 => 2 x, 2y et 2temps (NB: on prendmoitie du cercle mais se rappeler que cela s'etend de chaque cote.)
-        #sigma 2 => 4x, 4y, et 4temps
-        return parameter_one_dimension / 2
-
-    #need to split x, y before passing on the gaussian filtering
     def gaussian_filtering(self,img3D,raw_x,raw_y, raw_z,):
         '''
           Returns img3D convoluted
         '''
-        # x = self.getting_sigma_values(raw_x)
-        # y = self.getting_sigma_values(raw_y)
-        # z = self.getting_sigma_values(raw_z)
-        self.img3D_conv = gaussian_filter(img3D, sigma=(raw_x,raw_y,raw_z))
+        sigma_x, sigma_y, sigma_z = self.getting_sigma_values(raw_x, raw_y, raw_z)
+        self.img3D_conv = gaussian_filter(img3D, sigma=(sigma_x,sigma_y,sigma_z))
         return self.img3D_conv
 
 
@@ -141,15 +142,13 @@ class Matrix:
       with open(pickle_path, 'wb') as f:
          pickle.dump(self.img3D_conv, f)
 
-    def crime_to_img3D_con(self):
+    def crime_to_img3D_con(self, lat_meters, lon_meters, raw_x, raw_y, raw_z):
       print("2. Loading data")
       self.load_data()
       print('3. From coords to matrix ')
-      lat_meters = 100
-      lon_meters = 100
       self.from_coord_to_matrix(lat_meters, lon_meters)
       print('5. Gaussian filtering')
-      self.gaussian_filtering(self.img3D_non_conv, 2,2,2) #to be defined/research
+      self.gaussian_filtering(self.img3D_non_conv, raw_x,raw_y,raw_z) #to be defined/research
       return self.lat_size, self.lon_size, self.img3D_conv
 
 

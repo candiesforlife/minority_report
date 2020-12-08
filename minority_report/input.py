@@ -5,13 +5,11 @@ import numpy as np
 import pickle
 
 class Input:
-    # passer de nos map à notre liste de tensors d'entrainement
 
     def __init__(self):
         self.X = None
         self.y = None
 
-    #IMG3D filtré
     def load_data(self):
         root_dir = os.path.dirname(os.path.dirname(__file__))
         pickle_path = os.path.join(root_dir, 'raw_data', 'img3D-conv.pickle')
@@ -21,6 +19,9 @@ class Input:
         return self.img3D_conv
 
     def stacking(self, img3D, window, lat_step, lon_step, time_step):
+        '''
+            Returns stacked crimes.
+        '''
         grid_offset = np.array([0,0,0]) # Where do you start
         #new steps from precise grid
         grid_spacing = np.array([lat_step , lon_step, time_step])
@@ -34,13 +35,13 @@ class Input:
         Y = indexes[:,1]
         Z = indexes[:,2]
         #virgin matrix
-        a = np.zeros((int(img3D.shape[0]/lat_step)+2, int(img3D.shape[1]/lon_step)+2,Z.max()+2))
+        stacked_crimes = np.zeros((int(img3D.shape[0]/lat_step)+2, int(img3D.shape[1]/lon_step)+2,Z.max()+2))
         for i in range(len(indexes)):
-            if a[X[i], Y[i], Z[i]] == 0:
-                a[X[i], Y[i], Z[i]] = values[i]
+            if stacked_crimes[X[i], Y[i], Z[i]] == 0:
+                stacked_crimes[X[i], Y[i], Z[i]] = values[i]
             else:
-                a[X[i], Y[i], Z[i]] += values[i]
-        return a
+                stacked_crimes[X[i], Y[i], Z[i]] += values[i]
+        return stacked_crimes
 
 
     def get_observation_target(self,img3D,
@@ -50,19 +51,17 @@ class Input:
         output an observation of x_length consecutive images and the y_length next images as the target
         obs_step, obs_timeframe, target_step, target_timeframe : unit = hours
         '''
-        #function from raw to hours
+
         length = obs_timeframe + target_timeframe
         position = np.random.randint(0, img3D_conv.shape[2] - length)
         subsample = img3D[:, :, position : position + length]
-        #print(subsample.shape)
+
         observations, targets = np.split(subsample,[obs_timeframe], axis=2) # divide the subsample in X and y
-        #print(observations.shape)
-        #print(observations.min(), observations.max())
+
         observation = stacking(img3D, observations, obs_lat, obs_lon, obs_time) #get stacked hours for all images
-        print(observation.shape)
-        #print (targets.shape)
+
         target = stacking(img3D, targets,  tar_lat, tar_lon, tar_time )
-        print(target.shape)
+
         return observation, target
 
 
@@ -74,11 +73,13 @@ class Input:
         X = []
         y = []
         for n in range(nb_observations):
+            print(f'Creating observation {n} out of {nb_observations}')
             X_subsample, y_subsample = get_observation_target(img3D_conv,
                                            obs_tf,obs_lat,obs_lon, obs_time,
                                            tar_tf,  tar_lat,tar_lon, tar_time)
             X.append(X_subsample)
             y.append(y_subsample)
+
         X = np.array(X)
         y = np.array(y)
         self.X = X
@@ -98,14 +99,14 @@ class Input:
       Saves clean dataframe to clean data pickle
       '''
       root_dir = os.path.dirname(os.path.dirname(__file__))
-      x_train_pickle_path = os.path.join(root_dir, 'raw_data', 'x_train.pickle')
-      y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'x_train.pickle')
+      X_pickle_path = os.path.join(root_dir, 'raw_data', 'x.pickle')
+      y_pickle_path = os.path.join(root_dir, 'raw_data', 'y.pickle')
 
 
-      with open(x_train_pickle_path, 'wb') as f:
+      with open(X_pickle_path, 'wb') as f:
          pickle.dump(self.X, f)
 
-      with open(y_train_pickle_path, 'wb') as f:
+      with open(y_pickle_path, 'wb') as f:
          pickle.dump(self.y, f)
 
 
