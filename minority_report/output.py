@@ -1,10 +1,7 @@
 import os
-
 import pandas as pd
-import os
 import pickle
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
 class Output:
@@ -40,6 +37,7 @@ class Output:
           result = grid_offset + indexes * grid_spacing
           results.append(result)
         return np.array(results)
+
 
 
 

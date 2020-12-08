@@ -1,10 +1,22 @@
+
+import os
+import pandas as pd
+import numpy as np
+import pickle
+import itertools
+
+import matplotlib.pyplot as plt
+
+from datetime import datetime
+from scipy.ndimage import gaussian_filter
+
 from minority_report.input import Input
 from minority_report.matrix import Matrix
 
 from sklearn.model_selection import train_test_split
+
 from tensorflow.keras.callbacks import EarlyStopping
-from tensorflow.keras import models
-from tensorflow.keras import layers
+from tensorflow.keras import models, layers
 
 class Trainer:
     def __init__(self):
@@ -27,40 +39,33 @@ class Trainer:
         return self.X_train, self.X_test, self.y_train, self.y_test
 
     def init_model(self,x_length, y_length, lat_size, lon_size):
+
+
         print('initializing model')
         model = models.Sequential()
-        print('adding conv2D 1')
-        model.add(layers.Conv2D(16, kernel_size = 5, activation = 'relu',padding='same',
-                                input_shape = (x_length, lat_size, lon_size),
-                               data_format='channels_first'))
-        model.add(layers.MaxPooling2D(2, data_format='channels_first'))
-        print('adding conv2D 2')
-        model.add(layers.Conv2D(128, kernel_size = 3, activation = 'relu', padding='same',  data_format='channels_first'))
-        model.add(layers.MaxPooling2D(2, data_format='channels_first'))
-        print('adding conv2D 3')
-        model.add(layers.Conv2D(64, kernel_size = 3, activation = 'relu', padding='same', data_format='channels_first' ))
-        model.add(layers.MaxPooling2D(2, data_format='channels_first'))
-        print('flattening')
+        print('adding conv3D 1')
+        model.add(layers.Conv3D(64, kernel_size = (4,4,4), activation = 'relu', padding='same',
+                            input_shape = (64, 22, 8,1)))
+
+        print('adding MaxPooling')
+
+        model.add(layers.MaxPooling3D(2))
+        print('Flattening')
         model.add(layers.Flatten())
-        print('adding dense layer 1')
-        model.add(layers.Dense(50, activation = 'relu'))
-        print('adding dense layer 2')
-        model.add(layers.Dense(500, activation = 'relu'))
-        #print('adding dense layer 2')
-        #model.add(layers.Dropout(rate=0.5))
-        print('adding dense layer 3')
-        model.add(layers.Dense(y_length * lat_size * lon_size, activation = 'relu'))
+        print('Adding Dense Layer')
+        model.add(layers.Dense(64*22*4, activation = 'relu'))
         print('Reshaping')
-        model.add(layers.Reshape((y_length, lat_size, lon_size)))
-        print('compiling')
-        model.compile(loss = 'mse',
-                      optimizer = 'adam',
-                      metrics = 'mae')
+        model.add(layers.Reshape((64,22,4)))
+        print('Compiling')
+        model.compile(loss ='mse',
+                     optimizer='adam',
+                     metrics='mae')
         print('Done !')
         self.model = model
         return self.model
 
     def fit_model(self,batch_size, epochs, patience):
+        self.X_train = self.X_train.reshape(-1, self.X_train.shape[1], self.X_train.shape[2], self.X_train.shape[2], 1)
         es = EarlyStopping(patience = patience, restore_best_weights=True)
         self.model.fit(self.X_train, self.y_train,
                       batch_size = batch_size,
@@ -73,7 +78,8 @@ class Trainer:
         result = self.model.evaluate(self.X_test, self.y_test)
         return result
 
-    def predict_model(self):
+    def predict_model(self,):
+        self.X_test = self.X_test.reshape(-1, self.X_test.shape[1], self.X_test.shape[2], self.X_test.shape[2], 1)
         self.y_pred = self.model.predict(self.X_test)
         return self.y_pred
 
@@ -110,10 +116,14 @@ class Trainer:
 
 if __name__ == '__main__':
     print('1. Creating an instance of Matrix class')
-    df = Matrix()
-    lat_size, lon_size,img3D_conv = df.crime_to_img3D_con()
-    print('6. Saving image filtered 3d convoluted to pickle')
-    df.save_data()
+    matrix = Matrix()
+    print('2. Defining our lat_meters and lon_meters')
+    lat_meters, lon_meters = 10,8
+    print('3. Defining our lat_meters and lon_meters')
+    raw_x, raw_y, raw_z = 2,2,2
+    lat_size, lon_size, img3D_conv = matrix.crime_to_img3D_con(lat_meters, lon_meters, raw_x, raw_y, raw_z)
+    print('7. Saving image filtered 3d convoluted to pickle')
+    matrix.save_data()
     x_length = 24 #24h avant
     y_length = 3 #3h apres
     number_of_observations = 50 #50 observations

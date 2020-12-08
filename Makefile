@@ -72,7 +72,7 @@ LOCAL_PATH="/Users/ellynbouscasse/code/candiesforlife/minority_report/raw_data/d
 # bucket directory in which to store the uploaded file (we choose to name this data as a convention)
 BUCKET_FOLDER=data
 
-BUCKET_TRAINING_FOLDER=training_folder
+BUCKET_TRAINING_FOLDER=minority-report
 # name for the uploaded file inside the bucket folder (here we choose to keep the name of the uploaded file)
 # BUCKET_FILE_NAME=another_file_name_if_I_so_desire.csv
 BUCKET_FILE_NAME=$(shell basename ${LOCAL_PATH})
@@ -81,7 +81,7 @@ PYTHON_VERSION=3.7
 FRAMEWORK=scikit-learn
 RUNTIME_VERSION=1.15
 
-PACKAGE_NAME=minority-report
+PACKAGE_NAME=minority_report
 FILENAME=trainer
 
 
@@ -110,7 +110,9 @@ gcp_submit_training:
 		--python-version=${PYTHON_VERSION} \
 		--runtime-version=${RUNTIME_VERSION} \
 		--region ${REGION} \
-		--stream-logs
+		--stream-logs\
+		--scale-tier CUSTOM \
+    --master-machine-type n1-standard-16
 
 clean:
 	@rm -f */version.txt
