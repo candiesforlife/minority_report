@@ -31,20 +31,22 @@ class Input:
         del position #pour recuperer de la memoire dans le notebook
         return observation, target
 
-    def get_X_y(self,img3D_conv, number_of_observations, x_length, y_length):
+
+    def get_X_y(self,img3D_conv, nb_observations, obs_tf,obs_lat,obs_lon, obs_time,
+                    tar_tf, tar_lat,tar_lon, tar_time):
         '''
         outputs n observations and their associated targets
         '''
         X = []
         y = []
-        for n in range(number_of_observations):
-            X_subsample, y_subsample = self.get_observation_target(img3D_conv, x_length, y_length)
+        for n in range(nb_observations):
+            X_subsample, y_subsample = get_observation_target(img3D_conv,
+                                           obs_tf,obs_lat,obs_lon, obs_time,
+                                           tar_tf,  tar_lat,tar_lon, tar_time)
             X.append(X_subsample)
             y.append(y_subsample)
         X = np.array(X)
         y = np.array(y)
-
-        del X_subsample, y_subsample, n #pour recuperer de la memoire dans le notebook
         return X, y
 
     def combining_load_data_and_X_y(self, number_of_observations, x_length, y_length):
