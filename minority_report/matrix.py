@@ -21,7 +21,6 @@ class Matrix:
 
     def __init__(self):
         self.data = None
-        self.sample = None
         self.lat_size = None
         self.lon_size = None
         self.img3D_conv = None
@@ -66,50 +65,89 @@ class Matrix:
 
         return latO, lonO
 
+    # def from_coord_to_matrix(self, lat_meters, lon_meters):
+    #     """
+    #     outputs the 3D matrix of all coordinates for a given bucket height and width in meters
+    #     # """
+        # self.lat_meters = lat_meters
+        # self.lon_meters = lon_meters
+        # df = self.data.copy()
+        # #add 'time_index' column to df
+        # ind = {time:index for index,time in enumerate(np.sort(df['period'].unique()))}
+
+        # df['time_index'] = df['period'].map(ind)
+        # #initiate matrix
+        # grid_offset = np.array([ -df['latitude'].max() , df['longitude'].min(), 0 ]) # Where do you start
+        # #from meters to lat/lon step
+        # print('4. But before going from coords to matrix, lets go from meters to steps')
+        # lat_spacing, lon_spacing = self.from_meters_to_steps(self.lat_meters, self.lon_meters )
+        # grid_spacing = np.array([1, lat_spacing , lon_spacing]) # What's the space you consider (euclidian here)
+
+
+        # #get points coordinates
+        # coords = np.array([(t_ind, -lat, lon) for t_ind, lat, lon \
+        #                in zip(df['time_index'],df['latitude'],df['longitude'])])
+
+
+        # # Convert point to index
+        # indexes = np.round((coords - grid_offset)/grid_spacing).astype('int')
+
+        # Z = indexes[:,0]
+        # Y = indexes[:,1]
+        # X = indexes[:,2]
+
+        # #virgin matrix
+        # a = np.zeros((Z.max()+1, Y.max()+1, X.max()+1))
+
+        # a[Z, Y, X] = 1
+
+        # self.lat_size = a.shape[1]
+        # self.lon_size = a.shape[2]
+        # self.img3D_non_conv = a
+        # return self.img3D_non_conv
+
     def from_coord_to_matrix(self, lat_meters, lon_meters):
         """
         outputs the 3D matrix of all coordinates for a given bucket height and width in meters
         """
         self.lat_meters = lat_meters
         self.lon_meters = lon_meters
-        df = self.data.copy()
+        df=self.data.copy()
         #add 'time_index' column to df
         ind = {time:index for index,time in enumerate(np.sort(df['period'].unique()))}
-
         df['time_index'] = df['period'].map(ind)
+        #print(df.groupby('time_index').count())
         #initiate matrix
-        grid_offset = np.array([ -sample['latitude'].max() , sample['longitude'].min(), 0 ]) # Where do you start
+        #40.49611539518921, 40.91553277600008, -74.25559136315213,-73.70000906387347) : NYC boundaries
+        #([40.56952999448672, 40.73912795313436],[-74.04189660705046, -73.83355923946421]) : brooklyn boundaries
+        #[40.6218192717505, 40.6951504231971],[-73.90404639808888, -73.83559344190869]) :precinct 75 boundaries
+        grid_offset = np.array([ -df['latitude'].max() , df['longitude'].min(), 0 ]) # Where do you start
         #from meters to lat/lon step
-        print('4. But before going from coords to matrix, lets go from meters to steps')
         lat_spacing, lon_spacing = self.from_meters_to_steps(self.lat_meters, self.lon_meters )
-        grid_spacing = np.array([1, lat_spacing , lon_spacing]) # What's the space you consider (euclidian here)
-
-
+        grid_spacing = np.array([lat_spacing , lon_spacing, 1 ]) # What's the space you consider (euclidian here)
         #get points coordinates
-        coords = np.array([(t_ind, -lat, lon) for t_ind, lat, lon \
-                       in zip(df['time_index'],df['latitude'],df['longitude'])])
-
+        coords = np.array([( -lat, lon,t_ind) for lat, lon,t_ind \
+                       in zip(df['latitude'],df['longitude'],df['time_index'])])
 
         # Convert point to index
         indexes = np.round((coords - grid_offset)/grid_spacing).astype('int')
-
-        Z = indexes[:,0]
+        X = indexes[:,0]
         Y = indexes[:,1]
-        X = indexes[:,2]
+        Z = indexes[:,2]
 
         #virgin matrix
-        a = np.zeros((Z.max()+1, Y.max()+1, X.max()+1))
-
-        a[Z, Y, X] = 1
+        a = np.zeros((X.max()+1, Y.max()+1, Z.max()+1))
+        a[X, Y, Z] = 1
 
         self.lat_size = a.shape[1]
         self.lon_size = a.shape[2]
         self.img3D_non_conv = a
+
         return self.img3D_non_conv
 
 
     def getting_sigma_values(self, raw_x, raw_y, raw_z):
-         '''
+        '''
           Returns sigma values for the three dimensions, useful later for gaussian filtering.
         '''
         sigma_x = (raw_x / self.lat_meters) / 2
