@@ -13,7 +13,6 @@ class CleanData:
     def __init__(self):
       # loads core dataframe
       self.data = NYPD().get_data()
-
     #  1.
     def drop_nan(self):
       '''
@@ -468,15 +467,24 @@ class CleanData:
       return self.data
 
 
+
+
     def save_data(self):
       '''
       Saves clean dataframe to clean data pickle
       '''
       root_dir = os.path.dirname(os.path.dirname(__file__))
       pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
+      precinct_75_pickle_path = os.path.join(root_dir, 'raw_data', 'clean-75-precinct.pickle')
+      df_precinct_75 = self.data[self.data['precinct_number'] == 75]
 
       with open(pickle_path, 'wb') as f:
          pickle.dump(self.data, f)
+
+      with open(precinct_75_pickle_path, 'wb') as f:
+         pickle.dump(df_precinct_75, f)
+
+
 
 
 if __name__ == '__main__':
