@@ -3,19 +3,14 @@ import pandas as pd
 import os
 import pickle
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
-
 from datetime import datetime
-from shapely.geometry import Point
-
-from skimage import io, color
 from scipy.ndimage import gaussian_filter
 
 from minority_report.clean_data import CleanData
 from minority_report.scaling import Scaling
-from scipy.ndimage import gaussian_filter
+
 
 class Matrix:
 
@@ -32,6 +27,9 @@ class Matrix:
     def load_data(self):
         root_dir = os.path.dirname(os.path.dirname(__file__))
         pickle_path = os.path.join(root_dir, 'raw_data', 'clean-75-precinct.pickle')
+
+        # gcp_pickle_path = 'clean-75-precinct.pickle'
+
         with open(pickle_path, 'rb') as f:
             df = pickle.load(f)
         self.data = df
@@ -181,11 +179,11 @@ class Matrix:
          pickle.dump(self.img3D_conv, f)
 
     def crime_to_img3D_con(self, lat_meters, lon_meters, raw_x, raw_y, raw_z):
-      print("2. Loading data")
+      print("4. Loading data")
       self.load_data()
-      print('3. From coords to matrix ')
+      print('5. From coords to matrix ')
       self.from_coord_to_matrix(lat_meters, lon_meters)
-      print('5. Gaussian filtering')
+      print('6. Gaussian filtering')
       self.gaussian_filtering(self.img3D_non_conv, raw_x,raw_y,raw_z) #to be defined/research
       return self.lat_size, self.lon_size, self.img3D_conv
 
