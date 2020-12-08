@@ -106,10 +106,20 @@ class Matrix:
         return self.img3D_non_conv, self.lat_size, self.lon_size
 
 
-    def gaussian_filtering(self,img3D,z,x,y):
+    def getting_sigma_values(self, parameter_one_dimension):
+        # time parameter will be in hour already
+        #sigma 1 => 2 x, 2y et 2temps (NB: on prendmoitie du cercle mais se rappeler que cela s'etend de chaque cote.)
+        #sigma 2 => 4x, 4y, et 4temps
+        return parameter_one_dimension / 2
+
+    def gaussian_filtering(self,img3D,raw_z,raw_x,raw_y):
         '''
           Returns img3D convoluted
         '''
+        x = self.getting_sigma_values(raw_x)
+        y = self.getting_sigma_values(raw_y)
+        z = self.getting_sigma_values(raw_z)
+
         self.img3D_conv = gaussian_filter(img3D, sigma=(z,x,y))
         return self.img3D_conv
 
