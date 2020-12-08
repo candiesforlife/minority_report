@@ -8,7 +8,12 @@ matplotlib
 # data science
 numpy
 pandas
+datetime
+pickle
 scikit-learn
+scipy
+itertools
+
 
 # tests/linter
 black
@@ -32,6 +37,5 @@ termcolor
 # encoding packages
 compiler
 
-geopandas
-pygeos
+os
 
