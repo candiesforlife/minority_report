@@ -21,14 +21,26 @@ class Input:
         return self.img3D_conv
 
 
-    def get_observation_target(self,img3D_conv,x_length, y_length):
+    def get_observation_target(self,img3D,
+                           obs_timeframe,obs_lat,obs_lon, obs_time,
+                           target_timeframe,  tar_lat,tar_lon, tar_time):
         '''
         output an observation of x_length consecutive images and the y_length next images as the target
+        obs_step, obs_timeframe, target_step, target_timeframe : unit = hours
         '''
-        position = np.random.randint(0,img3D_conv.shape[0]-(x_length + y_length))
-        observation = img3D_conv[position:position+ x_length]
-        target = img3D_conv[position+ x_length:position + (x_length + y_length)]
-        del position #pour recuperer de la memoire dans le notebook
+        #function from raw to hours
+        length = obs_timeframe + target_timeframe
+        position = np.random.randint(0, img3D_conv.shape[2] - length)
+        subsample = img3D[:, :, position : position + length]
+        #print(subsample.shape)
+        observations, targets = np.split(subsample,[obs_timeframe], axis=2) # divide the subsample in X and y
+        #print(observations.shape)
+        #print(observations.min(), observations.max())
+        observation = stacking(img3D, observations, obs_lat, obs_lon, obs_time) #get stacked hours for all images
+        print(observation.shape)
+        #print (targets.shape)
+        target = stacking(img3D, targets,  tar_lat, tar_lon, tar_time )
+        print(target.shape)
         return observation, target
 
 
@@ -47,7 +59,9 @@ class Input:
             y.append(y_subsample)
         X = np.array(X)
         y = np.array(y)
-        return X, y
+        self.X = X
+        self.y = y
+        return self.X, self.y
 
     def combining_load_data_and_X_y(self, number_of_observations, x_length, y_length):
         print('8. Creating an Input instance')
