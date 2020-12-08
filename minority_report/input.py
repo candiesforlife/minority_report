@@ -20,6 +20,28 @@ class Input:
         self.img3D_conv = df
         return self.img3D_conv
 
+    def stacking(self, img3D, window, lat_step, lon_step, time_step):
+        grid_offset = np.array([0,0,0]) # Where do you start
+        #new steps from precise grid
+        grid_spacing = np.array([lat_step , lon_step, time_step])
+        #get points coordinates
+        coords = np.argwhere(window)
+        flat = window.flatten()
+        values = flat[flat !=0]
+        # Convert point to index
+        indexes = np.round((coords - grid_offset)/grid_spacing).astype('int')
+        X = indexes[:,0]
+        Y = indexes[:,1]
+        Z = indexes[:,2]
+        #virgin matrix
+        a = np.zeros((int(img3D.shape[0]/lat_step)+2, int(img3D.shape[1]/lon_step)+2,Z.max()+2))
+        for i in range(len(indexes)):
+            if a[X[i], Y[i], Z[i]] == 0:
+                a[X[i], Y[i], Z[i]] = values[i]
+            else:
+                a[X[i], Y[i], Z[i]] += values[i]
+        return a
+
 
     def get_observation_target(self,img3D,
                            obs_timeframe,obs_lat,obs_lon, obs_time,
