@@ -223,7 +223,7 @@ class Matrix:
         sample_length = obs_timeframe + (self.raw_z + 1) + target_timeframe
 
         # finds starting position
-        position = np.random.randint(0, img3D.shape[2] - sample_length)
+        position = np.random.randint(0, self.img3D_non_conv_train.shape[2] - sample_length)
 
         # samples in train and test dfs
         subsample = img3D[:, :, position : position + sample_length]
@@ -380,7 +380,7 @@ class Matrix:
         sample_length = obs_timeframe + (self.raw_z + 1) + target_timeframe
 
         # finds starting position
-        position = np.random.randint(0, img3D.shape[2] - sample_length)
+        position = np.random.randint(0, self.img3D_non_conv_test.shape[2] - sample_length)
 
         # samples in train and test dfs
         subsample = img3D[:, :, position : position + sample_length]
@@ -460,30 +460,44 @@ class Matrix:
     #          pickle.dump(self.img3D_conv_test, f)
 
 
-    def crime_to_img3D_con(self, lat_meters, lon_meters, raw_x, raw_y, raw_z):
+    def preprocessing_X_y(self, lat_meters, lon_meters, raw_x, raw_y, raw_z, nb_observations,
+     obs_tf, obs_lat, obs_lon, obs_time,
+     tar_tf, tar_lat,tar_lon, tar_time):
+        '''
+        Takes crime row in original dataframe,
+        passes through grid, gaussian filter and stacking.
+        Returns X and y (both train and test).'''
 
-      print("4. Loading data")
-      self.load_data()
+        print("4. Loading data")
+        self.load_data()
 
-      print('5. Splitting into Train and Test Dataframe')
-      self.train_test_df()
+        print('5. Splitting into Train and Test Dataframe')
+        self.train_test_df()
 
-      print('6a. From coords to matrix: train')
-      self.from_coord_to_matrix_train(lat_meters, lon_meters)
+        print('6a. From coords to matrix: train')
+        self.from_coord_to_matrix_train(lat_meters, lon_meters)
 
-      print('6b. From coords to matrix: test')
-      self.from_coord_to_matrix_test(lat_meters, lon_meters)
+        print('6b. From coords to matrix: test')
+        self.from_coord_to_matrix_test(lat_meters, lon_meters)
 
-      print('7. Getting sigma values for Gaussian filter')
-      self.getting_sigma_values(raw_x, raw_y, raw_z)
+        print('7. Getting sigma values for Gaussian filter')
+        self.getting_sigma_values(raw_x, raw_y, raw_z)
 
-      print('8a. Gaussian filtering: Train')
-      self.gaussian_filtering_train()
+        print('8a. Gaussian filtering: Train')
+        self.gaussian_filtering_train()
 
-      print('8b. Gaussian filtering: Test')
-      self.gaussian_filtering_test()
+        print('8b. Gaussian filtering: Test')
+        self.gaussian_filtering_test()
 
-      return self.img3D_conv_train, self.img3D_conv_test
+        print('9a. Getting X, y Train')
+        self.get_X_y_train(nb_observations, obs_tf,obs_lat,obs_lon, obs_time,
+                    tar_tf, tar_lat,tar_lon, tar_time)
+
+        print('9b. Getting X, y Test')
+        self.get_X_y_test(nb_observations, obs_tf,obs_lat,obs_lon, obs_time,
+                    tar_tf, tar_lat,tar_lon, tar_time)
+
+        return self.X_train, self.y_train, self.X_test, self.y_test
 
 
 
