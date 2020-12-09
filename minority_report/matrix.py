@@ -24,6 +24,9 @@ class Matrix:
         self.lon_meters = None
         self.train_df = None
         self.test_df = None
+        self.sigma_x = None
+        self.sigma_y = None
+        self.sigma_z = None
 
 
     def load_data(self):
@@ -150,25 +153,23 @@ class Matrix:
         '''
           Returns sigma values for the three dimensions, useful later for gaussian filtering.
         '''
-        sigma_x = (raw_x / self.lat_meters) / 2
-        sigma_y = (raw_y / self.lon_meters) / 2
-        sigma_z = raw_z / 2
-        return sigma_x, sigma_y, sigma_z
+        self.sigma_x = (raw_x / self.lat_meters) / 2
+        self.sigma_y = (raw_y / self.lon_meters) / 2
+        self.sigma_z = raw_z / 2
+
+        return self.sigma_x, self.sigma_y, self.sigma_z
 
 
-    def gaussian_filtering(self,img3D,raw_x,raw_y, raw_z,):
+    def gaussian_filtering(self):
         '''
           Returns img3D convoluted
         '''
-        sigma_x, sigma_y, sigma_z = self.getting_sigma_values(raw_x, raw_y, raw_z)
-        self.img3D_conv = gaussian_filter(img3D, sigma=(sigma_x,sigma_y,sigma_z))
+
+        self.img3D_conv = gaussian_filter(self.img3D_non_conv,
+            sigma = (self.sigma_x, self.sigma_y, self.sigma_z))
+
         return self.img3D_conv
 
-
-    def plotting_img3D(self, img3D): #data viz check
-        for element in img3D:
-            plt.imshow(element)
-            plt.show()
 
     def save_data(self):
       '''
@@ -185,8 +186,11 @@ class Matrix:
       self.load_data()
       print('5. From coords to matrix ')
       self.from_coord_to_matrix(lat_meters, lon_meters)
+      print('Getting sigma values for Gaussian filter')
+      # 120m * 120m and 1 week time
+      self.getting_sigma_values(120, 120, 28)
       print('6. Gaussian filtering')
-      self.gaussian_filtering(self.img3D_non_conv, raw_x,raw_y,raw_z) #to be defined/research
+      self.gaussian_filtering() #to be defined/research
       return self.lat_size, self.lon_size, self.img3D_conv
 
 
