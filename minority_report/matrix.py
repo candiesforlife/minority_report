@@ -22,6 +22,8 @@ class Matrix:
         self.img3D_non_conv = None
         self.lat_meters = None
         self.lon_meters = None
+        self.train_df = None
+        self.test_df = None
 
 
     def load_data(self):
@@ -34,6 +36,28 @@ class Matrix:
             df = pickle.load(f)
         self.data = df
         return self.data
+
+    def train_test_df(self):
+        '''
+        Splitting train and test data into two dataframes
+        '''
+        df = self.data.copy()
+
+        # creating train df
+        inf_train = df['period'] >= datetime(2007, 1, 1, 0, 0, 0)
+
+        sup_train = df['period'] < datetime(2016, 1, 1, 0, 0, 0)
+
+        self.train_df = df[inf_train & sup_train]
+
+        # creating test df
+        inf_test = df['period'] >= datetime(2016, 1, 1, 0, 0, 0)
+
+        sup_test = df['period'] <= datetime(2019, 10, 28, 0, 0, 0)
+
+        self.test_df = df[inf_test & sup_test]
+
+        return self.train_df, self.test_df
 
     def from_meters_to_steps(self,lat_meters, lon_meters):
         """
