@@ -30,6 +30,7 @@ class Trainer:
         self.y_pred = None
 
     def load_X_y_pickles(self):
+        ''' loading pickles train and test for X and y'''
         root_dir = os.path.dirname(os.path.dirname(__file__))
         X_train_pickle_path = os.path.join(root_dir, 'raw_data', 'X_train.pickle')
         y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train.pickle')
@@ -47,15 +48,14 @@ class Trainer:
             self.y_test = pickle.load(f)
 
     def reshape(self):
-        X_train_reshaped = self.X_train.reshape(-1, X_train.shape[1], X_train.shape[2], X_train.shape[3],1)
-        X_test_reshaped = self.X_test.reshape(-1,  X_train.shape[1], X_train.shape[2], X_train.shape[3],1)
-        y_train_reshaped = self.y_train.reshape(-1, y_train.shape[1], y_train.shape[2], y_train.shape[3],1)
-        y_test_reshaped = self.y_test.reshape(-1, y_train.shape[1], y_train.shape[2], y_train.shape[3],1)
-
+        ''' reshaping for the correct channel size before passing into the CNN model.'''
+        self.X_train = self.X_train.reshape(-1, X_train.shape[1], X_train.shape[2], X_train.shape[3],1)
+        self.X_test = self.X_test.reshape(-1,  X_train.shape[1], X_train.shape[2], X_train.shape[3],1)
+        self.y_train = self.y_train.reshape(-1, y_train.shape[1], y_train.shape[2], y_train.shape[3],1)
+        self.y_test = self.y_test.reshape(-1, y_train.shape[1], y_train.shape[2], y_train.shape[3],1)
+        return self.X_train, self.X_test, self.y_train, self.y_test
 
     def init_model(self,x_length, y_length, lat_size, lon_size):
-
-
         print('initializing model')
         model = models.Sequential()
         print('adding conv3D 1')
