@@ -53,7 +53,7 @@ class Input:
         '''
 
         length = obs_timeframe + target_timeframe
-        position = np.random.randint(0, img3D_conv.shape[2] - length)
+        position = np.random.randint(0, img3D.shape[2] - length)
         subsample = img3D[:, :, position : position + length]
 
         observations, targets = np.split(subsample,[obs_timeframe], axis=2) # divide the subsample in X and y

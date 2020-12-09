@@ -6,13 +6,16 @@ from datetime import datetime
 import pickle
 
 from minority_report.data import NYPD
-from ast import literal_eval
+from minority_report.utils import round_six_hours
+#from ast import literal_eval
 
 class CleanData:
 
     def __init__(self):
       # loads core dataframe
       self.data = NYPD().get_data()
+      self.precinct = None
+
     #  1.
     def drop_nan(self):
       '''
@@ -436,6 +439,17 @@ class CleanData:
       self.data = df
       return self.data
 
+    def six_hour_period(self):
+      '''
+      Adds column with period rounded to 6h timeframes
+      '''
+      df = self.data.copy()
+
+      df['six_hour_date'] = df['period'].apply(lambda x: round_six_hours(x))
+
+      self.data = df
+      return self.data
+
     def total_clean(self):
       '''
       Combines all cleaning functions and returns clean dataframe
@@ -462,11 +476,39 @@ class CleanData:
       self.round_int_precinct()
       print('Filtering NYC boundaries')
       self.filter_with_NYC_boundaries()
+      print('Added six hour period column')
+      self.six_hour_period()
+      print('Creating 75th precinct df w/o outliers')
+      self.precinct_75()
       print('Reording dataframe and final clean')
       self.clean_up_df()
       return self.data
 
+    def precinct_75(self):
+      '''
+      Creates df with 75th precinct only and cuts lat long outliers
+      '''
+      df = self.data.copy()
 
+      df_precinct_75 = df[df['precinct_number'] == 75]
+
+      # max and min lat long for 75th precinct
+      lat_min, lat_max, lon_min, lon_max = (40.6218192717505,
+         40.6951504231971,
+         -73.90404639808888,
+         -73.83559344190869)
+
+      max_lat = df['latitude'] <= lat_max # is smaller or equal to max lat boundary
+      min_lat = df['latitude'] >= lat_min # is greater or equal to min lat boundary
+
+      max_lon = df['longitude'] <= lon_max # is smaller or equal to max lon boundary
+      min_lon = df['longitude'] >= lon_min # is greater or equal to min lon boundary
+
+      df = df[ max_lat & min_lat & max_lon & min_lon] # side note: excludes 125 wrong lat long
+
+      self.precinct = df
+
+      return self.precinct
 
 
     def save_data(self):
@@ -476,13 +518,12 @@ class CleanData:
       root_dir = os.path.dirname(os.path.dirname(__file__))
       pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
       precinct_75_pickle_path = os.path.join(root_dir, 'raw_data', 'clean-75-precinct.pickle')
-      df_precinct_75 = self.data[self.data['precinct_number'] == 75]
 
       with open(pickle_path, 'wb') as f:
          pickle.dump(self.data, f)
 
       with open(precinct_75_pickle_path, 'wb') as f:
-         pickle.dump(df_precinct_75, f)
+         pickle.dump(self.precinct, f)
 
 
 
