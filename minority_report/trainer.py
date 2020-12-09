@@ -55,29 +55,41 @@ class Trainer:
         self.y_test = self.y_test.reshape(-1, y_train.shape[1], y_train.shape[2], y_train.shape[3],1)
         return self.X_train, self.X_test, self.y_train, self.y_test
 
-    def init_model(self,x_length, y_length, lat_size, lon_size):
-        print('initializing model')
-        model = models.Sequential()
-        print('adding conv3D 1')
-        model.add(layers.Conv3D(64, kernel_size = (4,4,4), activation = 'relu', padding='same',
-                            input_shape = (64, 22, 8,1)))
+    def init_model(self):
+          print('init model')
+          self.model = models.Sequential()
 
-        print('adding MaxPooling')
+          print('3D conv 1')
+          self.model.add(layers.Conv3D(32, kernel_size = (4,4,4), activation = 'relu', padding='same',
+                                     input_shape = (256, 256, 18,1))) # 256 and 256 are mandatory but the nb of sheets of X (18) must be changed accordingly with the input
+        self.model.add(layers.MaxPooling3D(2))
 
-        model.add(layers.MaxPooling3D(2))
-        print('Flattening')
-        model.add(layers.Flatten())
-        print('Adding Dense Layer')
-        model.add(layers.Dense(64*22*4, activation = 'relu'))
-        print('Reshaping')
-        model.add(layers.Reshape((64,22,4)))
-        print('Compiling')
-        model.compile(loss ='mse',
+          print('3D conv 2')
+          self.model.add(layers.Conv3D(128, kernel_size = (3,3,3), activation = 'relu', padding='same'))
+          self.model.add(layers.MaxPooling3D(2))
+
+          print('3D conv 3')
+          self.model.add(layers.Conv3D(64, kernel_size = (2,2,2), activation = 'relu', padding='same'))
+          self.model.add(layers.MaxPooling3D(2))
+
+          print('3D conv 4')
+          self.model.add(layers.Conv3D(16, kernel_size = (2,2,2), activation = 'relu', padding='same'))
+          self.model.add(layers.MaxPooling3D(2))
+
+          self.model.add(layers.Flatten())
+          self.model.add(layers.Dense(256))
+          self.model.add(layers.Reshape((16,16,1)))
+
+          self.model.add(layers.UpSampling3D(size=(2, 2, 2))) #size[2] must be changed accordingly with the nb of sheets in y (change with other layers)
+          self.model.add(layers.UpSampling3D(size=(2, 2, 2)))
+          self.model.add(layers.UpSampling3D(size=(2, 2, 1)))
+          self.model.add(layers.UpSampling3D(size=(2, 2, 1)))
+
+          self.model.compile(loss ='mse',
                      optimizer='adam',
                      metrics='mae')
-        print('Done !')
-        self.model = model
-        return self.model
+          return model
+
 
     def fit_model(self,batch_size, epochs, patience):
         self.X_train = self.X_train.reshape(-1, self.X_train.shape[1], self.X_train.shape[2], self.X_train.shape[3], 1)
