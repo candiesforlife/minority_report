@@ -120,7 +120,23 @@ class Matrix:
         Z = indexes[:,2]
 
         #virgin matrix
-        a = np.zeros((X.max()+1, Y.max()+1, Z.max()+1))
+
+        # 75th precinct distances:
+        lat_min, lat_max, lon_max, lon_min = (40.6218192717505,
+                                              40.6951504231971,
+                                              -73.90404639808888,
+                                              -73.83559344190869)
+
+        lat_diff = lat_max - lat_min # distance in lat that makes up width of precinct 75
+        lon_diff = lon_min - lon_max # distance in lon that makes up width of precinct 75
+
+        # dim 1: distance of precinct in lat / lat_spacing
+        a = np.zeros((np.round(lat_diff / lat_spacing).astype('int'),
+                     np.round(lon_diff / lon_spacing).astype('int'),
+                     Z.max() + 1))
+
+        # old version: a = np.zeros((X.max()+1, Y.max()+1, Z.max()+1))
+
         a[X, Y, Z] = 1
 
         self.lat_size = a.shape[1]
