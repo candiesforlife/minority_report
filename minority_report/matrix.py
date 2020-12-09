@@ -16,20 +16,27 @@ class Matrix:
 
     def __init__(self):
         self.data = None
+
         self.img3D_conv_train = None
         self.img3D_non_conv_train = None
         self.img3D_conv_test = None
         self.img3D_non_conv_test = None
+
         self.lat_meters = None
         self.lon_meters = None
+
         self.train_df = None
         self.test_df = None
+
         self.sigma_x = None
         self.sigma_y = None
         self.sigma_z = None
+
         self.raw_z = 28
+
         self.X_test = None
         self.y_test = None
+
         self.X_train = None
         self.y_train = None
 
@@ -221,10 +228,10 @@ class Matrix:
         sample_length = obs_timeframe + (self.raw_z + 1) + target_timeframe
 
         # finds starting position
-        position = np.random.randint(0, self.img3D_non_conv_train.shape[2] - sample_length)
+        position = np.random.randint(0, self.img3D_conv_train.shape[2] - sample_length)
 
         # samples in train and test dfs
-        subsample = img3D[:, :, position : position + sample_length]
+        subsample = self.img3D_conv_train[:, :, position : position + sample_length]
 
         # divide the subsample in X and y
         observations = subsample[:, :, : obs_timeframe]
@@ -234,7 +241,7 @@ class Matrix:
         # stacked images
         observation = self.stacking_train(observations, obs_lat, obs_lon, obs_time)
 
-        target = self.stacking_train(targets,  tar_lat, tar_lon, tar_time )
+        target = self.stacking_train(targets, tar_lat, tar_lon, tar_time)
 
         return observation, target
 
@@ -245,6 +252,7 @@ class Matrix:
         '''
         X = []
         y = []
+
         for n in range(nb_observations):
             print(f'Creating observation {n} out of {nb_observations}')
             X_subsample, y_subsample = self.get_observation_target_train(obs_tf,
@@ -255,8 +263,10 @@ class Matrix:
 
         X = np.array(X)
         y = np.array(y)
+
         self.X_train = X
         self.y_train = y
+
         return self.X_train, self.y_train
 
 
@@ -340,18 +350,23 @@ class Matrix:
         '''
             Returns stacked crimes.
         '''
-        grid_offset = np.array([0,0,0]) # Where do you start
+        # starting point
+        grid_offset = np.array([0,0,0])
+
         #new steps from precise grid
         grid_spacing = np.array([lat_step , lon_step, time_step])
+
         #get points coordinates
         coords = np.argwhere(window)
         flat = window.flatten()
         values = flat[flat !=0]
+
         # Convert point to index
         indexes = np.round((coords - grid_offset)/grid_spacing).astype('int')
         X = indexes[:,0]
         Y = indexes[:,1]
         Z = indexes[:,2]
+
         #virgin matrix: 256 absolute size to be stacked to work in model!
         stacked_crimes = np.zeros((256, 256, Z.max() + 2))
 
@@ -376,10 +391,10 @@ class Matrix:
         sample_length = obs_timeframe + (self.raw_z + 1) + target_timeframe
 
         # finds starting position
-        position = np.random.randint(0, self.img3D_non_conv_test.shape[2] - sample_length)
+        position = np.random.randint(0, self.img3D_conv_test.shape[2] - sample_length)
 
         # samples in train and test dfs
-        subsample = img3D[:, :, position : position + sample_length]
+        subsample = self.img3D_conv_test[:, :, position : position + sample_length]
 
         # divide the subsample in X and y
         observations = subsample[:, :, : obs_timeframe]
@@ -398,8 +413,10 @@ class Matrix:
         '''
         outputs n observations and their associated targets
         '''
+
         X = []
         y = []
+
         for n in range(nb_observations):
             print(f'Creating observation {n} out of {nb_observations}')
             X_subsample, y_subsample = self.get_observation_target_test(obs_tf,
@@ -410,8 +427,10 @@ class Matrix:
 
         X = np.array(X)
         y = np.array(y)
+
         self.X_test = X
         self.y_test = y
+
         return self.X_test, self.y_test
 
 
@@ -494,8 +513,4 @@ class Matrix:
                     tar_tf, tar_lat,tar_lon, tar_time)
 
         return self.X_train, self.y_train, self.X_test, self.y_test
-
-
-
-
 
