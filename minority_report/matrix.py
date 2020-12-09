@@ -154,12 +154,13 @@ class Matrix:
         return sigma_x, sigma_y, sigma_z
 
 
-    def gaussian_filtering(self,img3D,raw_x,raw_y, raw_z,):
+    def gaussian_filtering(self,raw_x,raw_y, raw_z,):
         '''
           Returns img3D convoluted
         '''
         sigma_x, sigma_y, sigma_z = self.getting_sigma_values(raw_x, raw_y, raw_z)
-        self.img3D_conv = gaussian_filter(img3D, sigma=(sigma_x,sigma_y,sigma_z))
+        self.img3D_conv = gaussian_filter(self.img3D_non_conv, sigma=(sigma_x,sigma_y,sigma_z))
+
         return self.img3D_conv
 
 
