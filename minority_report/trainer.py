@@ -118,7 +118,7 @@ if __name__ == '__main__':
     print('1. Creating an instance of Matrix class')
     matrix = Matrix()
     print('2. Defining our lat_meters and lon_meters')
-    lat_meters, lon_meters = 10,8
+    lat_meters, lon_meters = 15, 15
     print('3. Defining our lat_meters and lon_meters')
     raw_x, raw_y, raw_z = 2,2,2
     lat_size, lon_size, img3D_conv = matrix.crime_to_img3D_con(lat_meters, lon_meters, raw_x, raw_y, raw_z)
