@@ -115,12 +115,14 @@ class Trainer:
 
 
 if __name__ == '__main__':
+
     print('1. Creating an instance of Matrix class')
     matrix = Matrix()
-    print('2. Defining our lat_meters and lon_meters')
+    print('2. Defining grid steps in meters: 15, 15')
     lat_meters, lon_meters = 15, 15
-    print('3. Defining our lat_meters and lon_meters')
-    raw_x, raw_y, raw_z = 2,2,2
+    print('3. Moving from df to 3D_conv_img')
+    # 120m * 120m and 1 week time (28 * 6h images in 1 week)
+    raw_x, raw_y, raw_z = 120, 120, 28
     lat_size, lon_size, img3D_conv = matrix.crime_to_img3D_con(lat_meters, lon_meters, raw_x, raw_y, raw_z)
     print('7. Saving image filtered 3d convoluted to pickle')
     matrix.save_data()

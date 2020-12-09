@@ -62,7 +62,7 @@ class Matrix:
 
         return self.train_df, self.test_df
 
-    def from_meters_to_steps(self,lat_meters, lon_meters):
+    def from_meters_to_steps(self, lat_meters, lon_meters):
         """
         gives the latitude and longitude step to use for the grid buckets
         lat_meters, lon_meters = lat/lon step
@@ -187,8 +187,7 @@ class Matrix:
       print('5. From coords to matrix ')
       self.from_coord_to_matrix(lat_meters, lon_meters)
       print('Getting sigma values for Gaussian filter')
-      # 120m * 120m and 1 week time
-      self.getting_sigma_values(120, 120, 28)
+      self.getting_sigma_values(raw_x, raw_y, raw_z)
       print('6. Gaussian filtering')
       self.gaussian_filtering() #to be defined/research
       return self.lat_size, self.lon_size, self.img3D_conv
