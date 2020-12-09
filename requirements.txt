@@ -3,11 +3,17 @@ pip>=9
 setuptools>=26
 twine
 wheel>=0.29
+matplotlib
 
 # data science
 numpy
 pandas
+datetime
+pickle
 scikit-learn
+scipy
+itertools
+
 
 # tests/linter
 black
@@ -31,6 +37,5 @@ termcolor
 # encoding packages
 compiler
 
-geopandas
-pygeos
+os
 
