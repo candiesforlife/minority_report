@@ -248,8 +248,6 @@ class Matrix:
         return self.img3D_conv_test
 
 
-
-
     # Used for both Train and Test Dataframes
 
     def save_data(self):
