@@ -16,8 +16,6 @@ class Matrix:
 
     def __init__(self):
         self.data = None
-        self.lat_size = None
-        self.lon_size = None
         self.img3D_conv = None
         self.img3D_non_conv = None
         self.lat_meters = None
@@ -62,7 +60,7 @@ class Matrix:
 
         return self.train_df, self.test_df
 
-    def from_meters_to_steps(self, lat_meters, lon_meters):
+    def from_meters_to_steps(self):
         """
         gives the latitude and longitude step to use for the grid buckets
         lat_meters, lon_meters = lat/lon step
@@ -75,8 +73,8 @@ class Matrix:
         R = 6378137
 
         #offsets in meters
-        dn = lat_meters
-        de = lon_meters
+        dn = self.lat_meters
+        de = self.lon_meters
 
         #Coordinate offsets in radians
         dLat = dn/R
@@ -85,8 +83,6 @@ class Matrix:
         #OffsetPosition, decimal degrees
         latO = dLat * 180/np.pi
         lonO = dLon * 180/np.pi
-
-        del lat, lon, R, dn, de, dLat, dLon #pour recuperer de la memoire dans le notebook
 
         return latO, lonO
 
@@ -97,8 +93,9 @@ class Matrix:
         """
         self.lat_meters = lat_meters
         self.lon_meters = lon_meters
-        df=self.data.copy()
-        #add 'time_index' column to df
+
+        df = self.data.copy()
+        # add 'time_index' column to df
         #ind = {time:index for index,time in enumerate(np.sort(df['period'].unique()))}
         #df['time_index'] = df['period'].map(ind)
         ind = {time: index for index, time in enumerate(np.sort(df['six_hour_date'].unique()))}
@@ -182,15 +179,20 @@ class Matrix:
          pickle.dump(self.img3D_conv, f)
 
     def crime_to_img3D_con(self, lat_meters, lon_meters, raw_x, raw_y, raw_z):
+
       print("4. Loading data")
       self.load_data()
+
       print('5. From coords to matrix ')
       self.from_coord_to_matrix(lat_meters, lon_meters)
+
       print('Getting sigma values for Gaussian filter')
       self.getting_sigma_values(raw_x, raw_y, raw_z)
+
       print('6. Gaussian filtering')
-      self.gaussian_filtering() #to be defined/research
-      return self.lat_size, self.lon_size, self.img3D_conv
+      self.gaussian_filtering()
+
+      return self.img3D_conv
 
 
 
