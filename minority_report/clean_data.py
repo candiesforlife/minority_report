@@ -6,7 +6,8 @@ from datetime import datetime
 import pickle
 
 from minority_report.data import NYPD
-from ast import literal_eval
+from minority_report.utils import round_six_hours
+#from ast import literal_eval
 
 class CleanData:
 
@@ -438,6 +439,17 @@ class CleanData:
       self.data = df
       return self.data
 
+    def six_hour_period(self):
+      '''
+      Adds column with period rounded to 6h timeframes
+      '''
+      df = self.data.copy()
+
+      df['six_hour_date'] = df['period'].apply(lambda x: round_six_hours(x))
+
+      self.data = df
+      return self.data
+
     def total_clean(self):
       '''
       Combines all cleaning functions and returns clean dataframe
@@ -468,7 +480,7 @@ class CleanData:
       self.clean_up_df()
       return self.data
 
-   def precinct_75(self):
+    def precinct_75(self):
       '''
       Creates df with 75th precinct only and cuts lat long outliers
       '''
