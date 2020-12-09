@@ -65,7 +65,7 @@ class Trainer:
         return self.model
 
     def fit_model(self,batch_size, epochs, patience):
-        self.X_train = self.X_train.reshape(-1, self.X_train.shape[1], self.X_train.shape[2], self.X_train.shape[2], 1)
+        self.X_train = self.X_train.reshape(-1, self.X_train.shape[1], self.X_train.shape[2], self.X_train.shape[3], 1)
         es = EarlyStopping(patience = patience, restore_best_weights=True)
         self.model.fit(self.X_train, self.y_train,
                       batch_size = batch_size,

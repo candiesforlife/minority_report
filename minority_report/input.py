@@ -1,4 +1,3 @@
-
 import os
 import pandas as pd
 import numpy as np
@@ -9,6 +8,7 @@ class Input:
     def __init__(self):
         self.X = None
         self.y = None
+        self.img3D_conv = None
 
     def load_data(self):
         root_dir = os.path.dirname(os.path.dirname(__file__))
@@ -18,7 +18,7 @@ class Input:
         self.img3D_conv = df
         return self.img3D_conv
 
-    def stacking(self, img3D, window, lat_step, lon_step, time_step):
+    def stacking(self, window, lat_step, lon_step, time_step):
         '''
             Returns stacked crimes.
         '''
@@ -35,7 +35,7 @@ class Input:
         Y = indexes[:,1]
         Z = indexes[:,2]
         #virgin matrix
-        stacked_crimes = np.zeros((int(img3D.shape[0]/lat_step)+2, int(img3D.shape[1]/lon_step)+2,Z.max()+2))
+        stacked_crimes = np.zeros((int(self.img3D.shape[0]/lat_step)+2, int(self.img3D.shape[1]/lon_step)+2,Z.max()+2))
         for i in range(len(indexes)):
             if stacked_crimes[X[i], Y[i], Z[i]] == 0:
                 stacked_crimes[X[i], Y[i], Z[i]] = values[i]
@@ -44,7 +44,7 @@ class Input:
         return stacked_crimes
 
 
-    def get_observation_target(self,img3D,
+    def get_observation_target(self,
                            obs_timeframe,obs_lat,obs_lon, obs_time,
                            target_timeframe,  tar_lat,tar_lon, tar_time):
         '''
@@ -58,9 +58,9 @@ class Input:
 
         observations, targets = np.split(subsample,[obs_timeframe], axis=2) # divide the subsample in X and y
 
-        observation = stacking(img3D, observations, obs_lat, obs_lon, obs_time) #get stacked hours for all images
+        observation = stacking(self.img3D_conv, observations, obs_lat, obs_lon, obs_time) #get stacked hours for all images
 
-        target = stacking(img3D, targets,  tar_lat, tar_lon, tar_time )
+        target = stacking(self.img3D_conv, targets,  tar_lat, tar_lon, tar_time )
 
         return observation, target
 
