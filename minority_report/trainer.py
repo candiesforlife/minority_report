@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 from datetime import datetime
 from scipy.ndimage import gaussian_filter
-
+import pickle
 # from minority_report.input import Input
 from minority_report.matrix import Matrix
 
@@ -29,43 +29,70 @@ class Trainer:
         self.model = None
         self.y_pred = None
 
+    def load_X_y_pickles(self):
+        ''' loading pickles train and test for X and y'''
+        root_dir = os.path.dirname(os.path.dirname(__file__))
+        X_train_pickle_path = os.path.join(root_dir, 'raw_data', 'X_train.pickle')
+        y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train.pickle')
 
-    # def load_data_from_input_class(self, number_of_observations, x_length, y_length):
-    #     self.X, self.y = Input().combining_load_data_and_X_y(number_of_observations, x_length, y_length)
-    #     return self.X, self.y
+        X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test.pickle')
+        y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test.pickle')
 
-    # def holdout(self):
-    #     self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size = 0.2)
-    #     return self.X_train, self.X_test, self.y_train, self.y_test
+        with open(X_train_path, 'rb') as f:
+            self.X_train = pickle.load(f)
+        with open(X_test_path, 'rb') as f:
+            self.X_test = pickle.load(f)
+        with open(y_train_path, 'rb') as f:
+            self.y_train = pickle.load(f)
+        with open(y_test_path, 'rb') as f:
+            self.y_test = pickle.load(f)
 
-    def init_model(self,x_length, y_length, lat_size, lon_size):
+    def reshape(self):
+        ''' reshaping for the correct channel size before passing into the CNN model.'''
+        self.X_train = self.X_train.reshape(-1, X_train.shape[1], X_train.shape[2], X_train.shape[3],1)
+        self.X_test = self.X_test.reshape(-1,  X_train.shape[1], X_train.shape[2], X_train.shape[3],1)
+        self.y_train = self.y_train.reshape(-1, y_train.shape[1], y_train.shape[2], y_train.shape[3],1)
+        self.y_test = self.y_test.reshape(-1, y_train.shape[1], y_train.shape[2], y_train.shape[3],1)
+        return self.X_train, self.X_test, self.y_train, self.y_test
 
+    def init_model(self):
+        print('init model')
+        self.model = models.Sequential()
 
-        print('initializing model')
-        model = models.Sequential()
-        print('adding conv3D 1')
-        model.add(layers.Conv3D(64, kernel_size = (4,4,4), activation = 'relu', padding='same',
-                            input_shape = (64, 22, 8,1)))
+        print('3D conv 1')
+        self.model.add(layers.Conv3D(32, kernel_size = (4,4,4), activation = 'relu', padding='same',
+                                 input_shape = (256, 256, 18,1))) # 256 and 256 are mandatory but the nb of sheets of X (18) must be changed accordingly with the input
+        self.model.add(layers.MaxPooling3D(2))
 
-        print('adding MaxPooling')
+        print('3D conv 2')
+        self.model.add(layers.Conv3D(128, kernel_size = (3,3,3), activation = 'relu', padding='same'))
+        self.model.add(layers.MaxPooling3D(2))
 
-        model.add(layers.MaxPooling3D(2))
-        print('Flattening')
-        model.add(layers.Flatten())
-        print('Adding Dense Layer')
-        model.add(layers.Dense(64*22*4, activation = 'relu'))
-        print('Reshaping')
-        model.add(layers.Reshape((64,22,4)))
-        print('Compiling')
-        model.compile(loss ='mse',
-                     optimizer='adam',
-                     metrics='mae')
-        print('Done !')
-        self.model = model
-        return self.model
+        print('3D conv 3')
+        self.model.add(layers.Conv3D(64, kernel_size = (2,2,2), activation = 'relu', padding='same'))
+        self.model.add(layers.MaxPooling3D(2))
+
+        print('3D conv 4')
+        self.model.add(layers.Conv3D(16, kernel_size = (2,2,2), activation = 'relu', padding='same'))
+        self.model.add(layers.MaxPooling3D(2))
+
+        self.model.add(layers.Flatten())
+        self.model.add(layers.Dense(256))
+        self.model.add(layers.Reshape((16,16,1)))
+
+        self.model.add(layers.UpSampling3D(size=(2, 2, 2))) #size[2] must be changed accordingly with the nb of sheets in y (change with other layers)
+        self.model.add(layers.UpSampling3D(size=(2, 2, 2)))
+        self.model.add(layers.UpSampling3D(size=(2, 2, 1)))
+        self.model.add(layers.UpSampling3D(size=(2, 2, 1)))
+
+        self.model.compile(loss ='mse',
+                 optimizer='adam',
+                 metrics='mae')
+        return model
+
 
     def fit_model(self,batch_size, epochs, patience):
-        self.X_train = self.X_train.reshape(-1, self.X_train.shape[1], self.X_train.shape[2], self.X_train.shape[3], 1)
+        # self.X_train = self.X_train.reshape(-1, self.X_train.shape[1], self.X_train.shape[2], self.X_train.shape[3], 1)
         es = EarlyStopping(patience = patience, restore_best_weights=True)
         self.model.fit(self.X_train, self.y_train,
                       batch_size = batch_size,
@@ -75,12 +102,12 @@ class Trainer:
         return self.model
 
     def evaluate_model(self):
-        self.X_test = self.X_test.reshape(-1, self.X_test.shape[1], self.X_test.shape[2], self.X_test.shape[3], 1)
+        # self.X_test = self.X_test.reshape(-1, self.X_test.shape[1], self.X_test.shape[2], self.X_test.shape[3], 1)
         result = self.model.evaluate(self.X_test, self.y_test)
         return result
 
     def predict_model(self,):
-        self.X_test = self.X_test.reshape(-1, self.X_test.shape[1], self.X_test.shape[2], self.X_test.shape[3], 1)
+        # self.X_test = self.X_test.reshape(-1, self.X_test.shape[1], self.X_test.shape[2], self.X_test.shape[3], 1)
         self.y_pred = self.model.predict(self.X_test)
         return self.y_pred
 
@@ -96,13 +123,12 @@ class Trainer:
 
 
 
-    def training_model(self, number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs, patience):
-        print('7. Getting X, y from instanciating Trainer class ')
-        self.load_data_from_input_class(number_of_observations, x_length, y_length)
+    def training_model(self, number_of_observations,batch_size, epochs, patience):
+
         print('10. Train test split')
         self.holdout()
         print('11. Init model')
-        self.init_model(x_length, y_length, lat_size, lon_size)
+        self.init_model()
         print('12. Fit model')
         self.fit_model(batch_size, epochs, patience)
         print('13. Evaluate')
@@ -145,3 +171,4 @@ if __name__ == '__main__':
     print(X_train.shape)
     print(y_train.shape)
     print('12.Finished')
+
