@@ -124,7 +124,7 @@ class Matrix:
         #[40.6218192717505, 40.6951504231971],[-73.90404639808888, -73.83559344190869]) :precinct 75 boundaries
         grid_offset = np.array([ -df['latitude'].max() , df['longitude'].min(), 0 ]) # Where do you start
         #from meters to lat/lon step
-        lat_spacing, lon_spacing = self.from_meters_to_steps(self.lat_meters, self.lon_meters )
+        lat_spacing, lon_spacing = self.from_meters_to_steps()
         grid_spacing = np.array([lat_spacing , lon_spacing, 1 ]) # What's the space you consider (euclidian here)
         #get points coordinates
         coords = np.array([( -lat, lon,t_ind) for lat, lon,t_ind \
@@ -148,8 +148,8 @@ class Matrix:
         lon_diff = lon_min - lon_max # distance in lon that makes up width of precinct 75
 
         # dim 1: distance of precinct in lat / lat_spacing
-        a = np.zeros((np.round(lat_diff / lat_spacing).astype('int'),
-                     np.round(lon_diff / lon_spacing).astype('int'),
+        a = np.zeros((np.round(lat_diff / lat_spacing).astype('int') + 1,
+                     np.round(lon_diff / lon_spacing).astype('int') + 1,
                      Z.max() + 1))
 
         # old version: a = np.zeros((X.max()+1, Y.max()+1, Z.max()+1))
@@ -198,7 +198,7 @@ class Matrix:
         #[40.6218192717505, 40.6951504231971],[-73.90404639808888, -73.83559344190869]) :precinct 75 boundaries
         grid_offset = np.array([ -df['latitude'].max() , df['longitude'].min(), 0 ]) # Where do you start
         #from meters to lat/lon step
-        lat_spacing, lon_spacing = self.from_meters_to_steps(self.lat_meters, self.lon_meters )
+        lat_spacing, lon_spacing = self.from_meters_to_steps()
         grid_spacing = np.array([lat_spacing , lon_spacing, 1 ]) # What's the space you consider (euclidian here)
         #get points coordinates
         coords = np.array([( -lat, lon,t_ind) for lat, lon,t_ind \
@@ -222,8 +222,8 @@ class Matrix:
         lon_diff = lon_min - lon_max # distance in lon that makes up width of precinct 75
 
         # dim 1: distance of precinct in lat / lat_spacing
-        a = np.zeros((np.round(lat_diff / lat_spacing).astype('int'),
-                     np.round(lon_diff / lon_spacing).astype('int'),
+        a = np.zeros((np.round(lat_diff / lat_spacing).astype('int') + 1,
+                     np.round(lon_diff / lon_spacing).astype('int') + 1,
                      Z.max() + 1))
 
         # old version: a = np.zeros((X.max()+1, Y.max()+1, Z.max()+1))

@@ -476,6 +476,10 @@ class CleanData:
       self.round_int_precinct()
       print('Filtering NYC boundaries')
       self.filter_with_NYC_boundaries()
+      print('Added six hour period column')
+      self.six_hour_period()
+      print('Creating 75th precinct df w/o outliers')
+      self.precinct_75()
       print('Reording dataframe and final clean')
       self.clean_up_df()
       return self.data
