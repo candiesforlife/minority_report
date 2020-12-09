@@ -169,21 +169,6 @@ if __name__ == '__main__':
     print('10. Saving X, y (train & test) to pickles!')
     matrix.save_data()
     print('11. X shape')
-    X_train.shape
-    y_train.shape
+    print(X_train.shape)
+    print(y_train.shape)
     print('12.Finished')
-
-
-
-
-    x_length = 24 #24h avant
-    y_length = 3 #3h apres
-    number_of_observations = 50 #50 observations
-    batch_size = 32
-    epochs = 100
-    patience = 5
-    trainer = Trainer()
-    trainer.training_model(number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs, patience)
-
-
-
