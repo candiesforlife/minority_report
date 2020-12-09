@@ -13,6 +13,8 @@ class CleanData:
     def __init__(self):
       # loads core dataframe
       self.data = NYPD().get_data()
+      self.precinct = None
+
     #  1.
     def drop_nan(self):
       '''
@@ -466,7 +468,31 @@ class CleanData:
       self.clean_up_df()
       return self.data
 
+   def precinct_75(self):
+      '''
+      Creates df with 75th precinct only and cuts lat long outliers
+      '''
+      df = self.data.copy()
 
+      df_precinct_75 = df[df['precinct_number'] == 75]
+
+      # max and min lat long for 75th precinct
+      lat_min, lat_max, lon_min, lon_max = (40.6218192717505,
+         40.6951504231971,
+         -73.90404639808888,
+         -73.83559344190869)
+
+      max_lat = df['latitude'] <= lat_max # is smaller or equal to max lat boundary
+      min_lat = df['latitude'] >= lat_min # is greater or equal to min lat boundary
+
+      max_lon = df['longitude'] <= lon_max # is smaller or equal to max lon boundary
+      min_lon = df['longitude'] >= lon_min # is greater or equal to min lon boundary
+
+      df = df[ max_lat & min_lat & max_lon & min_lon] # side note: excludes 125 wrong lat long
+
+      self.precinct = df
+
+      return self.precinct
 
 
     def save_data(self):
@@ -476,13 +502,12 @@ class CleanData:
       root_dir = os.path.dirname(os.path.dirname(__file__))
       pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
       precinct_75_pickle_path = os.path.join(root_dir, 'raw_data', 'clean-75-precinct.pickle')
-      df_precinct_75 = self.data[self.data['precinct_number'] == 75]
 
       with open(pickle_path, 'wb') as f:
          pickle.dump(self.data, f)
 
       with open(precinct_75_pickle_path, 'wb') as f:
-         pickle.dump(df_precinct_75, f)
+         pickle.dump(self.precinct, f)
 
 
 
