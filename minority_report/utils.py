@@ -15,3 +15,19 @@ def simple_time_tracker(method):
             print(method.__name__, round(te - ts, 2))
         return result
     return timed
+
+def round_six_hours(period):
+
+    if period.hour < 6:
+        period = period.replace(hour = 0)
+
+    elif period.hour < 12 :
+        period = period.replace(hour = 6)
+
+    elif period.hour < 18 :
+        period = period.replace(hour = 12)
+
+    else:
+        period = period.replace(hour = 18)
+
+    return period
