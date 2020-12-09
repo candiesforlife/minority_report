@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 
 from datetime import datetime
 from scipy.ndimage import gaussian_filter
-
-from minority_report.input import Input
+import pickle
+# from minority_report.input import Input
 from minority_report.matrix import Matrix
 
 from sklearn.model_selection import train_test_split
@@ -29,43 +29,70 @@ class Trainer:
         self.model = None
         self.y_pred = None
 
+    def load_X_y_pickles(self):
+        ''' loading pickles train and test for X and y'''
+        root_dir = os.path.dirname(os.path.dirname(__file__))
+        X_train_pickle_path = os.path.join(root_dir, 'raw_data', 'X_train.pickle')
+        y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train.pickle')
 
-    def load_data_from_input_class(self, number_of_observations, x_length, y_length):
-        self.X, self.y = Input().combining_load_data_and_X_y(number_of_observations, x_length, y_length)
-        return self.X, self.y
+        X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test.pickle')
+        y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test.pickle')
 
-    def holdout(self):
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size = 0.2)
+        with open(X_train_path, 'rb') as f:
+            self.X_train = pickle.load(f)
+        with open(X_test_path, 'rb') as f:
+            self.X_test = pickle.load(f)
+        with open(y_train_path, 'rb') as f:
+            self.y_train = pickle.load(f)
+        with open(y_test_path, 'rb') as f:
+            self.y_test = pickle.load(f)
+
+    def reshape(self):
+        ''' reshaping for the correct channel size before passing into the CNN model.'''
+        self.X_train = self.X_train.reshape(-1, X_train.shape[1], X_train.shape[2], X_train.shape[3],1)
+        self.X_test = self.X_test.reshape(-1,  X_train.shape[1], X_train.shape[2], X_train.shape[3],1)
+        self.y_train = self.y_train.reshape(-1, y_train.shape[1], y_train.shape[2], y_train.shape[3],1)
+        self.y_test = self.y_test.reshape(-1, y_train.shape[1], y_train.shape[2], y_train.shape[3],1)
         return self.X_train, self.X_test, self.y_train, self.y_test
 
-    def init_model(self,x_length, y_length, lat_size, lon_size):
+    def init_model(self):
+        print('init model')
+        self.model = models.Sequential()
 
+        print('3D conv 1')
+        self.model.add(layers.Conv3D(32, kernel_size = (4,4,4), activation = 'relu', padding='same',
+                                 input_shape = (256, 256, 18,1))) # 256 and 256 are mandatory but the nb of sheets of X (18) must be changed accordingly with the input
+        self.model.add(layers.MaxPooling3D(2))
 
-        print('initializing model')
-        model = models.Sequential()
-        print('adding conv3D 1')
-        model.add(layers.Conv3D(64, kernel_size = (4,4,4), activation = 'relu', padding='same',
-                            input_shape = (64, 22, 8,1)))
+        print('3D conv 2')
+        self.model.add(layers.Conv3D(128, kernel_size = (3,3,3), activation = 'relu', padding='same'))
+        self.model.add(layers.MaxPooling3D(2))
 
-        print('adding MaxPooling')
+        print('3D conv 3')
+        self.model.add(layers.Conv3D(64, kernel_size = (2,2,2), activation = 'relu', padding='same'))
+        self.model.add(layers.MaxPooling3D(2))
 
-        model.add(layers.MaxPooling3D(2))
-        print('Flattening')
-        model.add(layers.Flatten())
-        print('Adding Dense Layer')
-        model.add(layers.Dense(64*22*4, activation = 'relu'))
-        print('Reshaping')
-        model.add(layers.Reshape((64,22,4)))
-        print('Compiling')
-        model.compile(loss ='mse',
-                     optimizer='adam',
-                     metrics='mae')
-        print('Done !')
-        self.model = model
-        return self.model
+        print('3D conv 4')
+        self.model.add(layers.Conv3D(16, kernel_size = (2,2,2), activation = 'relu', padding='same'))
+        self.model.add(layers.MaxPooling3D(2))
+
+        self.model.add(layers.Flatten())
+        self.model.add(layers.Dense(256))
+        self.model.add(layers.Reshape((16,16,1)))
+
+        self.model.add(layers.UpSampling3D(size=(2, 2, 2))) #size[2] must be changed accordingly with the nb of sheets in y (change with other layers)
+        self.model.add(layers.UpSampling3D(size=(2, 2, 2)))
+        self.model.add(layers.UpSampling3D(size=(2, 2, 1)))
+        self.model.add(layers.UpSampling3D(size=(2, 2, 1)))
+
+        self.model.compile(loss ='mse',
+                 optimizer='adam',
+                 metrics='mae')
+        return model
+
 
     def fit_model(self,batch_size, epochs, patience):
-        self.X_train = self.X_train.reshape(-1, self.X_train.shape[1], self.X_train.shape[2], self.X_train.shape[3], 1)
+        # self.X_train = self.X_train.reshape(-1, self.X_train.shape[1], self.X_train.shape[2], self.X_train.shape[3], 1)
         es = EarlyStopping(patience = patience, restore_best_weights=True)
         self.model.fit(self.X_train, self.y_train,
                       batch_size = batch_size,
@@ -75,12 +102,12 @@ class Trainer:
         return self.model
 
     def evaluate_model(self):
-        self.X_test = self.X_test.reshape(-1, self.X_test.shape[1], self.X_test.shape[2], self.X_test.shape[3], 1)
+        # self.X_test = self.X_test.reshape(-1, self.X_test.shape[1], self.X_test.shape[2], self.X_test.shape[3], 1)
         result = self.model.evaluate(self.X_test, self.y_test)
         return result
 
     def predict_model(self,):
-        self.X_test = self.X_test.reshape(-1, self.X_test.shape[1], self.X_test.shape[2], self.X_test.shape[3], 1)
+        # self.X_test = self.X_test.reshape(-1, self.X_test.shape[1], self.X_test.shape[2], self.X_test.shape[3], 1)
         self.y_pred = self.model.predict(self.X_test)
         return self.y_pred
 
@@ -96,13 +123,12 @@ class Trainer:
 
 
 
-    def training_model(self, number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs, patience):
-        print('7. Getting X, y from instanciating Trainer class ')
-        self.load_data_from_input_class(number_of_observations, x_length, y_length)
+    def training_model(self, number_of_observations,batch_size, epochs, patience):
+
         print('10. Train test split')
         self.holdout()
         print('11. Init model')
-        self.init_model(x_length, y_length, lat_size, lon_size)
+        self.init_model()
         print('12. Fit model')
         self.fit_model(batch_size, epochs, patience)
         print('13. Evaluate')
@@ -116,23 +142,33 @@ class Trainer:
 
 
 if __name__ == '__main__':
+
     print('1. Creating an instance of Matrix class')
     matrix = Matrix()
-    print('2. Defining our lat_meters and lon_meters')
-    lat_meters, lon_meters = 10,8
-    print('3. Defining our lat_meters and lon_meters')
-    raw_x, raw_y, raw_z = 2,2,2
-    lat_size, lon_size, img3D_conv = matrix.crime_to_img3D_con(lat_meters, lon_meters, raw_x, raw_y, raw_z)
-    print('7. Saving image filtered 3d convoluted to pickle')
+    print('2. Defining grid steps in meters: 15, 15')
+    lat_meters, lon_meters = 15, 15
+    print('3. Moving from df to preprocessed X and y')
+    # 120m * 120m and 1 week time (28 * 6h images in 1 week)
+    raw_x, raw_y, raw_z = 120, 120, 28 # N.B: 28 added as self.raw_z in input class
+    obs_lon = 4 # 4 * 15m = 60m
+    obs_lat = 4 # 4 * 15m = 60m
+    obs_time = 4 # 24h - each obs of X is 14 images (each image is 24h)
+    obs_tf = 56 # 4 (slots of 6h) * 14 days = 56 * 6 or 2 weeks (represents two weeks, where each img is 6h)
+    tar_lon = 4 # 8 * 15m = 120m
+    tar_lat = 4 # 10 * 15m = 150m
+    tar_time = 4 # each image is 24h - output: 2 images of 24h each
+    tar_tf = 8 # 12 * 6h = 2 days
+    nb_observations = 20
+    X_train, y_train, X_test, y_test = matrix.preprocessing_X_y(lat_meters,
+     lon_meters,
+     raw_x, raw_y, raw_z,
+     nb_observations,
+     obs_tf, obs_lat, obs_lon, obs_time,
+     tar_tf, tar_lat,tar_lon, tar_time)
+    print('10. Saving X, y (train & test) to pickles!')
     matrix.save_data()
-    x_length = 24 #24h avant
-    y_length = 3 #3h apres
-    number_of_observations = 50 #50 observations
-    batch_size = 32
-    epochs = 100
-    patience = 5
-    trainer = Trainer()
-    trainer.training_model(number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs, patience)
-
-
+    print('11. X shape')
+    print(X_train.shape)
+    print(y_train.shape)
+    print('12.Finished')
 
