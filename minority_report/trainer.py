@@ -123,13 +123,12 @@ class Trainer:
 
 
 
-    def training_model(self, number_of_observations, x_length, y_length, lat_size, lon_size, batch_size, epochs, patience):
-        print('7. Getting X, y from instanciating Trainer class ')
-        self.load_data_from_input_class(number_of_observations, x_length, y_length)
+    def training_model(self, number_of_observations,batch_size, epochs, patience):
+
         print('10. Train test split')
         self.holdout()
         print('11. Init model')
-        self.init_model(x_length, y_length, lat_size, lon_size)
+        self.init_model()
         print('12. Fit model')
         self.fit_model(batch_size, epochs, patience)
         print('13. Evaluate')
@@ -172,3 +171,4 @@ if __name__ == '__main__':
     print(X_train.shape)
     print(y_train.shape)
     print('12.Finished')
+
