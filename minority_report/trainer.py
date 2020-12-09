@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from scipy.ndimage import gaussian_filter
 
-from minority_report.input import Input
+# from minority_report.input import Input
 from minority_report.matrix import Matrix
 
 from sklearn.model_selection import train_test_split
@@ -30,13 +30,13 @@ class Trainer:
         self.y_pred = None
 
 
-    def load_data_from_input_class(self, number_of_observations, x_length, y_length):
-        self.X, self.y = Input().combining_load_data_and_X_y(number_of_observations, x_length, y_length)
-        return self.X, self.y
+    # def load_data_from_input_class(self, number_of_observations, x_length, y_length):
+    #     self.X, self.y = Input().combining_load_data_and_X_y(number_of_observations, x_length, y_length)
+    #     return self.X, self.y
 
-    def holdout(self):
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size = 0.2)
-        return self.X_train, self.X_test, self.y_train, self.y_test
+    # def holdout(self):
+    #     self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size = 0.2)
+    #     return self.X_train, self.X_test, self.y_train, self.y_test
 
     def init_model(self,x_length, y_length, lat_size, lon_size):
 
@@ -121,12 +121,31 @@ if __name__ == '__main__':
     matrix = Matrix()
     print('2. Defining grid steps in meters: 15, 15')
     lat_meters, lon_meters = 15, 15
-    print('3. Moving from df to 3D_conv_img')
+    print('3. Moving from df to preprocessed X and y')
     # 120m * 120m and 1 week time (28 * 6h images in 1 week)
-    raw_x, raw_y, raw_z = 120, 120, 28
-    img3D_conv_train, img3D_conv_test = matrix.crime_to_img3D_con(lat_meters, lon_meters, raw_x, raw_y, raw_z)
-    print('9. Saving image filtered 3d convoluted to pickle')
+    raw_x, raw_y, raw_z = 120, 120, 28 # N.B: 28 added as self.raw_z in input class
+    obs_lon = 4 # 4 * 15m = 60m
+    obs_lat = 4 # 4 * 15m = 60m
+    obs_time = 4 # 24h - each obs of X is 14 images (each image is 24h)
+    obs_tf = 56 # 4 (slots of 6h) * 14 days = 56 * 6 or 2 weeks (represents two weeks, where each img is 6h)
+    tar_lon = 4 # 8 * 15m = 120m
+    tar_lat = 4 # 10 * 15m = 150m
+    tar_time = 4 # each image is 24h - output: 2 images of 24h each
+    tar_tf = 8 # 12 * 6h = 2 days
+    nb_observations = 20
+    self.X_train, self.y_train, self.X_test, self.y_test = matrix.preprocessing_X_y(lat_meters,
+     lon_meters,
+     raw_x, raw_y, raw_z,
+     nb_observations,
+     obs_tf, obs_lat, obs_lon, obs_time,
+     tar_tf, tar_lat,tar_lon, tar_time)
+    print('10. Saving X, y (train & test) to pickles!')
     matrix.save_data()
+    print()
+
+
+
+
     x_length = 24 #24h avant
     y_length = 3 #3h apres
     number_of_observations = 50 #50 observations
