@@ -123,10 +123,15 @@ if __name__ == '__main__':
     lat_meters, lon_meters = 15, 15
     print('3. Moving from df to 3D_conv_img')
     # 120m * 120m and 1 week time (28 * 6h images in 1 week)
-    raw_x, raw_y, raw_z = 120, 120, 28
+    raw_x, raw_y, raw_z = 120, 120, 28 # N.B: 28 added as self.raw_z in input class
     img3D_conv_train, img3D_conv_test = matrix.crime_to_img3D_con(lat_meters, lon_meters, raw_x, raw_y, raw_z)
     print('9. Saving image filtered 3d convoluted to pickle')
     matrix.save_data()
+    print()
+
+
+
+
     x_length = 24 #24h avant
     y_length = 3 #3h apres
     number_of_observations = 50 #50 observations

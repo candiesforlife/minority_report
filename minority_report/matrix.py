@@ -27,6 +27,11 @@ class Matrix:
         self.sigma_x = None
         self.sigma_y = None
         self.sigma_z = None
+        self.raw_z = 28
+        self.X_test = None
+        self.y_test = None
+        self.X_train = None
+        self.y_train = None
 
 
     def load_data(self):
@@ -173,6 +178,89 @@ class Matrix:
 
         return self.img3D_conv_train
 
+    ########
+    # Input: Stacking et all.
+
+    def stacking_train(self, window, lat_step, lon_step, time_step):
+        '''
+            Returns stacked crimes.
+        '''
+        grid_offset = np.array([0,0,0]) # Where do you start
+        #new steps from precise grid
+        grid_spacing = np.array([lat_step , lon_step, time_step])
+        #get points coordinates
+        coords = np.argwhere(window)
+        flat = window.flatten()
+        values = flat[flat !=0]
+        # Convert point to index
+        indexes = np.round((coords - grid_offset)/grid_spacing).astype('int')
+        X = indexes[:,0]
+        Y = indexes[:,1]
+        Z = indexes[:,2]
+        #virgin matrix
+        stacked_crimes = np.zeros((int(self.img3D_conv_train.shape[0]/lat_step) + 2,
+            int(self.img3D_conv_train.shape[1]/lon_step) + 2,
+            Z.max() + 2))
+
+        for i in range(len(indexes)):
+
+            if stacked_crimes[X[i], Y[i], Z[i]] == 0:
+                stacked_crimes[X[i], Y[i], Z[i]] = values[i]
+            else:
+                stacked_crimes[X[i], Y[i], Z[i]] += values[i]
+
+        return stacked_crimes
+
+    def get_observation_target_train(self,
+                           obs_timeframe,obs_lat,obs_lon, obs_time,
+                           target_timeframe,  tar_lat,tar_lon, tar_time):
+        '''
+        output an observation of x_length consecutive images and the y_length next images as the target
+        obs_step, obs_timeframe, target_step, target_timeframe : unit = hours
+        '''
+
+        # sample length to absorb impact of gaussian time sigma
+        sample_length = obs_timeframe + (self.raw_z + 1) + target_timeframe
+
+        # finds starting position
+        position = np.random.randint(0, img3D.shape[2] - sample_length)
+
+        # samples in train and test dfs
+        subsample = img3D[:, :, position : position + sample_length]
+
+        # divide the subsample in X and y
+        observations = subsample[:, :, : obs_timeframe]
+
+        targets = subsample[:, :, - target_timeframe : ]
+
+        # stacked images
+        observation = self.stacking_train(observations, obs_lat, obs_lon, obs_time)
+
+        target = self.stacking_train(targets,  tar_lat, tar_lon, tar_time )
+
+        return observation, target
+
+    def get_X_y_train(self, nb_observations, obs_tf,obs_lat,obs_lon, obs_time,
+                    tar_tf, tar_lat,tar_lon, tar_time):
+        '''
+        outputs n observations and their associated targets
+        '''
+        X = []
+        y = []
+        for n in range(nb_observations):
+            print(f'Creating observation {n} out of {nb_observations}')
+            X_subsample, y_subsample = self.get_observation_target_train(obs_tf,
+                                        obs_lat,obs_lon, obs_time,
+                                        tar_tf,  tar_lat,tar_lon, tar_time)
+            X.append(X_subsample)
+            y.append(y_subsample)
+
+        X = np.array(X)
+        y = np.array(y)
+        self.X_train = X
+        self.y_train = y
+        return self.X_train, self.y_train
+
 
 
     # Test Matrix
@@ -247,23 +335,129 @@ class Matrix:
 
         return self.img3D_conv_test
 
+    ###############
+    # Input Replacement: Stacking et all.
+
+    def stacking_test(self, window, lat_step, lon_step, time_step):
+        '''
+            Returns stacked crimes.
+        '''
+        grid_offset = np.array([0,0,0]) # Where do you start
+        #new steps from precise grid
+        grid_spacing = np.array([lat_step , lon_step, time_step])
+        #get points coordinates
+        coords = np.argwhere(window)
+        flat = window.flatten()
+        values = flat[flat !=0]
+        # Convert point to index
+        indexes = np.round((coords - grid_offset)/grid_spacing).astype('int')
+        X = indexes[:,0]
+        Y = indexes[:,1]
+        Z = indexes[:,2]
+        #virgin matrix
+        stacked_crimes = np.zeros((int(self.img3D_conv_test.shape[0]/lat_step) + 2,
+            int(self.img3D_conv_test.shape[1]/lon_step) + 2,
+            Z.max() + 2))
+
+        for i in range(len(indexes)):
+
+            if stacked_crimes[X[i], Y[i], Z[i]] == 0:
+                stacked_crimes[X[i], Y[i], Z[i]] = values[i]
+            else:
+                stacked_crimes[X[i], Y[i], Z[i]] += values[i]
+
+        return stacked_crimes
+
+    def get_observation_target_test(self,
+                           obs_timeframe,obs_lat,obs_lon, obs_time,
+                           target_timeframe,  tar_lat,tar_lon, tar_time):
+        '''
+        output an observation of x_length consecutive images and the y_length next images as the target
+        obs_step, obs_timeframe, target_step, target_timeframe : unit = hours
+        '''
+
+        # sample length to absorb impact of gaussian time sigma
+        sample_length = obs_timeframe + (self.raw_z + 1) + target_timeframe
+
+        # finds starting position
+        position = np.random.randint(0, img3D.shape[2] - sample_length)
+
+        # samples in train and test dfs
+        subsample = img3D[:, :, position : position + sample_length]
+
+        # divide the subsample in X and y
+        observations = subsample[:, :, : obs_timeframe]
+
+        targets = subsample[:, :, - target_timeframe : ]
+
+        # stacked images
+        observation = self.stacking_test(observations, obs_lat, obs_lon, obs_time)
+
+        target = self.stacking_test(targets,  tar_lat, tar_lon, tar_time )
+
+        return observation, target
+
+    def get_X_y_test(self, nb_observations, obs_tf,obs_lat,obs_lon, obs_time,
+                    tar_tf, tar_lat,tar_lon, tar_time):
+        '''
+        outputs n observations and their associated targets
+        '''
+        X = []
+        y = []
+        for n in range(nb_observations):
+            print(f'Creating observation {n} out of {nb_observations}')
+            X_subsample, y_subsample = self.get_observation_target_test(obs_tf,
+                                        obs_lat,obs_lon, obs_time,
+                                        tar_tf,  tar_lat,tar_lon, tar_time)
+            X.append(X_subsample)
+            y.append(y_subsample)
+
+        X = np.array(X)
+        y = np.array(y)
+        self.X_test = X
+        self.y_test = y
+        return self.X_test, self.y_test
+
+
+    def save_data(self):
+        '''
+        Saves clean dataframe to clean data pickle
+        '''
+        root_dir = os.path.dirname(os.path.dirname(__file__))
+        X_train_pickle_path = os.path.join(root_dir, 'raw_data', 'X_train.pickle')
+        y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train.pickle')
+
+        X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test.pickle')
+        y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test.pickle')
+
+        with open(X_train_pickle_path, 'wb') as f:
+            pickle.dump(self.X_train, f)
+
+        with open(y_train_pickle_path, 'wb') as f:
+            pickle.dump(self.y_train, f)
+
+        with open(X_test_pickle_path, 'wb') as f:
+            pickle.dump(self.X_test, f)
+
+        with open(y_test_pickle_path, 'wb') as f:
+            pickle.dump(self.y_test, f)
 
     # Used for both Train and Test Dataframes
 
-    def save_data(self):
-      '''
-      Saves clean dataframe to clean data pickle
-      '''
-      root_dir = os.path.dirname(os.path.dirname(__file__))
-      train_pickle_path = os.path.join(root_dir, 'raw_data', 'img_train.pickle')
+    # def save_data(self):
+    #       '''
+    #       Saves clean dataframe to clean data pickle
+    #       '''
+    #       root_dir = os.path.dirname(os.path.dirname(__file__))
+    #       train_pickle_path = os.path.join(root_dir, 'raw_data', 'img_train.pickle')
 
-      with open(train_pickle_path, 'wb') as f:
-         pickle.dump(self.img3D_conv_train, f)
+    #       with open(train_pickle_path, 'wb') as f:
+    #          pickle.dump(self.img3D_conv_train, f)
 
-      test_pickle_path = os.path.join(root_dir, 'raw_data', 'img_test.pickle')
+    #       test_pickle_path = os.path.join(root_dir, 'raw_data', 'img_test.pickle')
 
-      with open(test_pickle_path, 'wb') as f:
-         pickle.dump(self.img3D_conv_test, f)
+    #       with open(test_pickle_path, 'wb') as f:
+    #          pickle.dump(self.img3D_conv_test, f)
 
 
     def crime_to_img3D_con(self, lat_meters, lon_meters, raw_x, raw_y, raw_z):
