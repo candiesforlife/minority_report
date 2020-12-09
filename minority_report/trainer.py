@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 from datetime import datetime
 from scipy.ndimage import gaussian_filter
-
+import pickle
 # from minority_report.input import Input
 from minority_report.matrix import Matrix
 
@@ -29,14 +29,29 @@ class Trainer:
         self.model = None
         self.y_pred = None
 
+    def load_X_y_pickles(self):
+        root_dir = os.path.dirname(os.path.dirname(__file__))
+        X_train_pickle_path = os.path.join(root_dir, 'raw_data', 'X_train.pickle')
+        y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train.pickle')
 
-    # def load_data_from_input_class(self, number_of_observations, x_length, y_length):
-    #     self.X, self.y = Input().combining_load_data_and_X_y(number_of_observations, x_length, y_length)
-    #     return self.X, self.y
+        X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test.pickle')
+        y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test.pickle')
 
-    # def holdout(self):
-    #     self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size = 0.2)
-    #     return self.X_train, self.X_test, self.y_train, self.y_test
+        with open(X_train_path, 'rb') as f:
+            self.X_train = pickle.load(f)
+        with open(X_test_path, 'rb') as f:
+            self.X_test = pickle.load(f)
+        with open(y_train_path, 'rb') as f:
+            self.y_train = pickle.load(f)
+        with open(y_test_path, 'rb') as f:
+            self.y_test = pickle.load(f)
+
+    def reshape(self):
+        X_train_reshaped = self.X_train.reshape(-1, X_train.shape[1], X_train.shape[2], X_train.shape[3],1)
+        X_test_reshaped = self.X_test.reshape(-1,  X_train.shape[1], X_train.shape[2], X_train.shape[3],1)
+        y_train_reshaped = self.y_train.reshape(-1, y_train.shape[1], y_train.shape[2], y_train.shape[3],1)
+        y_test_reshaped = self.y_test.reshape(-1, y_train.shape[1], y_train.shape[2], y_train.shape[3],1)
+
 
     def init_model(self,x_length, y_length, lat_size, lon_size):
 
