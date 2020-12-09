@@ -128,10 +128,10 @@ if __name__ == '__main__':
     obs_lat = 4 # 4 * 15m = 60m
     obs_time = 4 # 24h - each obs of X is 14 images (each image is 24h)
     obs_tf = 56 # 4 (slots of 6h) * 14 days = 56 * 6 or 2 weeks (represents two weeks, where each img is 6h)
-    tar_lon =  8 # 8 * 15m = 120m
-    tar_lat = 10 # 10 * 15m = 150m
-    tar_time = 2 # each image is 12h - output: one image of 12h
-    tar_tf = 8 # 8 * 6h = 2 days
+    tar_lon = 4 # 8 * 15m = 120m
+    tar_lat = 4 # 10 * 15m = 150m
+    tar_time = 4 # each image is 24h - output: 2 images of 24h each
+    tar_tf = 8 # 12 * 6h = 2 days
     nb_observations = 20
     self.X_train, self.y_train, self.X_test, self.y_test = matrix.preprocessing_X_y(lat_meters,
      lon_meters,

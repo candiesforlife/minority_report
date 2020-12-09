@@ -197,10 +197,8 @@ class Matrix:
         X = indexes[:,0]
         Y = indexes[:,1]
         Z = indexes[:,2]
-        #virgin matrix
-        stacked_crimes = np.zeros((int(self.img3D_conv_train.shape[0]/lat_step) + 2,
-            int(self.img3D_conv_train.shape[1]/lon_step) + 2,
-            Z.max() + 2))
+        #virgin matrix: 256 is arbitrary size that works in model
+        stacked_crimes = np.zeros((256, 256, Z.max() + 2))
 
         for i in range(len(indexes)):
 
@@ -354,10 +352,8 @@ class Matrix:
         X = indexes[:,0]
         Y = indexes[:,1]
         Z = indexes[:,2]
-        #virgin matrix
-        stacked_crimes = np.zeros((int(self.img3D_conv_test.shape[0]/lat_step) + 2,
-            int(self.img3D_conv_test.shape[1]/lon_step) + 2,
-            Z.max() + 2))
+        #virgin matrix: 256 absolute size to be stacked to work in model!
+        stacked_crimes = np.zeros((256, 256, Z.max() + 2))
 
         for i in range(len(indexes)):
 
