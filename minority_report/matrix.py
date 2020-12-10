@@ -245,7 +245,7 @@ class Matrix:
 
         return observation, target
 
-    def get_X_y_train(self, nb_observations, obs_tf,obs_lat,obs_lon, obs_time,
+    def get_X_y_train(self, nb_observations_train, obs_tf,obs_lat,obs_lon, obs_time,
                     tar_tf, tar_lat,tar_lon, tar_time):
         '''
         outputs n observations and their associated targets
@@ -408,7 +408,7 @@ class Matrix:
 
         return observation, target
 
-    def get_X_y_test(self, nb_observations, obs_tf,obs_lat,obs_lon, obs_time,
+    def get_X_y_test(self, nb_observations_test, obs_tf,obs_lat,obs_lon, obs_time,
                     tar_tf, tar_lat,tar_lon, tar_time):
         '''
         outputs n observations and their associated targets
@@ -475,7 +475,7 @@ class Matrix:
     #          pickle.dump(self.img3D_conv_test, f)
 
 
-    def preprocessing_X_y(self, lat_meters, lon_meters, raw_x, raw_y, raw_z, nb_observations,
+    def preprocessing_X_y(self,nb_observations_train, nb_observations_test, lat_meters, lon_meters, raw_x, raw_y, raw_z,#nb_observations,
      obs_tf, obs_lat, obs_lon, obs_time,
      tar_tf, tar_lat,tar_lon, tar_time):
         '''
@@ -504,12 +504,12 @@ class Matrix:
         print('8b. Gaussian filtering: Test')
         self.gaussian_filtering_test()
 
-        print('9a. Getting X, y Train')
-        self.get_X_y_train(nb_observations, obs_tf,obs_lat,obs_lon, obs_time,
+        print('9a. Getting X, y Train') #nb_observations
+        self.get_X_y_train(nb_observations_train, obs_tf,obs_lat,obs_lon, obs_time,
                     tar_tf, tar_lat,tar_lon, tar_time)
 
-        print('9b. Getting X, y Test')
-        self.get_X_y_test(nb_observations, obs_tf,obs_lat,obs_lon, obs_time,
+        print('9b. Getting X, y Test') #nb_observations
+        self.get_X_y_test(nb_observations_test, obs_tf,obs_lat,obs_lon, obs_time,
                     tar_tf, tar_lat,tar_lon, tar_time)
 
         return self.X_train, self.y_train, self.X_test, self.y_test

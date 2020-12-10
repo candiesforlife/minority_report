@@ -163,9 +163,10 @@ if __name__ == '__main__':
     tar_lat = 4 # 10 * 15m = 150m
     tar_time = 4 # each image is 24h - output: 2 images of 24h each
     tar_tf = 8 # 12 * 6h = 2 days
-    nb_observations = 20
-    X_train, y_train, X_test, y_test = matrix.preprocessing_X_y(lat_meters,
-     lon_meters, raw_x, raw_y, raw_z, nb_observations, obs_tf, obs_lat, obs_lon, obs_time, tar_tf, tar_lat,tar_lon, tar_time)
+    nb_observations_train = 140
+    nb_observations_test = 60
+    X_train, y_train, X_test, y_test = matrix.preprocessing_X_y(nb_observations_train, nb_observations_test,lat_meters, lon_meters, raw_x, raw_y, raw_z, obs_tf, obs_lat, obs_lon, obs_time, tar_tf, tar_lat,tar_lon, tar_time)
+
     print('10. Saving X, y (train & test) to pickles!')
     matrix.save_data()
     print('11. Checking X shape')
