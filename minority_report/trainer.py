@@ -180,13 +180,13 @@ if __name__ == '__main__':
     print('13. Checking y shape')
     print(y_train.shape)
     print(f'14.Finished with getting train & test data + saving it into pickles with {nb_observations}')
-    print('15. Instanciating Trainer class')
-    trainer  = Trainer()
-    batch_size = 32
-    epochs = 200
-    patience = 5
-    print('16. Starting the training of the model')
-    trainer.training_model(batch_size, epochs, patience)
+    # print('15. Instanciating Trainer class')
+    # trainer  = Trainer()
+    # batch_size = 32
+    # epochs = 200
+    # patience = 5
+    # print('16. Starting the training of the model')
+    # trainer.training_model(batch_size, epochs, patience)
 
 
 
