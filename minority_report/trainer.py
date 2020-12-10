@@ -124,10 +124,17 @@ class Trainer:
         result = self.model.evaluate(self.X_test, self.y_test)
         return result
 
-    def predict_model(self,):
+
+    def predict_model(self):
         # self.X_test = self.X_test.reshape(-1, self.X_test.shape[1], self.X_test.shape[2], self.X_test.shape[3], 1)
         self.y_pred = self.model.predict(self.X_test)
         return self.y_pred
+
+     def plot_predict(self):
+        fig, axes = plt.subplots(self.y_pred.shape[3], 2, figsize=(15,15))
+        for i in range(self.y_pred.shape[3]):
+            axes[i,0].imshow(self.y_pred[0,:,:,i,0], vmax=y_pred[0,:,:,i,0].max());
+            axes[i,1].imshow(self.y_test[0,:,:,i,0], vmax=y_test[0,:,:,i,0].max());
 
     def save_y_pred_to_pickle(self):
         '''
