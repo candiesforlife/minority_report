@@ -39,10 +39,10 @@ class Trainer:
         # X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test_60.pickle')
         # y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test_60.pickle')
         drive.mount('/content/drive/')
-        X_train_pickle_path = ('drive/MyDrive/pickles/X_train_140.pickle')
-        X_test_pickle_path = ('drive/MyDrive/pickles/X_test_60.pickle')
-        y_train_pickle_path = ('drive/MyDrive/pickles/y_train_140.pickle')
-        y_test_pickle_path = ('drive/MyDrive/pickles/y_test_60.pickle')
+        X_train_pickle_path = ('drive/MyDrive/pickles/large_obs/X_train_140.pickle')
+        X_test_pickle_path = ('drive/MyDrive/pickles/large_obs/X_test_60.pickle')
+        y_train_pickle_path = ('drive/MyDrive/pickles/large_obs/y_train_140.pickle')
+        y_test_pickle_path = ('drive/MyDrive/pickles/large_obs/y_test_60.pickle')
 
         with open(X_train_pickle_path, 'rb') as f:
             self.X_train = pickle.load(f)
