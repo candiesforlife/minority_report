@@ -32,7 +32,7 @@ class Matrix:
         self.sigma_y = None
         self.sigma_z = None
 
-        self.raw_z = 28
+        self.raw_z = 12
 
         self.X_test = None
         self.y_test = None
@@ -205,7 +205,7 @@ class Matrix:
         Y = indexes[:,1]
         Z = indexes[:,2]
         #virgin matrix: 256 is arbitrary size that works in model
-        stacked_crimes = np.zeros((256, 256, Z.max() + 2))
+        stacked_crimes = np.zeros((192, 132, Z.max() + 2))
 
         for i in range(len(indexes)):
 
@@ -245,7 +245,7 @@ class Matrix:
 
         return observation, target
 
-    def get_X_y_train(self, nb_observations, obs_tf,obs_lat,obs_lon, obs_time,
+    def get_X_y_train(self, nb_observations_train, obs_tf,obs_lat,obs_lon, obs_time,
                     tar_tf, tar_lat,tar_lon, tar_time):
         '''
         outputs n observations and their associated targets
@@ -368,7 +368,7 @@ class Matrix:
         Z = indexes[:,2]
 
         #virgin matrix: 256 absolute size to be stacked to work in model!
-        stacked_crimes = np.zeros((256, 256, Z.max() + 2))
+        stacked_crimes = np.zeros((192, 132, Z.max() + 2))
 
         for i in range(len(indexes)):
 
@@ -408,7 +408,7 @@ class Matrix:
 
         return observation, target
 
-    def get_X_y_test(self, nb_observations, obs_tf,obs_lat,obs_lon, obs_time,
+    def get_X_y_test(self, nb_observations_test, obs_tf,obs_lat,obs_lon, obs_time,
                     tar_tf, tar_lat,tar_lon, tar_time):
         '''
         outputs n observations and their associated targets
@@ -475,7 +475,7 @@ class Matrix:
     #          pickle.dump(self.img3D_conv_test, f)
 
 
-    def preprocessing_X_y(self, lat_meters, lon_meters, raw_x, raw_y, raw_z,#nb_observations,
+    def preprocessing_X_y(self,nb_observations_train, nb_observations_test, lat_meters, lon_meters, raw_x, raw_y, raw_z,#nb_observations,
      obs_tf, obs_lat, obs_lon, obs_time,
      tar_tf, tar_lat,tar_lon, tar_time):
         '''
@@ -505,11 +505,11 @@ class Matrix:
         self.gaussian_filtering_test()
 
         print('9a. Getting X, y Train') #nb_observations
-        self.get_X_y_train(140, obs_tf,obs_lat,obs_lon, obs_time,
+        self.get_X_y_train(nb_observations_train, obs_tf,obs_lat,obs_lon, obs_time,
                     tar_tf, tar_lat,tar_lon, tar_time)
 
         print('9b. Getting X, y Test') #nb_observations
-        self.get_X_y_test(60, obs_tf,obs_lat,obs_lon, obs_time,
+        self.get_X_y_test(nb_observations_test, obs_tf,obs_lat,obs_lon, obs_time,
                     tar_tf, tar_lat,tar_lon, tar_time)
 
         return self.X_train, self.y_train, self.X_test, self.y_test
