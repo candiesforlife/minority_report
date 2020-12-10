@@ -17,6 +17,7 @@ from sklearn.model_selection import train_test_split
 
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras import models, layers
+from google.colab import drive
 
 class Trainer:
     def __init__(self):
@@ -31,12 +32,17 @@ class Trainer:
 
     def load_X_y_pickles(self):
         ''' loading pickles train and test for X and y'''
-        root_dir = os.path.dirname(os.path.dirname(__file__))
-        X_train_pickle_path = os.path.join(root_dir, 'raw_data', ' X_train_140.pickle')
-        y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train_140.pickle')
+        # root_dir = os.path.dirname(os.path.dirname(__file__))
+        # X_train_pickle_path = os.path.join(root_dir, 'raw_data', ' X_train_140.pickle')
+        # y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train_140.pickle')
 
-        X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test_60.pickle')
-        y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test_60.pickle')
+        # X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test_60.pickle')
+        # y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test_60.pickle')
+        drive.mount('/content/drive/')
+        X_train_pickle_path = ('drive/MyDrive/pickles/X_train_140.pickle')
+        X_test_pickle_path = ('drive/MyDrive/pickles/X_test_60.pickle')
+        y_train_pickle_path = ('drive/MyDrive/pickles/y_train_140.pickle')
+        y_test_pickle_path = ('drive/MyDrive/pickles/y_test_60.pickle')
 
         with open(X_train_pickle_path, 'rb') as f:
             self.X_train = pickle.load(f)
