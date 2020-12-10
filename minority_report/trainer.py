@@ -123,20 +123,23 @@ class Trainer:
 
 
 
-    def training_model(self, number_of_observations,batch_size, epochs, patience):
+    def training_model(self,batch_size, epochs, patience):
 
-        print('10. Train test split')
-        self.holdout()
-        print('11. Init model')
-        self.init_model()
-        print('12. Fit model')
+        print('17. Loading X & y pickles, instance variables for the Training instance')
+        self.load_X_y_pickles()
+        print('18. Reshaping Training instance')
+        self.reshape()
+        print('19. Initiating & compling CNN model architecturee')
+        self.init_model(batch_size, epochs, patience)
+        print(f'20. Fitting model with a batch_size of {batch_size}, {epochs} epochs and a patience of {patience}')
         self.fit_model(batch_size, epochs, patience)
-        print('13. Evaluate')
+        print('21. Evaluating')
         self.evaluate_model()
-        # print('14. Predict')
-        # self.predict_model()
-        # print('15. Save y_pred to pickle')
-        # self.save_y_pred_to_pickle()
+        print('22. Predicting')
+        self.predict_model()
+        print('23. Saving y_pred to pickle')
+        self.save_y_pred_to_pickle()
+        print('24. Done!')
         return self
 
 
@@ -160,15 +163,22 @@ if __name__ == '__main__':
     tar_tf = 8 # 12 * 6h = 2 days
     nb_observations = 20
     X_train, y_train, X_test, y_test = matrix.preprocessing_X_y(lat_meters,
-     lon_meters,
-     raw_x, raw_y, raw_z,
-     nb_observations,
-     obs_tf, obs_lat, obs_lon, obs_time,
-     tar_tf, tar_lat,tar_lon, tar_time)
+     lon_meters, raw_x, raw_y, raw_z, nb_observations, obs_tf, obs_lat, obs_lon, obs_time, tar_tf, tar_lat,tar_lon, tar_time)
     print('10. Saving X, y (train & test) to pickles!')
     matrix.save_data()
-    print('11. X shape')
+    print('11. Checking X shape')
     print(X_train.shape)
+    print('13. Checking y shape')
     print(y_train.shape)
-    print('12.Finished')
+    print(f'14.Finished with getting train & test data + saving it into pickles with {nb_observations}')
+    print('15. Instanciating Trainer class')
+    trainer  = Trainer()
+    batch_size = 32
+    epochs = 200
+    patience = 5
+    print('16. Starting the training of the model')
+    trainer.training_model(batch_size, epochs, patience)
+
+
+
 
