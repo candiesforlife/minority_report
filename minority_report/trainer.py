@@ -94,13 +94,11 @@ class Trainer:
           print('3D conv 2')
           self.model.add(layers.UpSampling3D(size=(2, 2, 2)))
           self.model.add(layers.Conv3D(64, kernel_size=(3,3,3), activation='relu', padding='same'))
-          #self.model.add(layers.Conv3D(32, kernel_size=(3,3,3), activation='relu', padding='same'))
+
 
           print('3D conv 3')
           self.model.add(layers.UpSampling3D(size=(2, 2, 2)))
           self.model.add(layers.Conv3D(1, kernel_size=(3,3,3), activation='relu', padding='same'))
-          #self.model.add(layers.Conv3D(16, kernel_size=(4,4,4), activation='relu', padding='same'))
-
 
           optimizer = Adam(learning_rate = 0.0001)
 
