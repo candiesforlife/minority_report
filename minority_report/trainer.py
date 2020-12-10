@@ -148,11 +148,11 @@ class Trainer:
 
 if __name__ == '__main__':
 
-    # print('1. Creating an instance of Matrix class')
-    # matrix = Matrix()
-    # print('2. Defining grid steps in meters: 15, 15')
-    # lat_meters, lon_meters = 15, 15
-    # print('3. Moving from df to preprocessed X and y')
+    print('1. Creating an instance of Matrix class')
+    matrix = Matrix()
+    print('2. Defining grid steps in meters: 15, 15')
+    lat_meters, lon_meters = 15, 15
+    print('3. Moving from df to preprocessed X and y')
     # 120m * 120m and 1 week time (28 * 6h images in 1 week)
     raw_x, raw_y, raw_z = 120, 120, 28 # N.B: 28 added as self.raw_z in input class
     obs_lon = 4 # 4 * 15m = 60m
@@ -164,14 +164,14 @@ if __name__ == '__main__':
     tar_time = 4 # each image is 24h - output: 2 images of 24h each
     tar_tf = 8 # 12 * 6h = 2 days
     nb_observations = 20
-    # X_train, y_train, X_test, y_test = matrix.preprocessing_X_y(lat_meters,
-    #  lon_meters, raw_x, raw_y, raw_z, nb_observations, obs_tf, obs_lat, obs_lon, obs_time, tar_tf, tar_lat,tar_lon, tar_time)
-    # print('10. Saving X, y (train & test) to pickles!')
-    # matrix.save_data()
-    # print('11. Checking X shape')
-    # print(X_train.shape)
-    # print('13. Checking y shape')
-    # print(y_train.shape)
+    X_train, y_train, X_test, y_test = matrix.preprocessing_X_y(lat_meters,
+     lon_meters, raw_x, raw_y, raw_z, nb_observations, obs_tf, obs_lat, obs_lon, obs_time, tar_tf, tar_lat,tar_lon, tar_time)
+    print('10. Saving X, y (train & test) to pickles!')
+    matrix.save_data()
+    print('11. Checking X shape')
+    print(X_train.shape)
+    print('13. Checking y shape')
+    print(y_train.shape)
     print(f'14.Finished with getting train & test data + saving it into pickles with {nb_observations}')
     print('15. Instanciating Trainer class')
     trainer  = Trainer()
