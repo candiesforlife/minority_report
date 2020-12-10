@@ -17,6 +17,7 @@ from sklearn.model_selection import train_test_split
 
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras import models, layers
+from google.colab import drive
 
 class Trainer:
     def __init__(self):
@@ -32,27 +33,34 @@ class Trainer:
     def load_X_y_pickles(self):
         ''' loading pickles train and test for X and y'''
         root_dir = os.path.dirname(os.path.dirname(__file__))
-        X_train_pickle_path = os.path.join(root_dir, 'raw_data', 'X_train.pickle')
-        y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train.pickle')
+        X_train_pickle_path = os.path.join(root_dir, 'raw_data', ' X_train_70.pickle')
+        y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train_70.pickle')
 
-        X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test.pickle')
-        y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test.pickle')
+        X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test_30.pickle')
+        y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test_30.pickle')
+        # drive.mount('/content/drive/')
+        # X_train_pickle_path = ('drive/MyDrive/pickles/large_obs/X_train_140.pickle')
+        # X_test_pickle_path = ('drive/MyDrive/pickles/large_obs/X_test_60.pickle')
+        # y_train_pickle_path = ('drive/MyDrive/pickles/large_obs/y_train_140.pickle')
+        # y_test_pickle_path = ('drive/MyDrive/pickles/large_obs/y_test_60.pickle')
 
-        with open(X_train_path, 'rb') as f:
+        with open(X_train_pickle_path, 'rb') as f:
             self.X_train = pickle.load(f)
-        with open(X_test_path, 'rb') as f:
+        with open(X_test_pickle_path, 'rb') as f:
             self.X_test = pickle.load(f)
-        with open(y_train_path, 'rb') as f:
+        with open(y_train_pickle_path, 'rb') as f:
             self.y_train = pickle.load(f)
-        with open(y_test_path, 'rb') as f:
+        with open(y_test_pickle_path, 'rb') as f:
             self.y_test = pickle.load(f)
+
+        return self.X_train, self.X_test, self.y_train, self.y_test
 
     def reshape(self):
         ''' reshaping for the correct channel size before passing into the CNN model.'''
-        self.X_train = self.X_train.reshape(-1, X_train.shape[1], X_train.shape[2], X_train.shape[3],1)
-        self.X_test = self.X_test.reshape(-1,  X_train.shape[1], X_train.shape[2], X_train.shape[3],1)
-        self.y_train = self.y_train.reshape(-1, y_train.shape[1], y_train.shape[2], y_train.shape[3],1)
-        self.y_test = self.y_test.reshape(-1, y_train.shape[1], y_train.shape[2], y_train.shape[3],1)
+        self.X_train = self.X_train.reshape(-1, self.X_train.shape[1], self.X_train.shape[2], self.X_train.shape[3],1)
+        self.X_test = self.X_test.reshape(-1,  self.X_train.shape[1], self.X_train.shape[2], self.X_train.shape[3],1)
+        self.y_train = self.y_train.reshape(-1, self.y_train.shape[1], self.y_train.shape[2], self.y_train.shape[3],1)
+        self.y_test = self.y_test.reshape(-1, self.y_train.shape[1], self.y_train.shape[2], self.y_train.shape[3],1)
         return self.X_train, self.X_test, self.y_train, self.y_test
 
     def init_model(self):
@@ -88,7 +96,7 @@ class Trainer:
         self.model.compile(loss ='mse',
                  optimizer='adam',
                  metrics='mae')
-        return model
+        return self.model
 
 
     def fit_model(self,batch_size, epochs, patience):
@@ -123,20 +131,23 @@ class Trainer:
 
 
 
-    def training_model(self, number_of_observations,batch_size, epochs, patience):
+    def training_model(self,batch_size, epochs, patience):
 
-        print('10. Train test split')
-        self.holdout()
-        print('11. Init model')
+        print('17. Loading X & y pickles, instance variables for the Training instance')
+        self.load_X_y_pickles()
+        print('18. Reshaping Training instance')
+        self.reshape()
+        print('19. Initiating & compling CNN model architecturee')
         self.init_model()
-        print('12. Fit model')
+        print(f'20. Fitting model with a batch_size of {batch_size}, {epochs} epochs and a patience of {patience}')
         self.fit_model(batch_size, epochs, patience)
-        print('13. Evaluate')
+        print('21. Evaluating')
         self.evaluate_model()
-        # print('14. Predict')
-        # self.predict_model()
-        # print('15. Save y_pred to pickle')
-        # self.save_y_pred_to_pickle()
+        print('22. Predicting')
+        self.predict_model()
+        print('23. Saving y_pred to pickle')
+        self.save_y_pred_to_pickle()
+        print('24. Done!')
         return self
 
 
@@ -149,7 +160,7 @@ if __name__ == '__main__':
     lat_meters, lon_meters = 15, 15
     print('3. Moving from df to preprocessed X and y')
     # 120m * 120m and 1 week time (28 * 6h images in 1 week)
-    raw_x, raw_y, raw_z = 120, 120, 28 # N.B: 28 added as self.raw_z in input class
+    raw_x, raw_y, raw_z = 120, 120, 12 # N.B: 28 added as self.raw_z in input class
     obs_lon = 4 # 4 * 15m = 60m
     obs_lat = 4 # 4 * 15m = 60m
     obs_time = 4 # 24h - each obs of X is 14 images (each image is 24h)
@@ -158,17 +169,25 @@ if __name__ == '__main__':
     tar_lat = 4 # 10 * 15m = 150m
     tar_time = 4 # each image is 24h - output: 2 images of 24h each
     tar_tf = 8 # 12 * 6h = 2 days
-    nb_observations = 20
-    X_train, y_train, X_test, y_test = matrix.preprocessing_X_y(lat_meters,
-     lon_meters,
-     raw_x, raw_y, raw_z,
-     nb_observations,
-     obs_tf, obs_lat, obs_lon, obs_time,
-     tar_tf, tar_lat,tar_lon, tar_time)
+    nb_observations_train = 70
+    nb_observations_test = 30
+    X_train, y_train, X_test, y_test = matrix.preprocessing_X_y(nb_observations_train, nb_observations_test,lat_meters, lon_meters, raw_x, raw_y, raw_z, obs_tf, obs_lat, obs_lon, obs_time, tar_tf, tar_lat,tar_lon, tar_time)
+
     print('10. Saving X, y (train & test) to pickles!')
     matrix.save_data()
-    print('11. X shape')
+    print('11. Checking X shape')
     print(X_train.shape)
+    print('13. Checking y shape')
     print(y_train.shape)
-    print('12.Finished')
+    print(f'14.Finished with getting train & test data + saving it into pickles with {nb_observations}')
+    # print('15. Instanciating Trainer class')
+    # trainer  = Trainer()
+    # batch_size = 32
+    # epochs = 200
+    # patience = 5
+    # print('16. Starting the training of the model')
+    # trainer.training_model(batch_size, epochs, patience)
+
+
+
 
