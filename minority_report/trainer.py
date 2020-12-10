@@ -17,6 +17,7 @@ from sklearn.model_selection import train_test_split
 
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras import models, layers
+from tensorflow.keras.optimizers import  Adam
 from google.colab import drive
 
 class Trainer:
