@@ -205,7 +205,7 @@ class Matrix:
         Y = indexes[:,1]
         Z = indexes[:,2]
         #virgin matrix: 256 is arbitrary size that works in model
-        stacked_crimes = np.zeros((256, 256, Z.max() + 2))
+        stacked_crimes = np.zeros((192, 132, Z.max() + 2))
 
         for i in range(len(indexes)):
 
@@ -368,7 +368,7 @@ class Matrix:
         Z = indexes[:,2]
 
         #virgin matrix: 256 absolute size to be stacked to work in model!
-        stacked_crimes = np.zeros((256, 256, Z.max() + 2))
+        stacked_crimes = np.zeros((192, 132, Z.max() + 2))
 
         for i in range(len(indexes)):
 
