@@ -32,11 +32,11 @@ class Trainer:
     def load_X_y_pickles(self):
         ''' loading pickles train and test for X and y'''
         root_dir = os.path.dirname(os.path.dirname(__file__))
-        X_train_pickle_path = os.path.join(root_dir, 'raw_data', 'X_train_20.pickle')
-        y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train_20.pickle')
+        X_train_pickle_path = os.path.join(root_dir, 'raw_data', ' X_train_140.pickle')
+        y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train_140.pickle')
 
-        X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test_20.pickle')
-        y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test_20.pickle')
+        X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test_60.pickle')
+        y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test_60.pickle')
 
         with open(X_train_pickle_path, 'rb') as f:
             self.X_train = pickle.load(f)
