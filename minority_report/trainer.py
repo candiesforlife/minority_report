@@ -32,17 +32,17 @@ class Trainer:
 
     def load_X_y_pickles(self):
         ''' loading pickles train and test for X and y'''
-        # root_dir = os.path.dirname(os.path.dirname(__file__))
-        # X_train_pickle_path = os.path.join(root_dir, 'raw_data', ' X_train_140.pickle')
-        # y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train_140.pickle')
+        root_dir = os.path.dirname(os.path.dirname(__file__))
+        X_train_pickle_path = os.path.join(root_dir, 'raw_data', ' X_train_70.pickle')
+        y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train_70.pickle')
 
-        # X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test_60.pickle')
-        # y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test_60.pickle')
-        drive.mount('/content/drive/')
-        X_train_pickle_path = ('drive/MyDrive/pickles/large_obs/X_train_140.pickle')
-        X_test_pickle_path = ('drive/MyDrive/pickles/large_obs/X_test_60.pickle')
-        y_train_pickle_path = ('drive/MyDrive/pickles/large_obs/y_train_140.pickle')
-        y_test_pickle_path = ('drive/MyDrive/pickles/large_obs/y_test_60.pickle')
+        X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test_30.pickle')
+        y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test_30.pickle')
+        # drive.mount('/content/drive/')
+        # X_train_pickle_path = ('drive/MyDrive/pickles/large_obs/X_train_140.pickle')
+        # X_test_pickle_path = ('drive/MyDrive/pickles/large_obs/X_test_60.pickle')
+        # y_train_pickle_path = ('drive/MyDrive/pickles/large_obs/y_train_140.pickle')
+        # y_test_pickle_path = ('drive/MyDrive/pickles/large_obs/y_test_60.pickle')
 
         with open(X_train_pickle_path, 'rb') as f:
             self.X_train = pickle.load(f)
@@ -169,8 +169,8 @@ if __name__ == '__main__':
     tar_lat = 4 # 10 * 15m = 150m
     tar_time = 4 # each image is 24h - output: 2 images of 24h each
     tar_tf = 8 # 12 * 6h = 2 days
-    nb_observations_train = 140
-    nb_observations_test = 60
+    nb_observations_train = 70
+    nb_observations_test = 30
     X_train, y_train, X_test, y_test = matrix.preprocessing_X_y(nb_observations_train, nb_observations_test,lat_meters, lon_meters, raw_x, raw_y, raw_z, obs_tf, obs_lat, obs_lon, obs_time, tar_tf, tar_lat,tar_lon, tar_time)
 
     print('10. Saving X, y (train & test) to pickles!')
