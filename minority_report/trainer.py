@@ -160,7 +160,7 @@ if __name__ == '__main__':
     lat_meters, lon_meters = 15, 15
     print('3. Moving from df to preprocessed X and y')
     # 120m * 120m and 1 week time (28 * 6h images in 1 week)
-    raw_x, raw_y, raw_z = 120, 120, 28 # N.B: 28 added as self.raw_z in input class
+    raw_x, raw_y, raw_z = 120, 120, 12 # N.B: 28 added as self.raw_z in input class
     obs_lon = 4 # 4 * 15m = 60m
     obs_lat = 4 # 4 * 15m = 60m
     obs_time = 4 # 24h - each obs of X is 14 images (each image is 24h)

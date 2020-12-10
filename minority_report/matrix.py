@@ -32,7 +32,7 @@ class Matrix:
         self.sigma_y = None
         self.sigma_z = None
 
-        self.raw_z = 28
+        self.raw_z = 12
 
         self.X_test = None
         self.y_test = None
