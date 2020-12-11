@@ -17,7 +17,7 @@ from sklearn.model_selection import train_test_split
 
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras import models, layers
-from google.colab import drive
+#from google.colab import drive
 
 class Trainer:
     def __init__(self):
@@ -179,7 +179,7 @@ if __name__ == '__main__':
     print(X_train.shape)
     print('13. Checking y shape')
     print(y_train.shape)
-    print(f'14.Finished with getting train & test data + saving it into pickles with {nb_observations}')
+    #print(f'14.Finished with getting train & test data + saving it into pickles with {nb_observations}')
     # print('15. Instanciating Trainer class')
     # trainer  = Trainer()
     # batch_size = 32
