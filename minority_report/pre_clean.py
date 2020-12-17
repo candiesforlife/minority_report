@@ -35,3 +35,49 @@ class PreClean:
                         'Y_COORD_CD',
                         'Lat_Lon',
                        ], inplace = True)
+
+        self.data = df
+        return self.data
+
+    def rename_cols(self):
+        '''
+        Renames dataset columns to more readable names
+        '''
+
+        df = self.data.copy()
+
+        # dictionary of new names for each column
+        columns_dic = {
+
+            'CMPLNT_FR_DT' : 'date',
+            'CMPLNT_FR_TM' : 'time',
+
+            'LAW_CAT_CD' : 'offense_level',
+            'OFNS_DESC' : 'offense_type',
+            'CRM_ATPT_CPTD_CD' : 'crime_completed',
+
+            'LOC_OF_OCCUR_DESC' : 'premise_desc',
+            'PREM_TYP_DESC' : 'premise',
+            'Latitude' : 'latitude',
+            'Longitude' : 'longitude',
+            'BORO_NM' : 'borough',
+            'PATROL_BORO' : 'patrol_borough',
+            'ADDR_PCT_CD' : 'precinct_number',
+            'JURIS_DESC' : 'jurisdiction',
+
+            'SUSP_AGE_GROUP' : 'suspect_age',
+            'SUSP_RACE' : 'suspect_race',
+            'SUSP_SEX' : 'suspect_sex',
+            'VIC_AGE_GROUP' : 'victim_age',
+            'VIC_RACE' : 'victim_race',
+            'VIC_SEX' : 'victim_sex',
+            'PARKS_NM' : 'park_name',
+            'STATION_NAME' : 'metro'
+        }
+
+        df.rename(columns = columns_dic, inplace = True)
+
+        self.data = df
+        return self.data
+
+
