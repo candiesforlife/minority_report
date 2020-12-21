@@ -1,12 +1,25 @@
-# Data analysis
+# Minority Report
+
+Minority Report aims to predict future crime intensity in the 75th precinct in NYC.
+
+Each crime occurence is represented in a 3-D tensor made up of latitude, longitude and an indicated timeframe.
+
+After passing the tensors through a Gaussian filter and stacking them, they are used to train a Convolutional Neural Network.
+
+You can find out more by checking out our presentation [here](https://docs.google.com/presentation/d/1LlsR1xTr1Hx4iTx-in5fL0dMzcIrm319WJlsk2z9HWU/edit?usp=sharing)
+
+[NYPD Data Source](https://catalog.data.gov/dataset/nypd-complaint-data-historic/resource/427e1d35-8a14-4e6b-b7ce-f5c45fb30b26)
+
+
+<!-- # Data analysis
 - Document here the project: minority_report
 - Description: The minority report aims to predict the hourly intensity of crimes in a defined region in the next 48hours. (our y)
-- Data Source: https://lewagon-alumni.slack.com/files/U01CE79R7K5/F01FLDM0KRC/nypd_complaint_historic_datadictionary.ods
+- Data Source: https://catalog.data.gov/dataset/nypd-complaint-data-historic/resource/427e1d35-8a14-4e6b-b7ce-f5c45fb30b26
 - Type of analysis:
 
-Please document the project the better you can.
+Please document the project the better you can. -->
 
-# Startup the project
+<!-- # Startup the project
 
 The initial setup.
 
@@ -62,6 +75,6 @@ Functionnal test with a script:
 ```bash
   $ cd /tmp
   $ minority_report-run
-```
+``` -->
 
 
