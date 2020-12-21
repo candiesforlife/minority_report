@@ -106,21 +106,30 @@ class CleanData:
 
   def to_date_format(self):
     '''
-    Merges date and time into new column, drops old
-    Filters dataframe to show only complaints dated 2007 onwards
+    Creates new column 'period' out of 'date' and 'time'
+    Drops 'date' and 'time'
+    Filters dataframe to show only complaints dated >= 2007
     '''
+
     df = self.data.copy()
-    # concat to new period column
+
+    # New period column out of concatenated 'date' and 'time'
     df['period'] = df['date'] + ' ' + df['time']
-    # change to datetime
+
+    # Converts 'period' to datetime format
     df['period'] = df['period'].apply(lambda x: \
-                           datetime.strptime(x, '%m/%d/%Y %H:%M:%S'))
-    # round to hour bucket
-    df['period'] = df['period'].apply(lambda x: x.replace(minute = 0, second = 0))
-    # filter to post 2007
+                          datetime.strptime(x, '%m/%d/%Y %H:%M:%S'))
+
+    # Trims 'period' to hour
+    df['period'] = df['period'].apply(lambda x: \
+                          x.replace(minute = 0, second = 0))
+
+    # Filters dataframe to exclude crimes older than 2007
     df = df[df['period'] > datetime(2006, 12, 31, 23, 59, 0)]
-    # drop date and time
+
+    # Drops columns 'date' and 'time'
     df.drop(columns = ['date', 'time'], inplace = True)
+
     self.data = df
     return self.data
 
