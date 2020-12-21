@@ -1,4 +1,4 @@
-'''Generates new dataframe out of clean_data dataframe for Data Viz purposes'''
+'''Generates new dataframe out of clean_data df for Data Viz purposes'''
 
 import os
 import pickle
