@@ -17,6 +17,7 @@ from sklearn.model_selection import train_test_split
 
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras import models, layers
+from tensorflow.keras.optimizers import  Adam
 from google.colab import drive
 
 class Trainer:
@@ -65,38 +66,47 @@ class Trainer:
 
     def init_model(self):
         print('init model')
-        self.model = models.Sequential()
+          self.model = models.Sequential()
 
-        print('3D conv 1')
-        self.model.add(layers.Conv3D(32, kernel_size = (4,4,4), activation = 'relu', padding='same',
-                                 input_shape = (256, 256, 18,1))) # 256 and 256 are mandatory but the nb of sheets of X (18) must be changed accordingly with the input
-        self.model.add(layers.MaxPooling3D(2))
+          print('3D conv 1')
+          self.model.add(layers.Conv3D(32, kernel_size = (4,4,4), activation = 'relu', padding='same',
+                                      input_shape = (192, 132, 16,1)))
+          self.model.add(layers.MaxPooling3D(2))
 
-        print('3D conv 2')
-        self.model.add(layers.Conv3D(128, kernel_size = (3,3,3), activation = 'relu', padding='same'))
-        self.model.add(layers.MaxPooling3D(2))
+          print('3D conv 2')
+          self.model.add(layers.Conv3D(128, kernel_size = (3,3,3), activation = 'relu', padding='same'))
+          self.model.add(layers.MaxPooling3D(2))
 
-        print('3D conv 3')
-        self.model.add(layers.Conv3D(64, kernel_size = (2,2,2), activation = 'relu', padding='same'))
-        self.model.add(layers.MaxPooling3D(2))
+          print('3D conv 3')
+          self.model.add(layers.Conv3D(64, kernel_size = (2,2,2), activation = 'relu', padding='same'))
+          self.model.add(layers.MaxPooling3D(2))
 
-        print('3D conv 4')
-        self.model.add(layers.Conv3D(16, kernel_size = (2,2,2), activation = 'relu', padding='same'))
-        self.model.add(layers.MaxPooling3D(2))
+          print('3D conv 4')
+          self.model.add(layers.Conv3D(16, kernel_size = (2,2,2), activation = 'relu', padding='same'))
+          self.model.add(layers.MaxPooling3D(2))
 
-        self.model.add(layers.Flatten())
-        self.model.add(layers.Dense(256))
-        self.model.add(layers.Reshape((16,16,1)))
+          print('Flatten and Reshape')
+          self.model.add(layers.Flatten())
 
-        self.model.add(layers.UpSampling3D(size=(2, 2, 2))) #size[2] must be changed accordingly with the nb of sheets in y (change with other layers)
-        self.model.add(layers.UpSampling3D(size=(2, 2, 2)))
-        self.model.add(layers.UpSampling3D(size=(2, 2, 1)))
-        self.model.add(layers.UpSampling3D(size=(2, 2, 1)))
+          self.model.add(layers.Dense(1584))
+          self.model.add(layers.Reshape((48,33,1,1)))
 
-        self.model.compile(loss ='mse',
-                 optimizer='adam',
-                 metrics='mae')
-        return self.model
+
+          print('3D conv 2')
+          self.model.add(layers.UpSampling3D(size=(2, 2, 2)))
+          self.model.add(layers.Conv3D(64, kernel_size=(3,3,3), activation='relu', padding='same'))
+
+
+          print('3D conv 3')
+          self.model.add(layers.UpSampling3D(size=(2, 2, 2)))
+          self.model.add(layers.Conv3D(1, kernel_size=(3,3,3), activation='relu', padding='same'))
+
+          optimizer = Adam(learning_rate = 0.0001)
+
+          self.model.compile(loss ='mse',
+                     optimizer=optimizer,
+                     metrics='mae')
+          return self.model
 
 
     def fit_model(self,batch_size, epochs, patience):
@@ -114,10 +124,17 @@ class Trainer:
         result = self.model.evaluate(self.X_test, self.y_test)
         return result
 
-    def predict_model(self,):
+
+    def predict_model(self):
         # self.X_test = self.X_test.reshape(-1, self.X_test.shape[1], self.X_test.shape[2], self.X_test.shape[3], 1)
         self.y_pred = self.model.predict(self.X_test)
         return self.y_pred
+
+     def plot_predict(self):
+        fig, axes = plt.subplots(self.y_pred.shape[3], 2, figsize=(15,15))
+        for i in range(self.y_pred.shape[3]):
+            axes[i,0].imshow(self.y_pred[0,:,:,i,0], vmax=y_pred[0,:,:,i,0].max());
+            axes[i,1].imshow(self.y_test[0,:,:,i,0], vmax=y_test[0,:,:,i,0].max());
 
     def save_y_pred_to_pickle(self):
         '''
