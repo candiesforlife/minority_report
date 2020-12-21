@@ -13,7 +13,7 @@ class CleanData:
 
   def __init__(self):
 
-    self.data = NYPD().get_data() # loads raw NYPD dataframe
+    self.data = NYPD().get_data() # Loads raw NYPD dataframe
     self.precinct = None
 
   def drop_cols(self):
@@ -41,6 +41,7 @@ class CleanData:
     self.data = df
     return self.data
 
+
   def rename_cols(self):
     '''
     Renames dataset columns to snake_case
@@ -48,7 +49,7 @@ class CleanData:
 
     df = self.data.copy()
 
-    # dictionary of new names for each column
+    # Dictionary of new names for each column
     columns_dic = {
         'CMPLNT_FR_DT': 'date',
         'CMPLNT_FR_TM': 'time',
@@ -78,23 +79,27 @@ class CleanData:
     self.data = df
     return self.data
 
-  #  1.
+
   def drop_nan(self):
     '''
     Returns a dataframe without NaN
     '''
 
     df = self.data.copy()
-    #drop precinct missing values
+
+    # Drops missing values in 'precinct'
     not_unknown = df['precinct_number'] != -99.0
     not_nan = df['precinct_number'] == df['precinct_number']
     df = df[not_unknown & not_nan]
-    #drop time and date missing values
+
+    # Drops missing values in 'time' and 'date'
     df = df[df['time'] == df['time']]
     df = df[df['date'] == df['date']]
-    #drop offense_type and crime_completed
+
+    # Drops missing values in 'offense_type' and 'crime_completed'
     df = df[df['offense_type'] == df['offense_type']]
     df = df[df['crime_completed'] == df['crime_completed']]
+
     self.data = df
     return self.data
 
