@@ -12,7 +12,9 @@ class NYPD:
         """
 
         root_dir = os.path.dirname(os.path.dirname(__file__))
-        csv_path = os.path.join(root_dir, 'raw_data', 'data.csv')
+        # csv_path = os.path.join(root_dir, 'raw_data', 'data.csv')
+        # csv path below loads original NYPD dataset
+        csv_path = os.path.join(root_dir, 'raw_data', 'NYPD_Complaint_Data_Historic.csv')
         df = pd.read_csv(csv_path, low_memory = False)
 
         return df
