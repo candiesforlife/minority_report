@@ -478,20 +478,14 @@ class CleanData:
     """
     Returns df with correct precinct numbers (floats rounded up)
     """
+
     df = self.data.copy()
+
     df['precinct_number'] = [round(x) for x in df['precinct_number']]
+
     self.data = df
     return self.data
 
-  # 10. Run complete_to_boolean sur df['crime_completed']
-  # def crime_completed_to_boolean(self):
-  #   """
-  #       turns complete/incomplete into boolean value
-  #   """
-  #   df = self.data.copy()
-  #   df['crime_completed'] = df['crime_completed'].replace({'COMPLETED': True, 'INCOMPLETE': False})
-  #   self.data = df
-  #   return self.data
 
   def clean_up_df(self):
     '''
