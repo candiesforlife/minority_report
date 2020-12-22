@@ -491,31 +491,32 @@ class CleanData:
     '''
     Returns clean df with reordered cols and droped complaint ID
     '''
+
     df = self.data.copy()
 
-    #df.drop(columns = 'complaint_id', inplace = True)
+    list_column = [
+                  'period',
+                  'latitude',
+                  'longitude',
+                  'offense_level',
+                  'offense_type',
+                  'crime_completed',
+                  'premise_desc',
+                  'premise',
+                  'borough',
+                  'patrol_borough',
+                  'precinct_number',
+                  'jurisdiction',
+                  'suspect_age',
+                  'suspect_race',
+                  'suspect_sex',
+                  'victim_age',
+                  'victim_race',
+                  'victim_sex',
+                  'park_name',
+                  'metro']
 
-    list_column = ['period',
-                   'latitude',
-                   'longitude',
-                   'offense_level',
-                   'offense_type',
-                   'crime_completed',
-                   'premise_desc',
-                   'premise',
-                   'borough',
-                   'patrol_borough',
-                   'precinct_number',
-                   'jurisdiction',
-                   'suspect_age',
-                   'suspect_race',
-                   'suspect_sex',
-                   'victim_age',
-                   'victim_race',
-                   'victim_sex',
-                   'park_name',
-                   'metro']
-    # column reindex to be reviewed: doesn't work - not vital!
+    # Reindex to be reviewed: doesn't work - not vital!
     df.reindex(columns = list_column, copy=False)
 
     self.data = df
@@ -524,13 +525,16 @@ class CleanData:
 
   def filter_with_NYC_boundaries(self):
     """
-    get rid of crimes out of NYC boundaries
+    Removes crimes outside of NYC boundaries
     """
+
     df = self.data.copy()
+
     lat_interv = df['latitude'].between(40.49611539518921, 40.91553277600008)
-    lon_interv = df['longitude'].between(-74.25559136315213,-73.70000906387347)
+    lon_interv = df['longitude'].between(-74.25559136315213, -73.70000906387347)
 
     df = df[lat_interv & lon_interv]
+
     self.data = df
     return self.data
 
@@ -538,8 +542,10 @@ class CleanData:
     '''
     Adds column with period rounded to 6h timeframes
     '''
+
     df = self.data.copy()
 
+    # Function round_six_hours from utils.py
     df['six_hour_date'] = df['period'].apply(lambda x: round_six_hours(x))
 
     self.data = df
@@ -587,26 +593,28 @@ class CleanData:
     '''
     Creates df with 75th precinct only and cuts lat long outliers
     '''
+
     df = self.data.copy()
 
     df_precinct_75 = df[df['precinct_number'] == 75]
 
-    # max and min lat long for 75th precinct
-    lat_min, lat_max, lon_min, lon_max = (40.6218192717505,
-       40.6951504231971,
-       -73.90404639808888,
-       -73.83559344190869)
+    # Lat/Long extremities for 75th precinct
+    lat_min, lat_max, lon_min, lon_max = (
+                                        40.6218192717505,
+                                        40.6951504231971,
+                                        -73.90404639808888,
+                                        -73.83559344190869)
 
-    max_lat = df['latitude'] <= lat_max # is smaller or equal to max lat boundary
-    min_lat = df['latitude'] >= lat_min # is greater or equal to min lat boundary
+    max_lat = df['latitude'] <= lat_max
+    min_lat = df['latitude'] >= lat_min
 
-    max_lon = df['longitude'] <= lon_max # is smaller or equal to max lon boundary
-    min_lon = df['longitude'] >= lon_min # is greater or equal to min lon boundary
+    max_lon = df['longitude'] <= lon_max
+    min_lon = df['longitude'] >= lon_min
 
-    df = df[ max_lat & min_lat & max_lon & min_lon] # side note: excludes 125 wrong lat long
+    # Excludes 125 wrong lat long values
+    df = df[ max_lat & min_lat & max_lon & min_lon]
 
     self.precinct = df
-
     return self.precinct
 
 
@@ -614,13 +622,17 @@ class CleanData:
     '''
     Saves clean dataframe to clean data pickle
     '''
+
     root_dir = os.path.dirname(os.path.dirname(__file__))
+
     pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
     precinct_75_pickle_path = os.path.join(root_dir, 'raw_data', 'clean-75-precinct.pickle')
 
+    # Saves entire NYC dataframe to pickle
     with open(pickle_path, 'wb') as f:
        pickle.dump(self.data, f)
 
+    # Saves 75th precinct only (smaller scope)
     with open(precinct_75_pickle_path, 'wb') as f:
        pickle.dump(self.precinct, f)
 
@@ -634,3 +646,5 @@ if __name__ == '__main__':
   clean_data.total_clean()
   print('Saving clean dataframe')
   clean_data.save_data()
+  print('New pickles ready to use! :)')
+
