@@ -12,36 +12,34 @@ class Viz:
 
 
   def load_data(self):
-    '''
-    Loads clean df from pickle file
-    '''
+    '''Loads clean df from pickle file'''
+
     root_dir = os.path.dirname(os.path.dirname(__file__))
     pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
 
     with open(pickle_path, 'rb') as f:
         df = pickle.load(f)
 
-    # assigns clean.pickle to class variable data
+    # Assigns clean.pickle to class variable data
     self.data = df
     return self.data
 
 
   def time_columns(self):
-    '''
-    Adds new time-related columns to dataframe
-    '''
+    '''Adds new time-related columns to dataframe'''
+
     df = self.data.copy()
 
-    # new column: year
+    # New column: year
     df['year'] = df['period'].apply(lambda x: x.year)
 
-    # new column: month (1 - 12)
+    # New column: month (1 - 12)
     df['month'] = df['period'].apply(lambda x: x.month)
 
-    # new column: DOW where 1 is Monday and 7 is Sunday
+    # New column: DOW where 1 is Monday and 7 is Sunday
     df['day_of_week'] = df['period'].apply(lambda x: x.isoweekday())
 
-    # new column: hour (0 - 23)
+    # New column: hour (0 - 23)
     df['hour'] = df['period'].apply(lambda x: x.hour)
 
     self.data = df
@@ -49,9 +47,8 @@ class Viz:
 
 
   def to_pickle(self):
-    '''
-    Saves new viz dataframe as viz.pickle
-    '''
+    '''Saves new viz dataframe as viz.pickle'''
+
     root_dir = os.path.dirname(os.path.dirname(__file__))
     pickle_path = os.path.join(root_dir, 'raw_data', 'viz.pickle')
 
