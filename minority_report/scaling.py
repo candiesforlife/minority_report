@@ -1,9 +1,9 @@
 '''Returns scaled dataframe for numerical and categorical values'''
 
 import os
+import pandas as pd
 import itertools
 import pickle
-import pandas as pd
 
 from sklearn.preprocessing import OneHotEncoder
 # from sklearn.preprocessing import LabelEncoder
