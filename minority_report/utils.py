@@ -31,3 +31,14 @@ def round_six_hours(period):
         period = period.replace(hour = 18)
 
     return period
+
+
+  # 10. Run complete_to_boolean sur df['crime_completed']
+  # def crime_completed_to_boolean(self):
+  #   """
+  #       turns complete/incomplete into boolean value
+  #   """
+  #   df = self.data.copy()
+  #   df['crime_completed'] = df['crime_completed'].replace({'COMPLETED': True, 'INCOMPLETE': False})
+  #   self.data = df
+  #   return self.data
