@@ -253,8 +253,8 @@ class Matrix:
         X = []
         y = []
 
-        for n in range(nb_observations):
-            print(f'Creating observation {n} out of {nb_observations}')
+        for n in range(nb_observations_train):
+            print(f'Creating observation {n} out of {nb_observations_train}')
             X_subsample, y_subsample = self.get_observation_target_train(obs_tf,
                                         obs_lat,obs_lon, obs_time,
                                         tar_tf,  tar_lat,tar_lon, tar_time)
@@ -417,8 +417,8 @@ class Matrix:
         X = []
         y = []
 
-        for n in range(nb_observations):
-            print(f'Creating observation {n} out of {nb_observations}')
+        for n in range(nb_observations_test):
+            print(f'Creating observation {n} out of {nb_observations_test}')
             X_subsample, y_subsample = self.get_observation_target_test(obs_tf,
                                         obs_lat,obs_lon, obs_time,
                                         tar_tf,  tar_lat,tar_lon, tar_time)
@@ -439,11 +439,11 @@ class Matrix:
         Saves clean dataframe to clean data pickle
         '''
         root_dir = os.path.dirname(os.path.dirname(__file__))
-        X_train_pickle_path = os.path.join(root_dir, 'raw_data', 'X_train.pickle')
-        y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train.pickle')
+        X_train_pickle_path = os.path.join(root_dir, 'raw_data', 'X_train_large.pickle')
+        y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train_large.pickle')
 
-        X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test.pickle')
-        y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test.pickle')
+        X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test_large.pickle')
+        y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test_large.pickle')
 
         with open(X_train_pickle_path, 'wb') as f:
             pickle.dump(self.X_train, f)
