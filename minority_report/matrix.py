@@ -3,9 +3,9 @@ Passes clean_data into matrix, gaussian filter and stacking
 Returns X & y train and test pickles
 '''
 
-import pandas as pd
 import os
 import pickle
+import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -14,6 +14,12 @@ from scipy.ndimage import gaussian_filter
 
 from minority_report.clean_data import CleanData
 from minority_report.scaling import Scaling
+
+
+# Have clean_split.py to split into two df pickles
+# Pass train and test in matrix.py
+# (Matrix, Gaussian, Stacking)
+# Get oversations
 
 
 class Matrix:

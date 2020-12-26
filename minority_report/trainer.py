@@ -12,6 +12,7 @@ from scipy.ndimage import gaussian_filter
 import pickle
 # from minority_report.input import Input
 from minority_report.matrix import Matrix
+from minority_report.clean_split import Split
 
 from sklearn.model_selection import train_test_split
 
