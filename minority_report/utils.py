@@ -2,35 +2,64 @@
 #  DECORATOR
 #################################
 import time
+import numpy as np
 
 def simple_time_tracker(method):
-    def timed(*args, **kw):
-        ts = time.time()
-        result = method(*args, **kw)
-        te = time.time()
-        if 'log_time' in kw:
-            name = kw.get('log_name', method.__name__.upper())
-            kw['log_time'][name] = int(te - ts)
-        else:
-            print(method.__name__, round(te - ts, 2))
-        return result
-    return timed
+  def timed(*args, **kw):
+      ts = time.time()
+      result = method(*args, **kw)
+      te = time.time()
+      if 'log_time' in kw:
+          name = kw.get('log_name', method.__name__.upper())
+          kw['log_time'][name] = int(te - ts)
+      else:
+          print(method.__name__, round(te - ts, 2))
+      return result
+  return timed
 
 def round_six_hours(period):
 
-    if period.hour < 6:
-        period = period.replace(hour = 0)
+  if period.hour < 6:
+      period = period.replace(hour = 0)
 
-    elif period.hour < 12 :
-        period = period.replace(hour = 6)
+  elif period.hour < 12 :
+      period = period.replace(hour = 6)
 
-    elif period.hour < 18 :
-        period = period.replace(hour = 12)
+  elif period.hour < 18 :
+      period = period.replace(hour = 12)
 
-    else:
-        period = period.replace(hour = 18)
+  else:
+      period = period.replace(hour = 18)
 
-    return period
+  return period
+
+def from_meters_to_steps(lat_meters, lon_meters):
+  """
+  Returns the latitude and longitude step to use for the grid buckets
+  lat_meters, lon_meters are defined in trainer.py
+  They are equivalent to the bucket size desired
+  """
+
+  # Position in decimal degrees
+  lat = 40
+  lon = -73
+
+  # Earth’s radius (sphere)
+  R = 6378137
+
+  # Offset in meters
+  dn = lat_meters
+  de = lon_meters
+
+  # Coordinate offsets in radians
+  dLat = dn / R
+  dLon = de / (R * np.cos(np.pi * lat / 180))
+
+  # Offset position, decimal degrees
+  latO = dLat * 180 / np.pi
+  lonO = dLon * 180 / np.pi
+
+  return latO, lonO
 
 
   # 10. Run complete_to_boolean sur df['crime_completed']

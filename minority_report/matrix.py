@@ -147,7 +147,11 @@ class Matrix:
         #[40.6218192717505, 40.6951504231971],[-73.90404639808888, -73.83559344190869]) :precinct 75 boundaries
         grid_offset = np.array([ -df['latitude'].max() , df['longitude'].min(), 0 ]) # Where do you start
         #from meters to lat/lon step
-        lat_spacing, lon_spacing = self.from_meters_to_steps()
+
+        # lat_spacing, lon_spacing = self.from_meters_to_steps()
+        # Added from_meters_to_steps in utils instead: CLEAN UP FOR TEST AS WELL IF IT WORKS
+        lat_spacing, lon_spacing = from_meters_to_steps(lat_meters, lon_meters)
+
         grid_spacing = np.array([lat_spacing , lon_spacing, 1 ]) # What's the space you consider (euclidian here)
         #get points coordinates
         coords = np.array([( -lat, lon,t_ind) for lat, lon,t_ind \
