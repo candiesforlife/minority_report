@@ -1,3 +1,7 @@
+'''
+Passes clean_data into matrix, gaussian filter and stacking
+Returns X & y train and test pickles
+'''
 
 import pandas as pd
 import os
