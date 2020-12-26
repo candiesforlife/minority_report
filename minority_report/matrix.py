@@ -17,6 +17,7 @@ from minority_report.scaling import Scaling
 
 
 # Have clean_split.py to split into two df pickles
+# Check where to call Split class from!
 # Pass train and test in matrix.py
 # (Matrix, Gaussian, Stacking)
 # Get oversations
@@ -62,27 +63,27 @@ class Matrix:
         self.data = df
         return self.data
 
-    def train_test_df(self):
-        '''
-        Splitting train and test data into two dataframes
-        '''
-        df = self.data.copy()
+    # def train_test_df(self):
+    #     '''
+    #     Splitting train and test data into two dataframes
+    #     '''
+    #     df = self.data.copy()
 
-        # creating train df
-        inf_train = df['period'] >= datetime(2007, 1, 1, 0, 0, 0)
+    #     # creating train df
+    #     inf_train = df['period'] >= datetime(2007, 1, 1, 0, 0, 0)
 
-        sup_train = df['period'] < datetime(2016, 1, 1, 0, 0, 0)
+    #     sup_train = df['period'] < datetime(2016, 1, 1, 0, 0, 0)
 
-        self.train_df = df[inf_train & sup_train]
+    #     self.train_df = df[inf_train & sup_train]
 
-        # creating test df
-        inf_test = df['period'] >= datetime(2016, 1, 1, 0, 0, 0)
+    #     # creating test df
+    #     inf_test = df['period'] >= datetime(2016, 1, 1, 0, 0, 0)
 
-        sup_test = df['period'] <= datetime(2019, 10, 28, 0, 0, 0)
+    #     sup_test = df['period'] <= datetime(2019, 10, 28, 0, 0, 0)
 
-        self.test_df = df[inf_test & sup_test]
+    #     self.test_df = df[inf_test & sup_test]
 
-        return self.train_df, self.test_df
+    #     return self.train_df, self.test_df
 
     def from_meters_to_steps(self):
         """
