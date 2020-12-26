@@ -14,6 +14,7 @@ from scipy.ndimage import gaussian_filter
 
 from minority_report.clean_data import CleanData
 from minority_report.scaling import Scaling
+from minority_report.utils import from_meters_to_steps
 
 
 # Have clean_split.py to split into two df pickles
@@ -85,31 +86,31 @@ class Matrix:
 
     #     return self.train_df, self.test_df
 
-    def from_meters_to_steps(self):
-        """
-        gives the latitude and longitude step to use for the grid buckets
-        lat_meters, lon_meters = lat/lon step
-        """
-        #Position, decimal degrees
-        lat = 40
-        lon = -73
+    # def from_meters_to_steps(self):
+    #     """
+    #     gives the latitude and longitude step to use for the grid buckets
+    #     lat_meters, lon_meters = lat/lon step
+    #     """
+    #     #Position, decimal degrees
+    #     lat = 40
+    #     lon = -73
 
-        #Earth’s radius, sphere
-        R = 6378137
+    #     #Earth’s radius, sphere
+    #     R = 6378137
 
-        #offsets in meters
-        dn = self.lat_meters
-        de = self.lon_meters
+    #     #offsets in meters
+    #     dn = self.lat_meters
+    #     de = self.lon_meters
 
-        #Coordinate offsets in radians
-        dLat = dn/R
-        dLon = de/(R*np.cos(np.pi*lat/180))
+    #     #Coordinate offsets in radians
+    #     dLat = dn/R
+    #     dLon = de/(R*np.cos(np.pi*lat/180))
 
-        #OffsetPosition, decimal degrees
-        latO = dLat * 180/np.pi
-        lonO = dLon * 180/np.pi
+    #     #OffsetPosition, decimal degrees
+    #     latO = dLat * 180/np.pi
+    #     lonO = dLon * 180/np.pi
 
-        return latO, lonO
+    #     return latO, lonO
 
     def getting_sigma_values(self, raw_x, raw_y, raw_z):
         '''
