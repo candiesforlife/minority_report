@@ -54,6 +54,7 @@ class Matrix:
 
 
     def load_data(self):
+
         root_dir = os.path.dirname(os.path.dirname(__file__))
         pickle_path = os.path.join(root_dir, 'raw_data', 'clean-75-precinct.pickle')
 
@@ -61,6 +62,7 @@ class Matrix:
 
         with open(pickle_path, 'rb') as f:
             df = pickle.load(f)
+
         self.data = df
         return self.data
 

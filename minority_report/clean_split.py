@@ -66,3 +66,14 @@ class Split:
 
         with open(test_pickle_path, 'wb') as f:
             pickle.dump(self.test_df, f)
+
+if __name__ == '__main__':
+    print('Initializing Split Class')
+    split = Split()
+    print('Loading clean dataframe')
+    split.load_data()
+    print('Splitting into train and test dataframes')
+    split.train_test_df()
+    print('Saving train_df and test_df pickles')
+    split.save_data()
+    print('New pickles ready to use! :)')
