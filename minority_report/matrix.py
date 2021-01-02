@@ -53,6 +53,7 @@ class Matrix:
 
 
     def load_data(self):
+        '''Loads train and test dataframes'''
 
         root_dir = os.path.dirname(os.path.dirname(__file__))
         train_path = os.path.join(root_dir, 'raw_data', 'train_df.pickle')
@@ -484,6 +485,9 @@ class Matrix:
 
         print("4. Loading data")
         self.load_data()
+
+        # print('Assigning desired inputs')
+        # self.assigning_inputs()
 
         print('6a. From coords to matrix: train')
         self.from_coord_to_matrix_train(lat_meters, lon_meters)
