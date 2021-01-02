@@ -75,27 +75,6 @@ class Matrix:
 
         return self.train_df, self.test_df
 
-    # def train_test_df(self):
-    #     '''
-    #     Splitting train and test data into two dataframes
-    #     '''
-    #     df = self.data.copy()
-
-    #     # creating train df
-    #     inf_train = df['period'] >= datetime(2007, 1, 1, 0, 0, 0)
-
-    #     sup_train = df['period'] < datetime(2016, 1, 1, 0, 0, 0)
-
-    #     self.train_df = df[inf_train & sup_train]
-
-    #     # creating test df
-    #     inf_test = df['period'] >= datetime(2016, 1, 1, 0, 0, 0)
-
-    #     sup_test = df['period'] <= datetime(2019, 10, 28, 0, 0, 0)
-
-    #     self.test_df = df[inf_test & sup_test]
-
-    #     return self.train_df, self.test_df
 
     # def from_meters_to_steps(self):
     #     """
@@ -512,9 +491,6 @@ class Matrix:
 
         print("4. Loading data")
         self.load_data()
-
-        print('5. Splitting into Train and Test Dataframe')
-        self.train_test_df()
 
         print('6a. From coords to matrix: train')
         self.from_coord_to_matrix_train(lat_meters, lon_meters)
