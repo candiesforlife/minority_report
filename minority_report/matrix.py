@@ -27,7 +27,9 @@ from minority_report.utils import from_meters_to_steps
 class Matrix:
 
     def __init__(self):
-        self.data = None
+        #self.data = None
+        self.train_df = None
+        self.test_df = None
 
         self.img3D_conv_train = None
         self.img3D_non_conv_train = None
@@ -36,9 +38,6 @@ class Matrix:
 
         self.lat_meters = None
         self.lon_meters = None
-
-        self.train_df = None
-        self.test_df = None
 
         self.sigma_x = None
         self.sigma_y = None
@@ -56,19 +55,14 @@ class Matrix:
     def load_data(self):
 
         root_dir = os.path.dirname(os.path.dirname(__file__))
-        # pickle_path = os.path.join(root_dir, 'raw_data', 'clean-75-precinct.pickle')
         train_path = os.path.join(root_dir, 'raw_data', 'train_df.pickle')
         test_path = os.path.join(root_dir, 'raw_data', 'test_df.pickle')
-        # gcp_pickle_path = 'clean-75-precinct.pickle'
 
         with open(train_path, 'rb') as f:
             train_df = pickle.load(f)
 
         with open(test_path, 'rb') as g:
             test_df = pickle.load(g)
-
-        # with open(pickle_path, 'rb') as f:
-            # df = pickle.load(f)
 
         self.train_df = train_df
         self.test_df = test_df
@@ -104,15 +98,14 @@ class Matrix:
 
     def getting_sigma_values(self, raw_x, raw_y, raw_z):
         '''
-          Returns sigma values for the three dimensions, useful later for gaussian filtering.
+        Returns sigma values for all three dimensions
+        Used in gaussian_filter
         '''
         self.sigma_x = (raw_x / self.lat_meters) / 2
         self.sigma_y = (raw_y / self.lon_meters) / 2
         self.sigma_z = raw_z / 2
 
         return self.sigma_x, self.sigma_y, self.sigma_z
-
-
 
 
     # Train Matrix
