@@ -56,15 +56,24 @@ class Matrix:
     def load_data(self):
 
         root_dir = os.path.dirname(os.path.dirname(__file__))
-        pickle_path = os.path.join(root_dir, 'raw_data', 'clean-75-precinct.pickle')
-
+        # pickle_path = os.path.join(root_dir, 'raw_data', 'clean-75-precinct.pickle')
+        train_path = os.path.join(root_dir, 'raw_data', 'train_df.pickle')
+        test_path = os.path.join(root_dir, 'raw_data', 'test_df.pickle')
         # gcp_pickle_path = 'clean-75-precinct.pickle'
 
-        with open(pickle_path, 'rb') as f:
-            df = pickle.load(f)
+        with open(train_path, 'rb') as f:
+            train_df = pickle.load(f)
 
-        self.data = df
-        return self.data
+        with open(test_path, 'rb') as g:
+            test_df = pickle.load(g)
+
+        # with open(pickle_path, 'rb') as f:
+            # df = pickle.load(f)
+
+        self.train_df = train_df
+        self.test_df = test_df
+
+        return self.train_df, self.test_df
 
     # def train_test_df(self):
     #     '''

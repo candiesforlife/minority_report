@@ -596,7 +596,7 @@ class CleanData:
 
     df = self.data.copy()
 
-    df_precinct_75 = df[df['precinct_number'] == 75]
+    df = df[df['precinct_number'] == 75]
 
     # Lat/Long extremities for 75th precinct
     lat_min, lat_max, lon_min, lon_max = (
