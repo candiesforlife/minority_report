@@ -18,8 +18,7 @@ class Split:
 
 
     def load_data(self):
-        '''Loads clean dataframe for 75th precinct'''
-
+        '''Load clean dataframe for 75th precinct.'''
         root_dir = os.path.dirname(os.path.dirname(__file__))
         pickle_path = os.path.join(root_dir, 'raw_data', 'clean-75-precinct.pickle')
 
@@ -32,8 +31,7 @@ class Split:
         return self.data
 
     def train_test_df(self):
-        '''Splitting train and test data into two dataframes'''
-
+        '''Split dataframe into train and test dataframes.'''
         df = self.data.copy()
 
         # creating train df
@@ -53,7 +51,7 @@ class Split:
         return self.train_df, self.test_df
 
     def save_data(self):
-        '''Saves clean dataframe to clean data pickle'''
+        '''Save each dataframe to pickle.'''
 
         root_dir = os.path.dirname(os.path.dirname(__file__))
 
