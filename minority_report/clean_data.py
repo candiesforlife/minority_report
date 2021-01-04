@@ -1,4 +1,4 @@
-'''Returns clean dataframe w/o NaN and with correct dtypes'''
+'''Return clean dataframe w/o NaN and with correct dtypes.'''
 
 import os
 import pandas as pd
