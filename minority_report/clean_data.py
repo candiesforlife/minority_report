@@ -16,6 +16,7 @@ class CleanData:
     self.data = NYPD().get_data() # Loads raw NYPD dataframe
     self.precinct = None
 
+
   def drop_cols(self):
     '''Drop unnecessary columns, e.g. complaint ID.'''
     df = self.data.copy()
@@ -393,6 +394,7 @@ class CleanData:
     self.data = df
     return self.data
 
+
   def miss_borough(self):
     '''Replace wrong borough values.
 
@@ -509,6 +511,7 @@ class CleanData:
     self.data = df
     return self.data
 
+
   def six_hour_period(self):
     '''Add column with period rounded to 6h timeframes'''
 
@@ -520,41 +523,6 @@ class CleanData:
     self.data = df
     return self.data
 
-  def total_clean(self):
-    '''Combine all cleaning functions and returns clean dataframe.'''
-    print('Dropping Columns')
-    self.drop_cols()
-    print('Renaming Columns')
-    self.rename_cols()
-    print('Dropping NaNs')
-    self.drop_nan()
-    print('Changing date column')
-    self.to_date_format()
-    print('Changing suspect column')
-    self.miss_suspect()
-    print('Changing victim column')
-    self.miss_victim()
-    print('Changing premise column')
-    self.miss_premise()
-    print('Changing park & metro column')
-    self.miss_park_metro()
-    print('Changing coordinates columns')
-    self.miss_lon_lat()
-    print('Changing borough column')
-    self.miss_borough()
-    print('Changing patrol column')
-    self.miss_patrol_borough()
-    print('Changing precinct column')
-    self.round_int_precinct()
-    print('Filtering NYC boundaries')
-    self.filter_with_NYC_boundaries()
-    print('Added six hour period column')
-    self.six_hour_period()
-    print('Creating 75th precinct df w/o outliers')
-    self.precinct_75()
-    print('Reording dataframe and final clean')
-    self.clean_up_df()
-    return self.data
 
   def precinct_75(self):
     '''Create dataframe containing only 75th precinct complaints.
@@ -603,13 +571,43 @@ class CleanData:
        pickle.dump(self.precinct, f)
 
 
-
-
 if __name__ == '__main__':
+  '''Take original NYPD data and return clean dataframe.'''
   print('Initializing CleanData')
   clean_data = CleanData()
-  print('Creating clean dataframe')
-  clean_data.total_clean()
-  print('Saving clean dataframe')
+  print('Creating clean dataframe (17 Steps):')
+  print('1. Dropping Columns')
+  clean_data.drop_cols()
+  print('2. Renaming Columns')
+  clean_data.rename_cols()
+  print('3. Dropping NaNs')
+  clean_data.drop_nan()
+  print('4. Changing date column')
+  clean_data.to_date_format()
+  print('5. Changing suspect column')
+  clean_data.miss_suspect()
+  print('6. Changing victim column')
+  clean_data.miss_victim()
+  print('7. Changing premise column')
+  clean_data.miss_premise()
+  print('8. Changing park & metro column')
+  clean_data.miss_park_metro()
+  print('9. Changing coordinates columns')
+  clean_data.miss_lon_lat()
+  print('10. Changing borough column')
+  clean_data.miss_borough()
+  print('11. Changing patrol column')
+  clean_data.miss_patrol_borough()
+  print('12. Changing precinct column')
+  clean_data.round_int_precinct()
+  print('13. Filtering NYC boundaries')
+  clean_data.filter_with_NYC_boundaries()
+  print('14. Adding six hour period column')
+  clean_data.six_hour_period()
+  print('15. Creating 75th precinct df w/o outliers')
+  clean_data.precinct_75()
+  print('16. Reording dataframe')
+  clean_data.clean_up_df()
+  print('17. Saving clean dataframe')
   clean_data.save_data()
   print('New pickles ready to use! :)')
