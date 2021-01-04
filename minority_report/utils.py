@@ -1,6 +1,5 @@
-##################################
-#  DECORATOR
-#################################
+'''Functions that come to use in various classes.'''
+
 import time
 import numpy as np
 
@@ -18,7 +17,7 @@ def simple_time_tracker(method):
   return timed
 
 def round_six_hours(period):
-
+  '''Round datetime to closest 6h unit.'''
   if period.hour < 6:
       period = period.replace(hour = 0)
 
@@ -34,12 +33,11 @@ def round_six_hours(period):
   return period
 
 def from_meters_to_steps(lat_meters, lon_meters):
-  """
-  Returns the latitude and longitude step to use for the grid buckets
-  lat_meters, lon_meters are defined in trainer.py
-  They are equivalent to the bucket size desired
-  """
+  '''Return latitude and longitude distance for given meter distance.
 
+  Input desired meter distance for grid buckets (defined in trainer.py).
+  Output step to use when determining grid buckets.
+  '''
   # Position in decimal degrees
   lat = 40
   lon = -73
