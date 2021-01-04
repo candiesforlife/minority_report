@@ -17,9 +17,7 @@ class CleanData:
     self.precinct = None
 
   def drop_cols(self):
-    '''
-    Drops superfluous columns, e.g. complaint ID
-    '''
+    '''Drop unnecessary columns, e.g. complaint ID.'''
     df = self.data.copy()
 
     df.drop(columns = [
@@ -43,10 +41,7 @@ class CleanData:
 
 
   def rename_cols(self):
-    '''
-    Renames dataset columns to snake_case
-    '''
-
+    '''Rename dataset columns to snake_case format.'''
     df = self.data.copy()
 
     # Dictionary of new names for each column
@@ -80,10 +75,7 @@ class CleanData:
 
 
   def drop_nan(self):
-    '''
-    Returns a dataframe without NaN
-    '''
-
+    '''Return a dataframe without NaN.'''
     df = self.data.copy()
 
     # Drops missing values in 'precinct'
@@ -104,12 +96,12 @@ class CleanData:
 
 
   def to_date_format(self):
-    '''
-    Creates new column 'period' out of 'date' and 'time'
-    Drops 'date' and 'time'
-    Filters dataframe to show only complaints dated >= 2007
-    '''
+    ''' Keep only complete years and create datetime column.
 
+    Create new column 'period' out of columns 'date' and 'time'.
+    Drop columns 'date' and 'time'.
+    Filter dataframe to show only complaints dated >= 2007.
+    '''
     df = self.data.copy()
 
     # New period column out of concatenated 'date' and 'time'
@@ -134,10 +126,7 @@ class CleanData:
 
 
   def miss_suspect(self):
-    '''
-    Returns dataframe where missing values are replaced by 'UNKNOWN'
-    '''
-
+    '''Replace missing suspect values with UNKNOWN.'''
     df = self.data.copy()
 
     # Values to keep
@@ -156,10 +145,7 @@ class CleanData:
 
 
   def miss_victim(self):
-    '''
-    Returns dataframe where missing values are replaced by 'UNKNOWN'
-    '''
-
+    '''Replace missing victim values with UNKNOWN.'''
     df = self.data.copy()
 
     # Values to keep
@@ -178,10 +164,7 @@ class CleanData:
 
 
   def miss_premise(self):
-    '''
-    Returns dataframe where missing values are replaced by 'UNKNOWN'
-    '''
-
+    '''Replace missing premise values with UNKNOWN.'''
     df = self.data.copy()
 
     # Values to keep
@@ -220,11 +203,7 @@ class CleanData:
 
 
   def miss_park_metro(self):
-    '''
-    Returns dataframe where missing values are replaced by:
-    'NOT PARK' or 'NOT SUBWAY'
-    '''
-
+    '''Replace missing park and subway values with NOT PARK or NOT SUBWAY'''
     df = self.data.copy()
 
     park_list = [
@@ -396,9 +375,10 @@ class CleanData:
 
 
   def miss_lon_lat(self):
-    '''
-    Replaces missing latitude and longitude with median precinct coordinates
-    Median precinct coordinates: coordinates with highest crime occurence
+    '''Replace missing latitude and longitude with median precinct coordinates.
+
+    Median precinct coordinates are the coordinates with the highest
+    crime occurence per precinct.
     '''
 
     df = self.data.copy()
@@ -414,10 +394,10 @@ class CleanData:
     return self.data
 
   def miss_borough(self):
-    '''
-    Returns dataframe with corrected boroughs for precinct wrong values
-    '''
+    '''Replace wrong borough values.
 
+    Assign correct borough for each precinct number.
+    '''
     df = self.data.copy()
 
     # Fills in correct borough for given precinct numbers
@@ -438,10 +418,10 @@ class CleanData:
 
 
   def miss_patrol_borough(self):
-    '''
-    Returns dataframe with corrected patrol boroughs per precinct
-    '''
+    '''Replace wrong patrol borough values.
 
+    Assign each researched patrol borough number to associated NYC borough.
+    '''
     df = self.data.copy()
 
     # Correct patrol borough
@@ -475,10 +455,7 @@ class CleanData:
 
 
   def round_int_precinct(self):
-    """
-    Returns df with correct precinct numbers (floats rounded up)
-    """
-
+    '''Round inappropriate float precinct numbers.'''
     df = self.data.copy()
 
     df['precinct_number'] = [round(x) for x in df['precinct_number']]
@@ -488,10 +465,7 @@ class CleanData:
 
 
   def clean_up_df(self):
-    '''
-    Returns clean df with reordered cols and droped complaint ID
-    '''
-
+    '''Reorganise columns for dataframe legibility.'''
     df = self.data.copy()
 
     list_column = [
@@ -524,10 +498,7 @@ class CleanData:
 
 
   def filter_with_NYC_boundaries(self):
-    """
-    Removes crimes outside of NYC boundaries
-    """
-
+    '''Exclude complaints from outside of NYC coordinate boundaries.'''
     df = self.data.copy()
 
     lat_interv = df['latitude'].between(40.49611539518921, 40.91553277600008)
@@ -539,9 +510,7 @@ class CleanData:
     return self.data
 
   def six_hour_period(self):
-    '''
-    Adds column with period rounded to 6h timeframes
-    '''
+    '''Add column with period rounded to 6h timeframes'''
 
     df = self.data.copy()
 
@@ -552,9 +521,7 @@ class CleanData:
     return self.data
 
   def total_clean(self):
-    '''
-    Combines all cleaning functions and returns clean dataframe
-    '''
+    '''Combine all cleaning functions and returns clean dataframe.'''
     print('Dropping Columns')
     self.drop_cols()
     print('Renaming Columns')
@@ -590,10 +557,11 @@ class CleanData:
     return self.data
 
   def precinct_75(self):
-    '''
-    Creates df with 75th precinct only and cuts lat long outliers
-    '''
+    '''Create dataframe containing only 75th precinct complaints.
 
+    Filter to contain only precinct number 75.
+    Exclude latitude and longitude outliers to fit 75th boundaries.
+    '''
     df = self.data.copy()
 
     df = df[df['precinct_number'] == 75]
@@ -619,9 +587,7 @@ class CleanData:
 
 
   def save_data(self):
-    '''
-    Saves clean dataframe to clean data pickle
-    '''
+    '''Save clean dataframe to clean data pickle.'''
 
     root_dir = os.path.dirname(os.path.dirname(__file__))
 
