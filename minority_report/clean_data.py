@@ -1,4 +1,4 @@
-'''Returns clean dataframe w/o NaN and with correct dtypes'''
+'''Return clean dataframe w/o NaN and with correct dtypes.'''
 
 import os
 import pandas as pd
@@ -16,10 +16,9 @@ class CleanData:
     self.data = NYPD().get_data() # Loads raw NYPD dataframe
     self.precinct = None
 
+
   def drop_cols(self):
-    '''
-    Drops superfluous columns, e.g. complaint ID
-    '''
+    '''Drop unnecessary columns, e.g. complaint ID.'''
     df = self.data.copy()
 
     df.drop(columns = [
@@ -43,10 +42,7 @@ class CleanData:
 
 
   def rename_cols(self):
-    '''
-    Renames dataset columns to snake_case
-    '''
-
+    '''Rename dataset columns to snake_case format.'''
     df = self.data.copy()
 
     # Dictionary of new names for each column
@@ -80,10 +76,7 @@ class CleanData:
 
 
   def drop_nan(self):
-    '''
-    Returns a dataframe without NaN
-    '''
-
+    '''Return a dataframe without NaN.'''
     df = self.data.copy()
 
     # Drops missing values in 'precinct'
@@ -104,12 +97,12 @@ class CleanData:
 
 
   def to_date_format(self):
-    '''
-    Creates new column 'period' out of 'date' and 'time'
-    Drops 'date' and 'time'
-    Filters dataframe to show only complaints dated >= 2007
-    '''
+    ''' Keep only complete years and create datetime column.
 
+    Create new column 'period' out of columns 'date' and 'time'.
+    Drop columns 'date' and 'time'.
+    Filter dataframe to show only complaints dated >= 2007.
+    '''
     df = self.data.copy()
 
     # New period column out of concatenated 'date' and 'time'
@@ -134,10 +127,7 @@ class CleanData:
 
 
   def miss_suspect(self):
-    '''
-    Returns dataframe where missing values are replaced by 'UNKNOWN'
-    '''
-
+    '''Replace missing suspect values with UNKNOWN.'''
     df = self.data.copy()
 
     # Values to keep
@@ -156,10 +146,7 @@ class CleanData:
 
 
   def miss_victim(self):
-    '''
-    Returns dataframe where missing values are replaced by 'UNKNOWN'
-    '''
-
+    '''Replace missing victim values with UNKNOWN.'''
     df = self.data.copy()
 
     # Values to keep
@@ -178,10 +165,7 @@ class CleanData:
 
 
   def miss_premise(self):
-    '''
-    Returns dataframe where missing values are replaced by 'UNKNOWN'
-    '''
-
+    '''Replace missing premise values with UNKNOWN.'''
     df = self.data.copy()
 
     # Values to keep
@@ -220,11 +204,7 @@ class CleanData:
 
 
   def miss_park_metro(self):
-    '''
-    Returns dataframe where missing values are replaced by:
-    'NOT PARK' or 'NOT SUBWAY'
-    '''
-
+    '''Replace missing park and subway values with NOT PARK or NOT SUBWAY'''
     df = self.data.copy()
 
     park_list = [
@@ -396,9 +376,10 @@ class CleanData:
 
 
   def miss_lon_lat(self):
-    '''
-    Replaces missing latitude and longitude with median precinct coordinates
-    Median precinct coordinates: coordinates with highest crime occurence
+    '''Replace missing latitude and longitude with median precinct coordinates.
+
+    Median precinct coordinates are the coordinates with the highest
+    crime occurence per precinct.
     '''
 
     df = self.data.copy()
@@ -413,11 +394,12 @@ class CleanData:
     self.data = df
     return self.data
 
-  def miss_borough(self):
-    '''
-    Returns dataframe with corrected boroughs for precinct wrong values
-    '''
 
+  def miss_borough(self):
+    '''Replace wrong borough values.
+
+    Assign correct borough for each precinct number.
+    '''
     df = self.data.copy()
 
     # Fills in correct borough for given precinct numbers
@@ -438,10 +420,10 @@ class CleanData:
 
 
   def miss_patrol_borough(self):
-    '''
-    Returns dataframe with corrected patrol boroughs per precinct
-    '''
+    '''Replace wrong patrol borough values.
 
+    Assign each researched patrol borough number to associated NYC borough.
+    '''
     df = self.data.copy()
 
     # Correct patrol borough
@@ -475,10 +457,7 @@ class CleanData:
 
 
   def round_int_precinct(self):
-    """
-    Returns df with correct precinct numbers (floats rounded up)
-    """
-
+    '''Round inappropriate float precinct numbers.'''
     df = self.data.copy()
 
     df['precinct_number'] = [round(x) for x in df['precinct_number']]
@@ -488,10 +467,7 @@ class CleanData:
 
 
   def clean_up_df(self):
-    '''
-    Returns clean df with reordered cols and droped complaint ID
-    '''
-
+    '''Reorganise columns for dataframe legibility.'''
     df = self.data.copy()
 
     list_column = [
@@ -524,10 +500,7 @@ class CleanData:
 
 
   def filter_with_NYC_boundaries(self):
-    """
-    Removes crimes outside of NYC boundaries
-    """
-
+    '''Exclude complaints from outside of NYC coordinate boundaries.'''
     df = self.data.copy()
 
     lat_interv = df['latitude'].between(40.49611539518921, 40.91553277600008)
@@ -538,10 +511,9 @@ class CleanData:
     self.data = df
     return self.data
 
+
   def six_hour_period(self):
-    '''
-    Adds column with period rounded to 6h timeframes
-    '''
+    '''Add column with period rounded to 6h timeframes'''
 
     df = self.data.copy()
 
@@ -551,52 +523,16 @@ class CleanData:
     self.data = df
     return self.data
 
-  def total_clean(self):
-    '''
-    Combines all cleaning functions and returns clean dataframe
-    '''
-    print('Dropping Columns')
-    self.drop_cols()
-    print('Renaming Columns')
-    self.rename_cols()
-    print('Dropping NaNs')
-    self.drop_nan()
-    print('Changing date column')
-    self.to_date_format()
-    print('Changing suspect column')
-    self.miss_suspect()
-    print('Changing victim column')
-    self.miss_victim()
-    print('Changing premise column')
-    self.miss_premise()
-    print('Changing park & metro column')
-    self.miss_park_metro()
-    print('Changing coordinates columns')
-    self.miss_lon_lat()
-    print('Changing borough column')
-    self.miss_borough()
-    print('Changing patrol column')
-    self.miss_patrol_borough()
-    print('Changing precinct column')
-    self.round_int_precinct()
-    print('Filtering NYC boundaries')
-    self.filter_with_NYC_boundaries()
-    print('Added six hour period column')
-    self.six_hour_period()
-    print('Creating 75th precinct df w/o outliers')
-    self.precinct_75()
-    print('Reording dataframe and final clean')
-    self.clean_up_df()
-    return self.data
 
   def precinct_75(self):
-    '''
-    Creates df with 75th precinct only and cuts lat long outliers
-    '''
+    '''Create dataframe containing only 75th precinct complaints.
 
+    Filter to contain only precinct number 75.
+    Exclude latitude and longitude outliers to fit 75th boundaries.
+    '''
     df = self.data.copy()
 
-    df_precinct_75 = df[df['precinct_number'] == 75]
+    df = df[df['precinct_number'] == 75]
 
     # Lat/Long extremities for 75th precinct
     lat_min, lat_max, lon_min, lon_max = (
@@ -619,9 +555,7 @@ class CleanData:
 
 
   def save_data(self):
-    '''
-    Saves clean dataframe to clean data pickle
-    '''
+    '''Save clean dataframe to clean data pickle.'''
 
     root_dir = os.path.dirname(os.path.dirname(__file__))
 
@@ -637,13 +571,43 @@ class CleanData:
        pickle.dump(self.precinct, f)
 
 
-
-
 if __name__ == '__main__':
+  '''Take original NYPD data and return clean dataframe.'''
   print('Initializing CleanData')
   clean_data = CleanData()
-  print('Creating clean dataframe')
-  clean_data.total_clean()
-  print('Saving clean dataframe')
+  print('Creating clean dataframe (17 Steps):')
+  print('1. Dropping Columns')
+  clean_data.drop_cols()
+  print('2. Renaming Columns')
+  clean_data.rename_cols()
+  print('3. Dropping NaNs')
+  clean_data.drop_nan()
+  print('4. Changing date column')
+  clean_data.to_date_format()
+  print('5. Changing suspect column')
+  clean_data.miss_suspect()
+  print('6. Changing victim column')
+  clean_data.miss_victim()
+  print('7. Changing premise column')
+  clean_data.miss_premise()
+  print('8. Changing park & metro column')
+  clean_data.miss_park_metro()
+  print('9. Changing coordinates columns')
+  clean_data.miss_lon_lat()
+  print('10. Changing borough column')
+  clean_data.miss_borough()
+  print('11. Changing patrol column')
+  clean_data.miss_patrol_borough()
+  print('12. Changing precinct column')
+  clean_data.round_int_precinct()
+  print('13. Filtering NYC boundaries')
+  clean_data.filter_with_NYC_boundaries()
+  print('14. Adding six hour period column')
+  clean_data.six_hour_period()
+  print('15. Creating 75th precinct df w/o outliers')
+  clean_data.precinct_75()
+  print('16. Reording dataframe')
+  clean_data.clean_up_df()
+  print('17. Saving clean dataframe')
   clean_data.save_data()
   print('New pickles ready to use! :)')

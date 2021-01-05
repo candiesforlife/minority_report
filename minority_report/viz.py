@@ -1,4 +1,4 @@
-'''Generates new dataframe out of clean_data df for Data Viz purposes'''
+'''Generates new dataframe out of clean_data df for Data Viz purposes.'''
 
 import os
 import pickle
@@ -12,8 +12,7 @@ class Viz:
 
 
   def load_data(self):
-    '''Loads clean df from pickle file'''
-
+    '''Load clean NYC dataframe from pickle file.'''
     root_dir = os.path.dirname(os.path.dirname(__file__))
     pickle_path = os.path.join(root_dir, 'raw_data', 'clean.pickle')
 
@@ -26,8 +25,7 @@ class Viz:
 
 
   def time_columns(self):
-    '''Adds new time-related columns to dataframe'''
-
+    '''Add time category columns to dataframe.'''
     df = self.data.copy()
 
     # New column: year
@@ -47,8 +45,7 @@ class Viz:
 
 
   def to_pickle(self):
-    '''Saves new viz dataframe as viz.pickle'''
-
+    '''Save new viz dataframe as viz.pickle.'''
     root_dir = os.path.dirname(os.path.dirname(__file__))
     pickle_path = os.path.join(root_dir, 'raw_data', 'viz.pickle')
 
