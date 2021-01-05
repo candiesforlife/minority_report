@@ -280,32 +280,29 @@ class Matrix:
 
     # Test Matrix
 
+    def from_coord_to_matrix_test(self):
+        '''Return 3D matrix containing points of crime.
 
-    def from_coord_to_matrix_test(self, lat_meters, lon_meters):
-        """
-        outputs the 3D matrix of all coordinates for a given bucket height and width in meters
-        """
-        self.lat_meters = lat_meters
-        self.lon_meters = lon_meters
-
+        Each coordinate is assigned to a bucket of size lat_meters and lon_meters.
+        '''
         df = self.test_df.copy()
-        # add 'time_index' column to df
-        #ind = {time:index for index,time in enumerate(np.sort(df['period'].unique()))}
-        #df['time_index'] = df['period'].map(ind)
+
+        # Adds 'time_index' column to dataframe
         ind = {time: index for index, time in enumerate(np.sort(df['six_hour_date'].unique()))}
         df['time_index'] = df['six_hour_date'].map(ind)
-        #print(df.groupby('time_index').count())
-        #initiate matrix
-        #40.49611539518921, 40.91553277600008, -74.25559136315213,-73.70000906387347) : NYC boundaries
-        #([40.56952999448672, 40.73912795313436],[-74.04189660705046, -73.83355923946421]) : brooklyn boundaries
-        #[40.6218192717505, 40.6951504231971],[-73.90404639808888, -73.83559344190869]) :precinct 75 boundaries
-        grid_offset = np.array([ -df['latitude'].max() , df['longitude'].min(), 0 ]) # Where do you start
-        #from meters to lat/lon step
-        lat_spacing, lon_spacing = self.from_meters_to_steps()
-        grid_spacing = np.array([lat_spacing , lon_spacing, 1 ]) # What's the space you consider (euclidian here)
-        #get points coordinates
-        coords = np.array([( -lat, lon,t_ind) for lat, lon,t_ind \
-                       in zip(df['latitude'],df['longitude'],df['time_index'])])
+
+        # Matrix starting point
+        grid_offset = np.array([-df['latitude'].max(), df['longitude'].min(), 0])
+
+        # Converts bucket size (meters) to lat & lon spacing
+        lat_spacing, lon_spacing = from_meters_to_steps(self.lat_meters, self.lon_meters)
+
+        # Euclidian spacing
+        grid_spacing = np.array([lat_spacing , lon_spacing, 1 ])
+
+        # Gets point coordinates
+        coords = np.array([(-lat, lon, t_ind) for lat, lon, t_ind \
+                       in zip(df['latitude'], df['longitude'], df['time_index'])])
 
         # Convert point to index
         indexes = np.round((coords - grid_offset)/grid_spacing).astype('int')
@@ -313,23 +310,19 @@ class Matrix:
         Y = indexes[:,1]
         Z = indexes[:,2]
 
-        #virgin matrix
-
-        # 75th precinct distances:
+        # 75th precinct maximum & minimum points
         lat_min, lat_max, lon_max, lon_min = (40.6218192717505,
                                               40.6951504231971,
                                               -73.90404639808888,
                                               -73.83559344190869)
 
-        lat_diff = lat_max - lat_min # distance in lat that makes up width of precinct 75
-        lon_diff = lon_min - lon_max # distance in lon that makes up width of precinct 75
+        lat_diff = lat_max - lat_min # Distance in lat that makes up width of precinct 75
+        lon_diff = lon_min - lon_max # Distance in lon that makes up width of precinct 75
 
-        # dim 1: distance of precinct in lat / lat_spacing
+        # Dim 1: distance of precinct in lat / lat_spacing
         a = np.zeros((np.round(lat_diff / lat_spacing).astype('int') + 1,
                      np.round(lon_diff / lon_spacing).astype('int') + 1,
                      Z.max() + 1))
-
-        # old version: a = np.zeros((X.max()+1, Y.max()+1, Z.max()+1))
 
         a[X, Y, Z] = 1
 
@@ -341,10 +334,7 @@ class Matrix:
 
 
     def gaussian_filtering_test(self):
-        '''
-          Returns img3D convoluted
-        '''
-
+        '''Return 3D convoluted image (Gaussian filter).'''
         self.img3D_conv_test = gaussian_filter(self.img3D_non_conv_test,
             sigma = (self.sigma_x, self.sigma_y, self.sigma_z))
 
@@ -386,49 +376,40 @@ class Matrix:
 
     #     return stacked_crimes
 
-    def get_observation_target_test(self,
-                           self.obs_tf,obs_lat,obs_lon, obs_time,
-                           self.tar_tf,  tar_lat,tar_lon, tar_time):
-        '''
-        output an observation of x_length consecutive images and the y_length next images as the target
-        obs_step, self.obs_tf, target_step, self.tar_tf : unit = hours
+    def get_observation_target_test(self):
+        '''Return an observation of length obs_tf + tar_tf.
+
+        Include puffer of length raw_z to avoid data leakage.
         '''
 
-        # sample length to absorb impact of gaussian time sigma
+        # Absorb impact of gaussian time sigma in sample length
         sample_length = self.obs_tf + (self.raw_z + 1) + self.tar_tf
 
-        # finds starting position
+        # Sample starting position
         position = np.random.randint(0, self.img3D_conv_test.shape[2] - sample_length)
 
-        # samples in train and test dfs
+        # Extract sample
         subsample = self.img3D_conv_test[:, :, position : position + sample_length]
 
-        # divide the subsample in X and y
+        # Split sample in X an y
         observations = subsample[:, :, : self.obs_tf]
 
         targets = subsample[:, :, - self.tar_tf : ]
 
-        # stacked images
-        observation = stacking(observations, obs_lat, obs_lon, obs_time)
+        # Stack X and y with stacking function from utils.py
+        observation = stacking(observations, self.obs_lat, self.obs_lon, self.obs_time)
 
-        target = stacking(targets,  tar_lat, tar_lon, tar_time )
+        target = stacking(targets, self.tar_lat, self.tar_lon, self.tar_time)
 
         return observation, target
 
-    def get_X_y_test(self, nb_observations_test, obs_tf,obs_lat,obs_lon, obs_time,
-                    tar_tf, tar_lat,tar_lon, tar_time):
-        '''
-        outputs n observations and their associated targets
-        '''
-
+    def get_X_y_test(self):
+        '''Return total test observations to be used.'''
         X = []
         y = []
 
-        for n in range(nb_observations_test):
-            print(f'Creating observation {n} out of {nb_observations_test}')
-            X_subsample, y_subsample = self.get_observation_target_test(obs_tf,
-                                        obs_lat,obs_lon, obs_time,
-                                        tar_tf,  tar_lat,tar_lon, tar_time)
+        for n in range(self.nb_observations_test):
+            X_subsample, y_subsample = self.get_observation_target_test()
             X.append(X_subsample)
             y.append(y_subsample)
 
