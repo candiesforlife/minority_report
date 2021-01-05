@@ -59,6 +59,32 @@ def from_meters_to_steps(lat_meters, lon_meters):
 
   return latO, lonO
 
+  def stacking(self, window, lat_step, lon_step, time_step):
+    '''Return stacked 3D images.'''
+    # Grid starting point
+    grid_offset = np.array([0, 0, 0])
+    # Stacking steps to take
+    grid_spacing = np.array([lat_step , lon_step, time_step])
+    # Extract point coordinates
+    coords = np.argwhere(window)
+    flat = window.flatten()
+    values = flat[flat != 0]
+    # Convert point to index
+    indexes = np.round((coords - grid_offset)/grid_spacing).astype('int')
+    X = indexes[:,0]
+    Y = indexes[:,1]
+    Z = indexes[:,2]
+    # 192 and 132 are arbitrary: size works in model
+    stacked_crimes = np.zeros((192, 132, Z.max() + 2))
+
+    for i in range(len(indexes)):
+
+        if stacked_crimes[X[i], Y[i], Z[i]] == 0:
+            stacked_crimes[X[i], Y[i], Z[i]] = values[i]
+        else:
+            stacked_crimes[X[i], Y[i], Z[i]] += values[i]
+
+    return stacked_crimes
 
   # 10. Run complete_to_boolean sur df['crime_completed']
   # def crime_completed_to_boolean(self):

@@ -14,7 +14,7 @@ from scipy.ndimage import gaussian_filter
 
 from minority_report.clean_data import CleanData
 from minority_report.scaling import Scaling
-from minority_report.utils import from_meters_to_steps
+from minority_report.utils import from_meters_to_steps, stacking
 
 
 # Pass train and test in matrix.py
@@ -119,7 +119,7 @@ class Matrix:
     # Train Matrix
 
 
-    def from_coord_to_matrix_train(self, lat_meters, lon_meters):
+    def from_coord_to_matrix_train(self):
         '''Return 3D matrix containing points of crime.
 
         Each coordinate is assigned to a bucket of size lat_meters and lon_meters.
@@ -182,33 +182,32 @@ class Matrix:
     ########
     # Input: Stacking et all.
 
-    def stacking_train(self, window, lat_step, lon_step, time_step):
-        '''
-            Returns stacked crimes.
-        '''
-        grid_offset = np.array([0,0,0]) # Where do you start
-        #new steps from precise grid
-        grid_spacing = np.array([lat_step , lon_step, time_step])
-        #get points coordinates
-        coords = np.argwhere(window)
-        flat = window.flatten()
-        values = flat[flat !=0]
-        # Convert point to index
-        indexes = np.round((coords - grid_offset)/grid_spacing).astype('int')
-        X = indexes[:,0]
-        Y = indexes[:,1]
-        Z = indexes[:,2]
-        #virgin matrix: 256 is arbitrary size that works in model
-        stacked_crimes = np.zeros((192, 132, Z.max() + 2))
+    # def stacking(self, window, lat_step, lon_step, time_step):
+    #     '''Return stacked 3D images.'''
+    #     # Grid starting point
+    #     grid_offset = np.array([0, 0, 0])
+    #     # Stacking steps to take
+    #     grid_spacing = np.array([lat_step , lon_step, time_step])
+    #     # Extract point coordinates
+    #     coords = np.argwhere(window)
+    #     flat = window.flatten()
+    #     values = flat[flat != 0]
+    #     # Convert point to index
+    #     indexes = np.round((coords - grid_offset)/grid_spacing).astype('int')
+    #     X = indexes[:,0]
+    #     Y = indexes[:,1]
+    #     Z = indexes[:,2]
+    #     # 192 and 132 are arbitrary: size works in model
+    #     stacked_crimes = np.zeros((192, 132, Z.max() + 2))
 
-        for i in range(len(indexes)):
+    #     for i in range(len(indexes)):
 
-            if stacked_crimes[X[i], Y[i], Z[i]] == 0:
-                stacked_crimes[X[i], Y[i], Z[i]] = values[i]
-            else:
-                stacked_crimes[X[i], Y[i], Z[i]] += values[i]
+    #         if stacked_crimes[X[i], Y[i], Z[i]] == 0:
+    #             stacked_crimes[X[i], Y[i], Z[i]] = values[i]
+    #         else:
+    #             stacked_crimes[X[i], Y[i], Z[i]] += values[i]
 
-        return stacked_crimes
+    #     return stacked_crimes
 
     def get_observation_target_train(self,
                            obs_timeframe,obs_lat,obs_lon, obs_time,
@@ -233,9 +232,9 @@ class Matrix:
         targets = subsample[:, :, - target_timeframe : ]
 
         # stacked images
-        observation = self.stacking_train(observations, obs_lat, obs_lon, obs_time)
+        observation = stacking(observations, obs_lat, obs_lon, obs_time)
 
-        target = self.stacking_train(targets, tar_lat, tar_lon, tar_time)
+        target = stacking(targets, tar_lat, tar_lon, tar_time)
 
         return observation, target
 
@@ -340,38 +339,38 @@ class Matrix:
     ###############
     # Input Replacement: Stacking et all.
 
-    def stacking_test(self, window, lat_step, lon_step, time_step):
-        '''
-            Returns stacked crimes.
-        '''
-        # starting point
-        grid_offset = np.array([0,0,0])
+    # def stacking_test(self, window, lat_step, lon_step, time_step):
+    #     '''
+    #         Returns stacked crimes.
+    #     '''
+    #     # starting point
+    #     grid_offset = np.array([0,0,0])
 
-        #new steps from precise grid
-        grid_spacing = np.array([lat_step , lon_step, time_step])
+    #     #new steps from precise grid
+    #     grid_spacing = np.array([lat_step , lon_step, time_step])
 
-        #get points coordinates
-        coords = np.argwhere(window)
-        flat = window.flatten()
-        values = flat[flat !=0]
+    #     #get points coordinates
+    #     coords = np.argwhere(window)
+    #     flat = window.flatten()
+    #     values = flat[flat !=0]
 
-        # Convert point to index
-        indexes = np.round((coords - grid_offset)/grid_spacing).astype('int')
-        X = indexes[:,0]
-        Y = indexes[:,1]
-        Z = indexes[:,2]
+    #     # Convert point to index
+    #     indexes = np.round((coords - grid_offset)/grid_spacing).astype('int')
+    #     X = indexes[:,0]
+    #     Y = indexes[:,1]
+    #     Z = indexes[:,2]
 
-        #virgin matrix: 256 absolute size to be stacked to work in model!
-        stacked_crimes = np.zeros((192, 132, Z.max() + 2))
+    #     #virgin matrix: 256 absolute size to be stacked to work in model!
+    #     stacked_crimes = np.zeros((192, 132, Z.max() + 2))
 
-        for i in range(len(indexes)):
+    #     for i in range(len(indexes)):
 
-            if stacked_crimes[X[i], Y[i], Z[i]] == 0:
-                stacked_crimes[X[i], Y[i], Z[i]] = values[i]
-            else:
-                stacked_crimes[X[i], Y[i], Z[i]] += values[i]
+    #         if stacked_crimes[X[i], Y[i], Z[i]] == 0:
+    #             stacked_crimes[X[i], Y[i], Z[i]] = values[i]
+    #         else:
+    #             stacked_crimes[X[i], Y[i], Z[i]] += values[i]
 
-        return stacked_crimes
+    #     return stacked_crimes
 
     def get_observation_target_test(self,
                            obs_timeframe,obs_lat,obs_lon, obs_time,
@@ -396,9 +395,9 @@ class Matrix:
         targets = subsample[:, :, - target_timeframe : ]
 
         # stacked images
-        observation = self.stacking_test(observations, obs_lat, obs_lon, obs_time)
+        observation = stacking(observations, obs_lat, obs_lon, obs_time)
 
-        target = self.stacking_test(targets,  tar_lat, tar_lon, tar_time )
+        target = stacking(targets,  tar_lat, tar_lon, tar_time )
 
         return observation, target
 
