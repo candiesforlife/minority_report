@@ -231,32 +231,30 @@ class Matrix:
 
     #     return stacked_crimes
 
-    def get_observation_target_train(self,
-                           obs_timeframe,obs_lat,obs_lon, obs_time,
-                           target_timeframe,  tar_lat,tar_lon, tar_time):
-        '''
-        output an observation of x_length consecutive images and the y_length next images as the target
-        obs_step, obs_timeframe, target_step, target_timeframe : unit = hours
+    def get_observation_target_train(self):
+        '''Return an observation of length obs_tf + tar_tf.
+
+        Include puffer of length raw_z to avoid data leakage.
         '''
 
-        # sample length to absorb impact of gaussian time sigma
-        sample_length = obs_timeframe + (self.raw_z + 1) + target_timeframe
+        # Absorb impact of gaussian time sigma in sample length
+        sample_length = self.obs_tf + (self.raw_z + 1) + self.tar_tf
 
-        # finds starting position
+        # Sample starting position
         position = np.random.randint(0, self.img3D_conv_train.shape[2] - sample_length)
 
-        # samples in train and test dfs
+        # Extract sample
         subsample = self.img3D_conv_train[:, :, position : position + sample_length]
 
-        # divide the subsample in X and y
-        observations = subsample[:, :, : obs_timeframe]
+        # Split sample in X an y
+        observations = subsample[:, :, : self.obs_tf]
 
-        targets = subsample[:, :, - target_timeframe : ]
+        targets = subsample[:, :, - self.tar_tf : ]
 
-        # stacked images
-        observation = stacking(observations, obs_lat, obs_lon, obs_time)
+        # Stack X and y with stacking function from utils.py
+        observation = stacking(observations, self.obs_lat, self.obs_lon, self.obs_time)
 
-        target = stacking(targets, tar_lat, tar_lon, tar_time)
+        target = stacking(targets, self.tar_lat, self.tar_lon, self.tar_time)
 
         return observation, target
 
@@ -395,15 +393,15 @@ class Matrix:
     #     return stacked_crimes
 
     def get_observation_target_test(self,
-                           obs_timeframe,obs_lat,obs_lon, obs_time,
-                           target_timeframe,  tar_lat,tar_lon, tar_time):
+                           self.obs_tf,obs_lat,obs_lon, obs_time,
+                           self.tar_tf,  tar_lat,tar_lon, tar_time):
         '''
         output an observation of x_length consecutive images and the y_length next images as the target
-        obs_step, obs_timeframe, target_step, target_timeframe : unit = hours
+        obs_step, self.obs_tf, target_step, self.tar_tf : unit = hours
         '''
 
         # sample length to absorb impact of gaussian time sigma
-        sample_length = obs_timeframe + (self.raw_z + 1) + target_timeframe
+        sample_length = self.obs_tf + (self.raw_z + 1) + self.tar_tf
 
         # finds starting position
         position = np.random.randint(0, self.img3D_conv_test.shape[2] - sample_length)
@@ -412,9 +410,9 @@ class Matrix:
         subsample = self.img3D_conv_test[:, :, position : position + sample_length]
 
         # divide the subsample in X and y
-        observations = subsample[:, :, : obs_timeframe]
+        observations = subsample[:, :, : self.obs_tf]
 
-        targets = subsample[:, :, - target_timeframe : ]
+        targets = subsample[:, :, - self.tar_tf : ]
 
         # stacked images
         observation = stacking(observations, obs_lat, obs_lon, obs_time)
