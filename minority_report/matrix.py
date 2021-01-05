@@ -15,6 +15,7 @@ from scipy.ndimage import gaussian_filter
 from minority_report.clean_data import CleanData
 from minority_report.scaling import Scaling
 from minority_report.utils import from_meters_to_steps, stacking
+# from minority_report.utils import stacking
 
 
 # Pass train and test in matrix.py

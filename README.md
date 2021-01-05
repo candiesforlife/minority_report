@@ -19,6 +19,15 @@ In Terminal:
 2. python minority_report/clean_split.py
 
 3. python minority_report/trainer.py
+
+# Minority Report for Viz Purposes
+
+In Terminal:
+
+1. python minority_report/clean_data.py
+
+2. python minority_report/viz.py
+
 <!-- # Data analysis
 - Document here the project: minority_report
 - Description: The minority report aims to predict the hourly intensity of crimes in a defined region in the next 48hours. (our y)
