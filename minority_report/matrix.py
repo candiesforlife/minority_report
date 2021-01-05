@@ -24,8 +24,23 @@ from minority_report.utils import from_meters_to_steps, stacking
 
 class Matrix:
 
-    def __init__(self, lat_meters, lon_meters, raw_x, raw_y, raw_z):
-        #self.data = None
+    def __init__(self, lat_meters, lon_meters, raw_x, raw_y, raw_z,\
+        nb_observations_train, nb_observations_test,\
+        obs_tf, obs_lat, obs_lon, obs_time,\
+        tar_tf, tar_lat, tar_lon, tar_time):
+        '''Initiate Matrix class with all input parameters.
+
+        lat_meters, lon_meters: meters that define primary grid spacing
+        raw_x, raw_y = lat, long distance in meters that gaussian_filter uses
+        raw_z = time dimension for gaussian_filter (eg. 12 = 12 * 6h (72h))
+        nb_observations_train = number of observations from train_df
+        nb_observations_test = number of observations from test_df
+        obs_tf = timeframe for input X (e.g. we use 2 weeks to predict...)
+        tar_tf = timeframe for output y (e.g. we use ... to predict two days)
+        obs_lon, tar_lon = spacial stacking lon for X and y
+        obs_lat, tar_lat = spacial stacking lat for X and y
+        obs_time, tar_time = temporal stacking (number of 6h timeframes to use)
+        '''
         self.train_df = None
         self.test_df = None
 
@@ -44,7 +59,18 @@ class Matrix:
         self.sigma_y = None
         self.sigma_z = None
 
-        self.raw_z = 12
+        self.nb_observations_train = nb_observations_train
+        self.nb_observations_test = nb_observations_test
+
+        self.obs_tf = obs_tf
+        self.obs_lat = obs_lat
+        self.obs_lon = obs_lon
+        self.obs_time = obs_time
+
+        self.tar_tf = tar_tf
+        self.tar_lat = tar_lat
+        self.tar_lon = tar_lon
+        self.tar_time = tar_time
 
         self.X_test = None
         self.y_test = None
@@ -52,10 +78,6 @@ class Matrix:
         self.X_train = None
         self.y_train = None
 
-    def assigning_inputs(raw_x, raw_y, raw_z, lat_meters, lon_meters):
-
-        self.lat_meters = lat_meters
-        self.lon_meters = lon_meters
 
     def load_data(self):
         '''Load train and test dataframes.'''

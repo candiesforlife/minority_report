@@ -173,24 +173,19 @@ class Trainer:
 
 if __name__ == '__main__':
 
-    print('1. Creating an instance of Matrix class')
-    matrix = Matrix()
-    print('2. Defining grid steps in meters: 15, 15')
-    lat_meters, lon_meters = 15, 15
+    print('1. Creating an instance of Matrix class:')
+    matrix = Matrix(lat_meters=15, lon_meters=15, raw_x=120, raw_y=120, raw_z=12,\
+        nb_observations_train=70, nb_observations_test=30,\
+        obs_tf=56, obs_lat=4, obs_lon=4, obs_time=4,\
+        tar_tf=8, tar_lat=4, tar_lon=4, tar_time=4)
+    print('- Using grid steps of 15m by 15m')
+    print('- Gaussian filter to spread out over 120m and 3 days in each direction')
+    print('- Using 70 train and 30 test observations')
+    print('- We are using 2 weeks of data to predict two days at a later point')
+    print('- For spacial stacking, 15m buckets expand to 60m')
+    print('- For temporal stacking, 6h timeframes combine to form 24h timeframes')
     print('3. Moving from df to preprocessed X and y')
-    # 120m * 120m and 1 week time (28 * 6h images in 1 week)
-    raw_x, raw_y, raw_z = 120, 120, 12 # N.B: 28 added as self.raw_z in input class
-    obs_lon = 4 # 4 * 15m = 60m
-    obs_lat = 4 # 4 * 15m = 60m
-    obs_time = 4 # 24h - each obs of X is 14 images (each image is 24h)
-    obs_tf = 56 # 4 (slots of 6h) * 14 days = 56 * 6 or 2 weeks (represents two weeks, where each img is 6h)
-    tar_lon = 4 # 8 * 15m = 120m
-    tar_lat = 4 # 10 * 15m = 150m
-    tar_time = 4 # each image is 24h - output: 2 images of 24h each
-    tar_tf = 8 # 12 * 6h = 2 days
-    nb_observations_train = 70
-    nb_observations_test = 30
-    X_train, y_train, X_test, y_test = matrix.preprocessing_X_y(nb_observations_train, nb_observations_test,lat_meters, lon_meters, raw_x, raw_y, raw_z, obs_tf, obs_lat, obs_lon, obs_time, tar_tf, tar_lat,tar_lon, tar_time)
+    X_train, y_train, X_test, y_test = matrix.preprocessing_X_y()
 
     print('10. Saving X, y (train & test) to pickles!')
     matrix.save_data()
