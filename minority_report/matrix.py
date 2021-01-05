@@ -258,19 +258,13 @@ class Matrix:
 
         return observation, target
 
-    def get_X_y_train(self, nb_observations_train, obs_tf,obs_lat,obs_lon, obs_time,
-                    tar_tf, tar_lat,tar_lon, tar_time):
-        '''
-        outputs n observations and their associated targets
-        '''
+    def get_X_y_train(self):
+        '''Return total train observations to be used.'''
         X = []
         y = []
 
-        for n in range(nb_observations_train):
-            print(f'Creating observation {n} out of {nb_observations_train}')
-            X_subsample, y_subsample = self.get_observation_target_train(obs_tf,
-                                        obs_lat,obs_lon, obs_time,
-                                        tar_tf,  tar_lat,tar_lon, tar_time)
+        for n in range(self.nb_observations_train):
+            X_subsample, y_subsample = self.get_observation_target_train()
             X.append(X_subsample)
             y.append(y_subsample)
 
