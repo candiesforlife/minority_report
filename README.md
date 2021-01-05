@@ -10,7 +10,15 @@ You can find out more by checking out our presentation [here](https://docs.googl
 
 [NYPD Data Source](https://catalog.data.gov/dataset/nypd-complaint-data-historic/resource/427e1d35-8a14-4e6b-b7ce-f5c45fb30b26)
 
+# How to run Minority Report
 
+In Terminal:
+
+1. python minority_report/clean_data.py
+
+2. python minority_report/clean_split.py
+
+3. python minority_report/trainer.py
 <!-- # Data analysis
 - Document here the project: minority_report
 - Description: The minority report aims to predict the hourly intensity of crimes in a defined region in the next 48hours. (our y)

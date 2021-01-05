@@ -184,11 +184,13 @@ if __name__ == '__main__':
     print('- We are using 2 weeks of data to predict two days at a later point')
     print('- For spacial stacking, 15m buckets expand to 60m')
     print('- For temporal stacking, 6h timeframes combine to form 24h timeframes')
-    print('3. Moving from df to preprocessed X and y')
+
+    print('2. Preprocessing X and y:')
     X_train, y_train, X_test, y_test = matrix.preprocessing_X_y()
 
-    print('10. Saving X, y (train & test) to pickles!')
+    print('8. Saving X, y for train and test to pickles!')
     matrix.save_data()
+
     print('11. Checking X shape')
     print(X_train.shape)
     print('13. Checking y shape')

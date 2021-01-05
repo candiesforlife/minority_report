@@ -463,42 +463,37 @@ class Matrix:
     #          pickle.dump(self.img3D_conv_test, f)
 
 
-    def preprocessing_X_y(self,nb_observations_train, nb_observations_test, lat_meters, lon_meters, raw_x, raw_y, raw_z,#nb_observations,
-     obs_tf, obs_lat, obs_lon, obs_time,
-     tar_tf, tar_lat,tar_lon, tar_time):
-        '''
-        Takes crime row in original dataframe,
-        passes through grid, gaussian filter and stacking.
-        Returns X and y (both train and test).'''
+    def preprocessing_X_y(self):
+        '''Preprocess crime dataframe to generate model inputs.
 
-        print("4. Loading data")
+        Pass train and test dataframes through all preprocessing steps.
+        Plot on grid, pass through gaussian filter and stacking.
+        Return X and y for both train and test.
+        '''
+
+        print('3. Loading train and test dataframes')
         self.load_data()
 
-        # print('Assigning desired inputs')
-        # self.assigning_inputs()
+        print('4a. From coords to matrix: Train')
+        self.from_coord_to_matrix_train()
 
-        print('6a. From coords to matrix: train')
-        self.from_coord_to_matrix_train(lat_meters, lon_meters)
+        print('4b. From coords to matrix: Test')
+        self.from_coord_to_matrix_test()
 
-        print('6b. From coords to matrix: test')
-        self.from_coord_to_matrix_test(lat_meters, lon_meters)
+        print('5. Getting sigma values for Gaussian filter')
+        self.getting_sigma_values()
 
-        print('7. Getting sigma values for Gaussian filter')
-        self.getting_sigma_values(raw_x, raw_y, raw_z)
-
-        print('8a. Gaussian filtering: Train')
+        print('6a. Gaussian filtering: Train')
         self.gaussian_filtering_train()
 
-        print('8b. Gaussian filtering: Test')
+        print('6b. Gaussian filtering: Test')
         self.gaussian_filtering_test()
 
-        print('9a. Getting X, y Train') #nb_observations
-        self.get_X_y_train(nb_observations_train, obs_tf,obs_lat,obs_lon, obs_time,
-                    tar_tf, tar_lat,tar_lon, tar_time)
+        print('7a. Getting X, y Train')
+        self.get_X_y_train()
 
-        print('9b. Getting X, y Test') #nb_observations
-        self.get_X_y_test(nb_observations_test, obs_tf,obs_lat,obs_lon, obs_time,
-                    tar_tf, tar_lat,tar_lon, tar_time)
+        print('7b. Getting X, y Test')
+        self.get_X_y_test()
 
         return self.X_train, self.y_train, self.X_test, self.y_test
 
