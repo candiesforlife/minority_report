@@ -59,7 +59,7 @@ def from_meters_to_steps(lat_meters, lon_meters):
 
   return latO, lonO
 
-def stacking(self, window, lat_step, lon_step, time_step):
+def stacking(window, lat_step, lon_step, time_step):
   '''Return stacked 3D images.'''
   # Grid starting point
   grid_offset = np.array([0, 0, 0])

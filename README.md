@@ -20,6 +20,8 @@ In Terminal:
 
 3. python minority_report/trainer.py
 
+N.B. Model has to be initiated in google collab.
+
 # Minority Report for Viz Purposes
 
 In Terminal:

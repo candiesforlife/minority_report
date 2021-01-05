@@ -1,7 +1,4 @@
-'''
-Passes clean_data into matrix, gaussian filter and stacking
-Returns X & y train and test pickles
-'''
+'''Pass train and test df through preprocessing and return X and y'''
 
 import os
 import pickle
@@ -15,13 +12,6 @@ from scipy.ndimage import gaussian_filter
 from minority_report.clean_data import CleanData
 from minority_report.scaling import Scaling
 from minority_report.utils import from_meters_to_steps, stacking
-# from minority_report.utils import stacking
-
-
-# Pass train and test in matrix.py
-# (Matrix, Gaussian, Stacking)
-# Get oversations
-
 
 class Matrix:
 
@@ -99,32 +89,6 @@ class Matrix:
         return self.train_df, self.test_df
 
 
-    # def from_meters_to_steps(self):
-    #     """
-    #     gives the latitude and longitude step to use for the grid buckets
-    #     lat_meters, lon_meters = lat/lon step
-    #     """
-    #     #Position, decimal degrees
-    #     lat = 40
-    #     lon = -73
-
-    #     #Earth’s radius, sphere
-    #     R = 6378137
-
-    #     #offsets in meters
-    #     dn = self.lat_meters
-    #     de = self.lon_meters
-
-    #     #Coordinate offsets in radians
-    #     dLat = dn/R
-    #     dLon = de/(R*np.cos(np.pi*lat/180))
-
-    #     #OffsetPosition, decimal degrees
-    #     latO = dLat * 180/np.pi
-    #     lonO = dLon * 180/np.pi
-
-    #     return latO, lonO
-
     def getting_sigma_values(self):
         '''Return three sigma values for gaussian filter.
 
@@ -139,7 +103,7 @@ class Matrix:
         return self.sigma_x, self.sigma_y, self.sigma_z
 
 
-    # Train Matrix
+    ### Train Matrix
 
 
     def from_coord_to_matrix_train(self):
@@ -202,35 +166,6 @@ class Matrix:
 
         return self.img3D_conv_train
 
-    ########
-    # Input: Stacking et all.
-
-    # def stacking(self, window, lat_step, lon_step, time_step):
-    #     '''Return stacked 3D images.'''
-    #     # Grid starting point
-    #     grid_offset = np.array([0, 0, 0])
-    #     # Stacking steps to take
-    #     grid_spacing = np.array([lat_step , lon_step, time_step])
-    #     # Extract point coordinates
-    #     coords = np.argwhere(window)
-    #     flat = window.flatten()
-    #     values = flat[flat != 0]
-    #     # Convert point to index
-    #     indexes = np.round((coords - grid_offset)/grid_spacing).astype('int')
-    #     X = indexes[:,0]
-    #     Y = indexes[:,1]
-    #     Z = indexes[:,2]
-    #     # 192 and 132 are arbitrary: size works in model
-    #     stacked_crimes = np.zeros((192, 132, Z.max() + 2))
-
-    #     for i in range(len(indexes)):
-
-    #         if stacked_crimes[X[i], Y[i], Z[i]] == 0:
-    #             stacked_crimes[X[i], Y[i], Z[i]] = values[i]
-    #         else:
-    #             stacked_crimes[X[i], Y[i], Z[i]] += values[i]
-
-    #     return stacked_crimes
 
     def get_observation_target_train(self):
         '''Return an observation of length obs_tf + tar_tf.
@@ -259,6 +194,7 @@ class Matrix:
 
         return observation, target
 
+
     def get_X_y_train(self):
         '''Return total train observations to be used.'''
         X = []
@@ -278,8 +214,8 @@ class Matrix:
         return self.X_train, self.y_train
 
 
+    ### Test Matrix
 
-    # Test Matrix
 
     def from_coord_to_matrix_test(self):
         '''Return 3D matrix containing points of crime.
@@ -341,41 +277,6 @@ class Matrix:
 
         return self.img3D_conv_test
 
-    ###############
-    # Input Replacement: Stacking et all.
-
-    # def stacking_test(self, window, lat_step, lon_step, time_step):
-    #     '''
-    #         Returns stacked crimes.
-    #     '''
-    #     # starting point
-    #     grid_offset = np.array([0,0,0])
-
-    #     #new steps from precise grid
-    #     grid_spacing = np.array([lat_step , lon_step, time_step])
-
-    #     #get points coordinates
-    #     coords = np.argwhere(window)
-    #     flat = window.flatten()
-    #     values = flat[flat !=0]
-
-    #     # Convert point to index
-    #     indexes = np.round((coords - grid_offset)/grid_spacing).astype('int')
-    #     X = indexes[:,0]
-    #     Y = indexes[:,1]
-    #     Z = indexes[:,2]
-
-    #     #virgin matrix: 256 absolute size to be stacked to work in model!
-    #     stacked_crimes = np.zeros((192, 132, Z.max() + 2))
-
-    #     for i in range(len(indexes)):
-
-    #         if stacked_crimes[X[i], Y[i], Z[i]] == 0:
-    #             stacked_crimes[X[i], Y[i], Z[i]] = values[i]
-    #         else:
-    #             stacked_crimes[X[i], Y[i], Z[i]] += values[i]
-
-    #     return stacked_crimes
 
     def get_observation_target_test(self):
         '''Return an observation of length obs_tf + tar_tf.
@@ -403,6 +304,7 @@ class Matrix:
         target = stacking(targets, self.tar_lat, self.tar_lon, self.tar_time)
 
         return observation, target
+
 
     def get_X_y_test(self):
         '''Return total test observations to be used.'''
@@ -445,23 +347,6 @@ class Matrix:
 
         with open(y_test_pickle_path, 'wb') as f:
             pickle.dump(self.y_test, f)
-
-    # Used for both Train and Test Dataframes
-
-    # def save_data(self):
-    #       '''
-    #       Saves clean dataframe to clean data pickle
-    #       '''
-    #       root_dir = os.path.dirname(os.path.dirname(__file__))
-    #       train_pickle_path = os.path.join(root_dir, 'raw_data', 'img_train.pickle')
-
-    #       with open(train_pickle_path, 'wb') as f:
-    #          pickle.dump(self.img3D_conv_train, f)
-
-    #       test_pickle_path = os.path.join(root_dir, 'raw_data', 'img_test.pickle')
-
-    #       with open(test_pickle_path, 'wb') as f:
-    #          pickle.dump(self.img3D_conv_test, f)
 
 
     def preprocessing_X_y(self):
