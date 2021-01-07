@@ -126,38 +126,40 @@ class Trainer:
 
 
   def fit_model(self,batch_size, epochs, patience):
-    # self.X_train = self.X_train.reshape(-1, self.X_train.shape[1], self.X_train.shape[2], self.X_train.shape[3], 1)
-    es = EarlyStopping(patience = patience, restore_best_weights=True)
+    '''Fit model using X_train and y_train.'''
+    es = EarlyStopping(patience=patience, restore_best_weights=True)
     self.model.fit(self.X_train, self.y_train,
-                  batch_size = batch_size,
-                  epochs = epochs,
-                  validation_split = 0.3,
-                  callbacks = es)
+                  batch_size=batch_size,
+                  epochs=epochs,
+                  validation_split=0.3,
+                  callbacks=es)
+
     return self.model
 
 
   def evaluate_model(self):
-    # self.X_test = self.X_test.reshape(-1, self.X_test.shape[1], self.X_test.shape[2], self.X_test.shape[3], 1)
+    '''Evaluate model using X_test and y_test.'''
     result = self.model.evaluate(self.X_test, self.y_test)
+
     return result
 
 
   def predict_model(self):
-    # self.X_test = self.X_test.reshape(-1, self.X_test.shape[1], self.X_test.shape[2], self.X_test.shape[3], 1)
+    '''Predict y given X_test.'''
     self.y_pred = self.model.predict(self.X_test)
+
     return self.y_pred
 
 
   def plot_predict(self):
+    '''Plot y_pred against y_test to visualise difference.'''
     fig, axes = plt.subplots(self.y_pred.shape[3], 2, figsize=(15,15))
     for i in range(self.y_pred.shape[3]):
         axes[i,0].imshow(self.y_pred[0,:,:,i,0], vmax=y_pred[0,:,:,i,0].max());
         axes[i,1].imshow(self.y_test[0,:,:,i,0], vmax=y_test[0,:,:,i,0].max());
 
   def save_y_pred_to_pickle(self):
-    '''
-    Saves to  y_pred pickler
-    '''
+    '''Save y_pred as pickle.'''
     root_dir = os.path.dirname(os.path.dirname(__file__))
     pickle_path = os.path.join(root_dir, 'raw_data', 'y_pred.pickle')
 
@@ -165,9 +167,8 @@ class Trainer:
         pickle.dump(self.y_pred, f)
 
 
-
-  def training_model(self,batch_size, epochs, patience):
-
+  def training_model(self, batch_size, epochs, patience):
+    '''Combine all model training functions in one.'''
     print('17. Loading X & y pickles, instance variables for the Training instance')
     self.load_X_y_pickles()
     print('18. Reshaping Training instance')
