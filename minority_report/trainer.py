@@ -9,9 +9,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from scipy.ndimage import gaussian_filter
 import pickle
-# from minority_report.input import Input
 from minority_report.matrix import Matrix
-# from minority_report.clean_split import Split
 
 from sklearn.model_selection import train_test_split
 
@@ -22,6 +20,7 @@ from tensorflow.keras.optimizers import  Adam
 #from google.colab import drive
 
 class Trainer:
+
   def __init__(self):
     self.X = None
     self.y = None
@@ -33,18 +32,18 @@ class Trainer:
     self.y_pred = None
 
   def load_X_y_pickles(self):
-    ''' loading pickles train and test for X and y'''
+    '''Load X and y pickles (Train & Test)'''
     root_dir = os.path.dirname(os.path.dirname(__file__))
-    X_train_pickle_path = os.path.join(root_dir, 'raw_data', ' X_train_70.pickle')
-    y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train_70.pickle')
+    X_train_pickle_path = os.path.join(root_dir, 'raw_data', ' X_train_large.pickle')
+    y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train_large.pickle')
 
-    X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test_30.pickle')
-    y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test_30.pickle')
+    X_test_pickle_path = os.path.join(root_dir, 'raw_data', 'X_test_large.pickle')
+    y_test_pickle_path = os.path.join(root_dir, 'raw_data', 'y_test_large.pickle')
     # drive.mount('/content/drive/')
-    # X_train_pickle_path = ('drive/MyDrive/pickles/large_obs/X_train_140.pickle')
-    # X_test_pickle_path = ('drive/MyDrive/pickles/large_obs/X_test_60.pickle')
-    # y_train_pickle_path = ('drive/MyDrive/pickles/large_obs/y_train_140.pickle')
-    # y_test_pickle_path = ('drive/MyDrive/pickles/large_obs/y_test_60.pickle')
+    # X_train_pickle_path = ('drive/MyDrive/pickles/large_obs/X_train_large.pickle')
+    # X_test_pickle_path = ('drive/MyDrive/pickles/large_obs/X_test_large.pickle')
+    # y_train_pickle_path = ('drive/MyDrive/pickles/large_obs/y_train_large.pickle')
+    # y_test_pickle_path = ('drive/MyDrive/pickles/large_obs/y_test_large.pickle')
 
     with open(X_train_pickle_path, 'rb') as f:
         self.X_train = pickle.load(f)
@@ -56,6 +55,7 @@ class Trainer:
         self.y_test = pickle.load(f)
 
     return self.X_train, self.X_test, self.y_train, self.y_test
+
 
   def reshape(self):
     ''' reshaping for the correct channel size before passing into the CNN model.'''
