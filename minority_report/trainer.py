@@ -32,7 +32,7 @@ class Trainer:
     self.y_pred = None
 
   def load_X_y_pickles(self):
-    '''Load X and y pickles (Train & Test)'''
+    '''Load X and y pickles (Train & Test).'''
     root_dir = os.path.dirname(os.path.dirname(__file__))
     X_train_pickle_path = os.path.join(root_dir, 'raw_data', ' X_train_large.pickle')
     y_train_pickle_path = os.path.join(root_dir, 'raw_data', 'y_train_large.pickle')
@@ -58,12 +58,21 @@ class Trainer:
 
 
   def reshape(self):
-    ''' reshaping for the correct channel size before passing into the CNN model.'''
-    self.X_train = self.X_train.reshape(-1, self.X_train.shape[1], self.X_train.shape[2], self.X_train.shape[3],1)
-    self.X_test = self.X_test.reshape(-1,  self.X_train.shape[1], self.X_train.shape[2], self.X_train.shape[3],1)
-    self.y_train = self.y_train.reshape(-1, self.y_train.shape[1], self.y_train.shape[2], self.y_train.shape[3],1)
-    self.y_test = self.y_test.reshape(-1, self.y_train.shape[1], self.y_train.shape[2], self.y_train.shape[3],1)
+    '''Reshape X and y to appropriate channel size.
+
+    CNN model requires buffered shape to work.
+    '''
+    self.X_train = self.X_train.reshape(-1, self.X_train.shape[1], \
+                                self.X_train.shape[2], self.X_train.shape[3], 1)
+    self.X_test = self.X_test.reshape(-1,  self.X_train.shape[1], \
+                                self.X_train.shape[2], self.X_train.shape[3], 1)
+    self.y_train = self.y_train.reshape(-1, self.y_train.shape[1], \
+                                self.y_train.shape[2], self.y_train.shape[3], 1)
+    self.y_test = self.y_test.reshape(-1, self.y_train.shape[1], \
+                                self.y_train.shape[2], self.y_train.shape[3], 1)
+
     return self.X_train, self.X_test, self.y_train, self.y_test
+
 
   def init_model(self):
     print('init model')
