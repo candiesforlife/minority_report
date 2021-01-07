@@ -75,24 +75,28 @@ class Trainer:
 
 
   def init_model(self):
-    print('init model')
+    '''Iniate model: 3D Convoluted Neural Network.'''
+    print('Inialise model')
     self.model = models.Sequential()
 
     print('3D conv 1')
-    self.model.add(layers.Conv3D(32, kernel_size = (4,4,4), activation = 'relu', padding='same',
-                                input_shape = (192, 132, 16,1)))
+    self.model.add(layers.Conv3D(32, kernel_size=(4,4,4), activation='relu',
+                                padding='same', input_shape=(192, 132, 16,1)))
     self.model.add(layers.MaxPooling3D(2))
 
     print('3D conv 2')
-    self.model.add(layers.Conv3D(128, kernel_size = (3,3,3), activation = 'relu', padding='same'))
+    self.model.add(layers.Conv3D(128, kernel_size=(3,3,3), activation='relu',
+                                padding='same'))
     self.model.add(layers.MaxPooling3D(2))
 
     print('3D conv 3')
-    self.model.add(layers.Conv3D(64, kernel_size = (2,2,2), activation = 'relu', padding='same'))
+    self.model.add(layers.Conv3D(64, kernel_size=(2,2,2), activation='relu',
+                                padding='same'))
     self.model.add(layers.MaxPooling3D(2))
 
     print('3D conv 4')
-    self.model.add(layers.Conv3D(16, kernel_size = (2,2,2), activation = 'relu', padding='same'))
+    self.model.add(layers.Conv3D(16, kernel_size=(2,2,2), activation='relu',
+                                padding='same'))
     self.model.add(layers.MaxPooling3D(2))
 
     print('Flatten and Reshape')
@@ -101,21 +105,23 @@ class Trainer:
     self.model.add(layers.Dense(1584))
     self.model.add(layers.Reshape((48,33,1,1)))
 
-
-    print('3D conv 2')
+    print('3D conv 5')
     self.model.add(layers.UpSampling3D(size=(2, 2, 2)))
-    self.model.add(layers.Conv3D(64, kernel_size=(3,3,3), activation='relu', padding='same'))
+    self.model.add(layers.Conv3D(64, kernel_size=(3,3,3), activation='relu',
+                                padding='same'))
 
 
-    print('3D conv 3')
+    print('3D conv 6')
     self.model.add(layers.UpSampling3D(size=(2, 2, 2)))
-    self.model.add(layers.Conv3D(1, kernel_size=(3,3,3), activation='relu', padding='same'))
+    self.model.add(layers.Conv3D(1, kernel_size=(3,3,3), activation='relu',
+                                padding='same'))
 
-    optimizer = Adam(learning_rate = 0.0001)
+    optimizer = Adam(learning_rate=0.0001)
 
-    self.model.compile(loss ='mse',
+    self.model.compile(loss='mse',
                optimizer=optimizer,
                metrics='mae')
+
     return self.model
 
 
