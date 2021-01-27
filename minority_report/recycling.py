@@ -104,3 +104,11 @@
 #             img_list.append(grayscale)
 #             img_list = np.array(img_list)
 #             return img_list
+
+# 10. Run complete_to_boolean sur df['crime_completed']
+#       def crime_completed_to_boolean(self):
+#           """Turn complete/incomplete into boolean value"""
+#           df = self.data.copy()
+#           df['crime_completed'] = df['crime_completed'].replace({'COMPLETED': True, 'INCOMPLETE': False})
+#           self.data = df
+#           return self.data

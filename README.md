@@ -30,6 +30,11 @@ In Terminal:
 
 2. python minority_report/viz.py
 
+<!-- TO DO:
+- Rename matrix.py to preprocessing.py
+- Have py file that runs full cleaning and preprocessing in one
+- Have trainer run smoothly as python file with model -->
+
 <!-- # Data analysis
 - Document here the project: minority_report
 - Description: The minority report aims to predict the hourly intensity of crimes in a defined region in the next 48hours. (our y)
