@@ -30,6 +30,10 @@ In Terminal:
 
 2. python minority_report/viz.py
 
+# Then, for more information, you can :
+
+1. Run the Data_Viz notebook
+
 <!-- TO DO:
 - Rename matrix.py to preprocessing.py
 - Have py file that runs full cleaning and preprocessing in one
