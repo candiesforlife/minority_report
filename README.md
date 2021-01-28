@@ -6,7 +6,7 @@ Each crime occurence is represented in a 3-D tensor made up of latitude, longitu
 
 After passing the tensors through a Gaussian filter and stacking them, they are used to train a Convolutional Neural Network.
 
-You can find out more by checking out our presentation [here](https://docs.google.com/presentation/d/1LlsR1xTr1Hx4iTx-in5fL0dMzcIrm319WJlsk2z9HWU/edit?usp=sharing)
+You can find out more by checking out our presentation [here](https://docs.google.com/presentation/d/1LlsR1xTr1Hx4iTx-in5fL0dMzcIrm319WJlsk2z9HWU/edit?usp=sharing) and check our video [here](https://www.youtube.com/watch?v=a9MM6uY4LDg)
 
 [NYPD Data Source](https://catalog.data.gov/dataset/nypd-complaint-data-historic/resource/427e1d35-8a14-4e6b-b7ce-f5c45fb30b26)
 
