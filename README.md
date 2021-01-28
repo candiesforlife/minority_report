@@ -20,8 +20,6 @@ In Terminal:
 
 3. python minority_report/trainer.py
 
-N.B. Model has to be initiated in google collab.
-
 # Minority Report for Viz Purposes
 
 In Terminal:
@@ -30,9 +28,12 @@ In Terminal:
 
 2. python minority_report/viz.py
 
-# Then, for more information, you can :
+# Then you can :
 
-1. Run the Data_Viz notebook
+1. Run the data_viz notebook
+2. Open the train_model notebook on Google Colab to train our model
+3. Plot a prediction
+
 
 <!-- TO DO:
 - Rename matrix.py to preprocessing.py
